@@ -3,24 +3,51 @@ workflows:
     name: iOS Unsigned IPA
     instance_type: mac_mini_m2
     max_build_duration: 60
+
     environment:
       xcode: latest
-      vars:
-        SCHEME: "3105"
-        BUILD_REF: "iOS/ThreeOneOSFive.xcodeproj"
+
     scripts:
+      - name: Encontrar projeto Xcode
+        script: |
+          set -e
+
+          echo "Procurando .xcodeproj..."
+          find . -name "*.xcodeproj" -type d -print
+
+          PROJECT=$(find . -name "*.xcodeproj" -type d | head -n 1)
+
+          if [ -z "$PROJECT" ]; then
+            echo "ERRO: nenhum .xcodeproj encontrado no repositório."
+            exit 1
+          fi
+
+          echo "Projeto encontrado: $PROJECT"
+          echo "PROJECT_PATH=$PROJECT" >> $CM_ENV
+
       - name: Listar schemes
         script: |
           set -e
-          xcodebuild -project "$BUILD_REF" -list
+          xcodebuild -project "$PROJECT_PATH" -list
 
       - name: Compilar app sem assinatura
         script: |
           set -e
+
+          SCHEME=$(xcodebuild -project "$PROJECT_PATH" -list |
+            awk '/Schemes:/{getline; gsub(/^[ \t]+|[ \t]+$/, ""); print; exit}')
+
+          echo "Scheme encontrado: $SCHEME"
+
+          if [ -z "$SCHEME" ]; then
+            echo "ERRO: nenhum scheme encontrado."
+            exit 1
+          fi
+
           rm -rf "$CM_BUILD_DIR/build"
-          mkdir -p "$CM_BUILD_DIR/build"
+
           xcodebuild \
-            -project "$BUILD_REF" \
+            -project "$PROJECT_PATH" \
             -scheme "$SCHEME" \
             -configuration Release \
             -sdk iphoneos \
@@ -34,13 +61,22 @@ workflows:
       - name: Criar IPA unsigned
         script: |
           set -e
-          APP_PATH=$(find "$CM_BUILD_DIR/build/DerivedData/Build/Products/Release-iphoneos" -maxdepth 1 -name "*.app" | head -n 1)
-          test -n "$APP_PATH"
-          OUT_DIR="$CM_BUILD_DIR/build/ipa"
-          mkdir -p "$OUT_DIR/Payload"
-          cp -R "$APP_PATH" "$OUT_DIR/Payload/"
-          cd "$OUT_DIR"
+
+          APP_PATH=$(find "$CM_BUILD_DIR/build/DerivedData/Build/Products" \
+            -name "*.app" -type d | head -n 1)
+
+          if [ -z "$APP_PATH" ]; then
+            echo "ERRO: .app não encontrado."
+            exit 1
+          fi
+
+          mkdir -p "$CM_BUILD_DIR/build/ipa/Payload"
+          cp -R "$APP_PATH" "$CM_BUILD_DIR/build/ipa/Payload/"
+
+          cd "$CM_BUILD_DIR/build/ipa"
           zip -qry "$CM_BUILD_DIR/build/3105-unsigned.ipa" Payload
+
+          echo "IPA criada com sucesso."
 
     artifacts:
       - build/3105-unsigned.ipa
