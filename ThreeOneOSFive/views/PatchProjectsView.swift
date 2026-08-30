@@ -15,7 +15,6 @@ struct PatchProjectsView: View {
     @State private var showCreate = false
     @State private var showImporter = false
     @State private var searchText = ""
-    @State private var activeProjectIDs: Set<UUID> = []
 
     private var filteredItems: [PatchLibraryItem] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -180,20 +179,18 @@ struct PatchProjectsView: View {
             Toggle(
                 "",
                 isOn: Binding(
-                    get: { activeProjectIDs.contains(item.id) },
+                    get: { store.isApplied(projectID: item.id) },
                     set: { enabled in
-                        if enabled {
-                            activeProjectIDs.insert(item.id)
-                        } else {
-                            activeProjectIDs.remove(item.id)
-                        }
+                        store.setApplied(enabled, for: item)
                     }
                 )
             )
             .labelsHidden()
             .tint(AppTheme.accent)
-            .disabled(item.isLocked)
-            .accessibilityLabel(activeProjectIDs.contains(item.id) ? "Desativar patch" : "Ativar patch")
+            .disabled(item.isLocked || store.isBusy)
+            .accessibilityLabel(
+                store.isApplied(projectID: item.id) ? "Restaurar patch" : "Aplicar patch"
+            )
         }
     }
 
@@ -317,18 +314,12 @@ private struct PatchProjectDetailView: View {
     let projectID: UUID
     @State private var showEditor = false
     @State private var editingRule: PatchRule?
-    @State private var showApplyConfirmation = false
-    @State private var showRestoreConfirmation = false
     @State private var isWorking = false
     @State private var actionAlert: PatchStoreAlert?
     @State private var shareRequest: PatchShareRequest?
 
     private var item: PatchLibraryItem? {
         store.items.first(where: { $0.id == projectID })
-    }
-
-    private var receipt: PatchTransactionReceipt? {
-        DevicePatchService.latestReceipt(projectID: projectID)
     }
 
     private var isWorkspaceProject: Bool {
@@ -412,28 +403,10 @@ private struct PatchProjectDetailView: View {
                 }
 
                 Section {
-                    Button {
-                        showApplyConfirmation = true
-                    } label: {
-                        actionLabel("patch.apply", systemImage: "checkmark.shield.fill")
-                    }
-                    .disabled(isWorking)
-
-                    if receipt != nil {
-                        Button(role: .destructive) {
-                            showRestoreConfirmation = true
-                        } label: {
-                            actionLabel("patch.restore", systemImage: "arrow.uturn.backward.circle")
-                        }
-                        .disabled(isWorking)
-                    }
-
                     Button(action: prepareExport) {
                         actionLabel("patch.export", systemImage: "square.and.arrow.up")
                     }
                     .disabled(isWorking)
-                } footer: {
-                    Text(language.text("patch.apply_footer"))
                 }
             }
         }
@@ -464,24 +437,6 @@ private struct PatchProjectDetailView: View {
             PatchRuleEditorView(rule: rule) { updatedRule in
                 updateRule(updatedRule)
             }
-        }
-        .confirmationDialog(
-            language.text("patch.apply_confirm_title"),
-            isPresented: $showApplyConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(language.text("patch.apply")) { apply() }
-            Button(language.text("common.cancel"), role: .cancel) {}
-        } message: {
-            Text(language.text("patch.apply_confirm_message"))
-        }
-        .confirmationDialog(
-            language.text("patch.restore_confirm_title"),
-            isPresented: $showRestoreConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(language.text("patch.restore"), role: .destructive) { restore() }
-            Button(language.text("common.cancel"), role: .cancel) {}
         }
         .alert(item: $actionAlert) { alert in
             Alert(
@@ -541,38 +496,6 @@ private struct PatchProjectDetailView: View {
         }
     }
 
-    private func apply() {
-        guard let item, let baseProject = item.project else { return }
-        isWorking = true
-        Task.detached(priority: .userInitiated) {
-            do {
-                let project = item.summary.schemaVersion >= 2
-                    ? try PatchProjectLibrary.synchronizeWorkspace(item: item)
-                    : baseProject
-                _ = try DevicePatchService.apply(project: project)
-                await MainActor.run {
-                    store.reload()
-                    isWorking = false
-                    actionAlert = PatchStoreAlert(titleKey: "common.done", messageKey: "patch.applied_message")
-                }
-            } catch let error as PatchPackageError {
-                await MainActor.run {
-                    isWorking = false
-                    actionAlert = PatchStoreAlert(
-                        titleKey: "common.failed",
-                        messageKey: error.localizationKey,
-                        messageArgument: error.localizationArgument
-                    )
-                }
-            } catch {
-                await MainActor.run {
-                    isWorking = false
-                    actionAlert = PatchStoreAlert(titleKey: "common.failed", messageKey: "patch.error.apply")
-                }
-            }
-        }
-    }
-
     private func prepareExport() {
         guard let item else { return }
         isWorking = true
@@ -607,33 +530,6 @@ private struct PatchProjectDetailView: View {
         }
     }
 
-    private func restore() {
-        guard let receipt else { return }
-        isWorking = true
-        Task.detached(priority: .userInitiated) {
-            do {
-                try DevicePatchService.restore(receipt: receipt)
-                await MainActor.run {
-                    isWorking = false
-                    actionAlert = PatchStoreAlert(titleKey: "common.done", messageKey: "patch.restored_message")
-                }
-            } catch let error as PatchPackageError {
-                await MainActor.run {
-                    isWorking = false
-                    actionAlert = PatchStoreAlert(
-                        titleKey: "common.failed",
-                        messageKey: error.localizationKey,
-                        messageArgument: error.localizationArgument
-                    )
-                }
-            } catch {
-                await MainActor.run {
-                    isWorking = false
-                    actionAlert = PatchStoreAlert(titleKey: "common.failed", messageKey: "patch.error.restore")
-                }
-            }
-        }
-    }
 }
 
 private struct PatchShareRequest: Identifiable {

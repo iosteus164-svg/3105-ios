@@ -227,6 +227,60 @@ final class PatchProjectStore: ObservableObject {
         }
     }
 
+
+    func isApplied(projectID: UUID) -> Bool {
+        DevicePatchService.latestReceipt(projectID: projectID) != nil
+    }
+
+    func setApplied(_ enabled: Bool, for item: PatchLibraryItem) {
+        guard !isBusy, !item.isLocked, let baseProject = item.project else { return }
+
+        if enabled {
+            guard !isApplied(projectID: item.id) else { return }
+            isBusy = true
+            Task.detached(priority: .userInitiated) { [weak self] in
+                do {
+                    let project = item.summary.schemaVersion >= 2
+                        ? try PatchProjectLibrary.synchronizeWorkspace(item: item)
+                        : baseProject
+                    _ = try DevicePatchService.apply(project: project)
+                    await MainActor.run {
+                        self?.reload()
+                        self?.isBusy = false
+                        self?.alert = PatchStoreAlert(
+                            titleKey: "common.done",
+                            messageKey: "patch.applied_message"
+                        )
+                    }
+                } catch let error as PatchPackageError {
+                    await self?.failOperation(error)
+                } catch {
+                    await self?.failOperation(.applyFailed)
+                }
+            }
+        } else {
+            guard let receipt = DevicePatchService.latestReceipt(projectID: item.id) else { return }
+            isBusy = true
+            Task.detached(priority: .userInitiated) { [weak self] in
+                do {
+                    try DevicePatchService.restore(receipt: receipt)
+                    await MainActor.run {
+                        self?.reload()
+                        self?.isBusy = false
+                        self?.alert = PatchStoreAlert(
+                            titleKey: "common.done",
+                            messageKey: "patch.restored_message"
+                        )
+                    }
+                } catch let error as PatchPackageError {
+                    await self?.failOperation(error)
+                } catch {
+                    await self?.failOperation(.restoreFailed)
+                }
+            }
+        }
+    }
+
     func synchronizeWorkspace(projectID: UUID, reportsSuccess: Bool = false) {
         guard let item = items.first(where: { $0.id == projectID }),
               item.summary.schemaVersion >= 2,
