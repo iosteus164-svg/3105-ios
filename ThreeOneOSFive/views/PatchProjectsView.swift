@@ -73,12 +73,7 @@ struct PatchProjectsView: View {
                 }
                 .listStyle(.insetGrouped)
             }
-            .navigationTitle("")
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    AnimatedTitleText(text: language.text("patch.title"))
-                }
-            }
+            .navigationTitle(language.text("patch.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -243,17 +238,9 @@ private struct PatchProjectRow: View {
         HStack(spacing: 12) {
             AppRowIcon(systemName: item.isLocked ? "lock.doc.fill" : "shippingbox.fill")
             VStack(alignment: .leading, spacing: 3) {
-                Text((item.project?.name ?? language.text("patch.locked_project")).uppercased())
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.white, .white, AppTheme.accent, AppTheme.accent],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
+                AnimatedPatchRowTitle(
+                    text: item.project?.name ?? language.text("patch.locked_project")
+                )
                 Text(item.isLocked
                      ? language.text("patch.tap_to_unlock")
                      : language.text(
