@@ -40,14 +40,14 @@ struct FeatureVisibility: Equatable {
     }
 
     var visibleSections: [AppSection] {
-        [.home, .patches]
+        [.home, .patches, .cleaner]
     }
 
     func isVisible(_ section: AppSection) -> Bool {
         switch section {
-        case .home, .patches:
+        case .home, .patches, .cleaner:
             return true
-        case .files, .cleaner, .wallpapers:
+        case .files, .wallpapers:
             return false
         }
     }

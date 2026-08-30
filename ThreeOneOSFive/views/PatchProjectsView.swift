@@ -243,9 +243,17 @@ private struct PatchProjectRow: View {
         HStack(spacing: 12) {
             AppRowIcon(systemName: item.isLocked ? "lock.doc.fill" : "shippingbox.fill")
             VStack(alignment: .leading, spacing: 3) {
-                Text(item.project?.name ?? language.text("patch.locked_project"))
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(.primary)
+                Text((item.project?.name ?? language.text("patch.locked_project")).uppercased())
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [.white, .white, AppTheme.accent, AppTheme.accent],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
                 Text(item.isLocked
                      ? language.text("patch.tap_to_unlock")
                      : language.text(
