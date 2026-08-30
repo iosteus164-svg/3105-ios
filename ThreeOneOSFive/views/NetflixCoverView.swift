@@ -210,8 +210,7 @@ struct NetflixCoverView: View {
             )
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(item.title.replacingOccurrences(of: "
-", with: " "))
+                Text(item.title.replacingOccurrences(of: "\n", with: " "))
                     .font(.caption.weight(.bold))
                     .foregroundStyle(.white)
                     .lineLimit(2)
