@@ -31,7 +31,7 @@ struct ThreeOneOSFiveApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                ContentView()
+                NetflixCoverView()
                     .environmentObject(appState)
                     .environmentObject(patchDraftCoordinator)
                     .environmentObject(fileOperationCoordinator)
