@@ -1,0 +1,4 @@
+Build marker: NETFLIX RED V3
+Tabs: Home + Patches only
+Accent: red
+Wallpaper toggle: removed from Home

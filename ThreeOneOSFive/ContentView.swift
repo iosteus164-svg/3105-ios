@@ -13,10 +13,8 @@ struct ContentView: View {
 #if targetEnvironment(simulator)
         let arguments = ProcessInfo.processInfo.arguments
         let initialTab: Int
-        if arguments.contains("--simulate-files-tab") {
+        if arguments.contains("--simulate-patch-tab") {
             initialTab = 1
-        } else if arguments.contains("--simulate-patch-tab") {
-            initialTab = 2
         } else if arguments.contains("--simulate-cleaner-tab") {
             initialTab = 3
         } else if arguments.contains("--simulate-wallpaper-tab") {
@@ -45,12 +43,6 @@ struct ContentView: View {
         }
         .onChange(of: patchDraftCoordinator.importRequest?.id) { requestID in
             if requestID != nil { tabNavigation.select(AppSection.patches.rawValue) }
-        }
-        .onChange(of: cleanerEnabled) { _ in
-            tabNavigation.reconcileSelection(with: featureVisibility)
-        }
-        .onChange(of: wallpapersEnabled) { _ in
-            tabNavigation.reconcileSelection(with: featureVisibility)
         }
         .onAppear {
             tabNavigation.reconcileSelection(with: featureVisibility)
@@ -118,19 +110,12 @@ struct ContentView: View {
             DashboardView(
                 cleanerEnabled: $cleanerEnabled,
                 wallpapersEnabled: $wallpapersEnabled,
-                wallpapersSupported: wallpapersSupported
-            )
-        case .files:
-            AppDataBrowserView(
-                tabSession: filesTabSession
+                wallpapersSupported: false
             )
         case .patches:
             PatchProjectsView()
-        case .cleaner:
-            CleanerView()
-        case .wallpapers:
-            WallpaperLabView()
         }
+    }
     }
 
     private var tabSelection: Binding<Int> {
@@ -191,20 +176,14 @@ private extension AppSection {
     var titleKey: String {
         switch self {
         case .home: return "tab.home"
-        case .files: return "tab.files"
         case .patches: return "tab.patches"
-        case .cleaner: return "tab.cleaner"
-        case .wallpapers: return "tab.wallpapers"
         }
     }
 
     var systemImage: String {
         switch self {
-        case .home: return "house.fill"
-        case .files: return "folder.fill"
-        case .patches: return "shippingbox.fill"
-        case .cleaner: return "sparkles"
-        case .wallpapers: return "photo.on.rectangle.angled"
+        case .home: return "house"
+        case .patches: return "shippingbox"
         }
     }
 }
@@ -222,8 +201,7 @@ private struct DashboardView: View {
         NavigationStack {
             List {
                 deviceSection
-                featuresSection
-            }
+}
             .navigationBarTitleDisplayMode(.inline)
             .tint(AppTheme.accent)
             .toolbar {
@@ -244,17 +222,6 @@ private struct DashboardView: View {
             .sheet(isPresented: $showLogs) { LogView() }
         }
     }
-
-    private var featuresSection: some View {
-        Section {
-            Toggle(isOn: $cleanerEnabled) {
-                Label(language.text("tab.cleaner"), systemImage: "sparkles")
-            }
-        } header: {
-            Text(language.text("dashboard.features"))
-        } footer: {
-            Text(language.text("dashboard.features_footer"))
-        }
     }
 
     private var deviceSection: some View {
