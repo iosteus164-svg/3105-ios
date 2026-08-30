@@ -97,7 +97,12 @@ struct ContentView: View {
                     )
                 }
             }
-            .navigationTitle("3105")
+            .navigationTitle("")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    AnimatedTitleText(text: "Netflix")
+                }
+            }
             .navigationSplitViewColumnWidth(min: 210, ideal: 240, max: 300)
         } detail: {
             sectionContent(selectedVisibleSection)
@@ -244,11 +249,6 @@ private struct DashboardView: View {
         Section {
             Toggle(isOn: $cleanerEnabled) {
                 Label(language.text("tab.cleaner"), systemImage: "sparkles")
-            }
-            if wallpapersSupported {
-                Toggle(isOn: $wallpapersEnabled) {
-                    Label(language.text("tab.wallpapers"), systemImage: "photo.on.rectangle.angled")
-                }
             }
         } header: {
             Text(language.text("dashboard.features"))

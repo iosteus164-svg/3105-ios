@@ -47,9 +47,9 @@ struct FeatureVisibility: Equatable {
         switch section {
         case .cleaner:
             return cleanerEnabled
-        case .wallpapers:
-            return wallpapersEnabled && wallpapersSupported
-        case .home, .files, .patches:
+        case .files, .wallpapers:
+            return false
+        case .home, .patches:
             return true
         }
     }

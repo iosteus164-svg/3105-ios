@@ -73,7 +73,12 @@ struct PatchProjectsView: View {
                 }
                 .listStyle(.insetGrouped)
             }
-            .navigationTitle(language.text("patch.title"))
+            .navigationTitle("")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    AnimatedTitleText(text: language.text("patch.title"))
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -411,7 +416,12 @@ private struct PatchProjectDetailView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .navigationTitle(item?.project?.name ?? language.text("patch.title"))
+        .navigationTitle("")
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                AnimatedTitleText(text: item?.project?.name ?? language.text("patch.title"))
+            }
+        }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
