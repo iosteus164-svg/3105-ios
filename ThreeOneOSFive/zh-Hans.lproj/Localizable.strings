@@ -1,11 +1,11 @@
 "app.subtitle" = "MobileGestalt 编辑器";
 "app.capability_editor" = "MobileGestalt 功能编辑器";
 "common.close" = "关闭";
-"common.done" = "完成";
-"common.ok" = "好";
+"common.done" = "Concluído";
+"common.ok" = "OK";
 "common.cancel" = "取消";
 "common.clear" = "清除搜索";
-"common.failed" = "失败";
+"common.failed" = "Falha";
 "common.version" = "版本 %@";
 "common.device" = "设备";
 "common.reboot" = "重新启动";
@@ -73,10 +73,10 @@
 "dashboard.enterprise_signing" = "3105 仅在使用企业证书签名时运行。不支持 SideStore、AltStore、3uTools 或 LiveContainer。";
 "dashboard.features" = "功能";
 "dashboard.features_footer" = "开启清理或壁纸后，该功能才会显示在应用导航中。";
-"tab.home" = "主页";
-"tab.files" = "文件";
-"tab.patches" = "补丁";
-"tab.cleaner" = "清理";
+"tab.home" = "Início";
+"tab.files" = "Arquivos";
+"tab.patches" = "Patches";
+"tab.cleaner" = "Limpeza";
 
 "cleaner.title" = "清理";
 "cleaner.limited_mode" = "有限清理";
@@ -176,13 +176,13 @@
 "patch.apply_confirm_title" = "要应用此补丁吗？";
 "patch.apply_confirm_message" = "将再次验证所有 bundle identifier 和相对路径，并在首次写入前备份原始文件。";
 "patch.restore_confirm_title" = "要恢复原始文件吗？";
-"patch.created_message" = "补丁项目已创建。";
-"patch.updated_message" = "补丁项目已更新，密码未更改。";
-"patch.imported_message" = ".3105 软件包已导入。";
-"patch.unlocked_message" = "已解锁。此设备不会再次询问该软件包的密码。";
+"patch.created_message" = "O patch foi criado.";
+"patch.updated_message" = "O patch foi atualizado sem alterar a senha.";
+"patch.imported_message" = "O pacote .3105 foi importado.";
+"patch.unlocked_message" = "Desbloqueado. Este dispositivo não solicitará novamente a senha deste pacote.";
 "patch.workspace_synced_message" = "补丁工作区已同步。";
-"patch.applied_message" = "所有补丁规则均已应用，原始文件已备份。";
-"patch.restored_message" = "原始文件已恢复。";
+"patch.applied_message" = "Todos os patches foram aplicados e os arquivos originais foram salvos como backup.";
+"patch.restored_message" = "Os arquivos originais foram restaurados.";
 "patch.error.unsupported_format" = "这不是有效的 .3105 补丁软件包。";
 "patch.error.unsupported_version" = "此补丁需要更高版本的 3105。请更新应用后再导入。";
 "patch.error.password_or_corrupt" = "密码不正确，或软件包已被修改。";
@@ -195,8 +195,8 @@
 "patch.error.keychain" = "无法安全保存或读取已记住的解锁密钥。";
 "patch.error.app_unavailable" = "未安装应用 bundle %@，或无法打开该应用。未更改任何补丁文件。";
 "patch.error.symlink" = "补丁目标路径不能经过符号链接。";
-"patch.error.apply" = "无法应用补丁。之前的所有写入均已回滚。";
-"patch.error.restore" = "无法安全恢复原始文件。未覆盖任何未经验证的目标。";
+"patch.error.apply" = "Não foi possível aplicar o patch. As alterações anteriores foram revertidas.";
+"patch.error.restore" = "Não foi possível restaurar os arquivos originais com segurança.";
 "patch.error.invalid_import_link" = "补丁导入链接无效。请使用指向 .3105 软件包的安全 HTTPS 链接。";
 "patch.error.remote_import" = "无法安全下载补丁。请检查链接后重试。";
 
@@ -441,7 +441,7 @@
 "browser.tab_name_message" = "输入此标签页的名称。";
 "browser.open_new_tab" = "在新标签页中打开";
 
-"tab.wallpapers" = "壁纸";
+"tab.wallpapers" = "Papéis de parede";
 "wallpaper.title" = "壁纸实验室";
 "wallpaper.access" = "PosterBoard 访问";
 "wallpaper.access_ready" = "可安装";
