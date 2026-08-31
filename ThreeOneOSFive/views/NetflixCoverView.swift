@@ -29,7 +29,7 @@ struct NetflixCoverView: View {
         .animation(.easeInOut(duration: 0.25), value: isLoading)
         .task {
             guard isLoading else { return }
-            try? await Task.sleep(for: .milliseconds(3100))
+            try? await Task.sleep(for: .milliseconds(2600))
             isLoading = false
         }
         .sheet(item: $selectedMovie) { movie in
@@ -458,58 +458,73 @@ struct NetflixCoverView: View {
 }
 
 private struct NetflixLoadingView: View {
-    @State private var stage = 0
-    @State private var showSpinner = false
-
-    private let stages = [
-        "N",
-        "N",
-        "NE",
-        "NET",
-        "NETF",
-        "NETFL",
-        "NETFLI",
-        "NETFLIX"
-    ]
+    @State private var phase: IntroPhase = .logo
+    @State private var logoScale: CGFloat = 0.82
+    @State private var wordmarkWidth: CGFloat = 0.12
+    @State private var wordmarkOpacity = 0.0
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
+        GeometryReader { proxy in
+            ZStack {
+                Color.black.ignoresSafeArea()
 
-            VStack(spacing: 34) {
-                Spacer()
-
-                Text(stages[min(stage, stages.count - 1)])
-                    .font(.system(size: 42, weight: .black, design: .default))
-                    .foregroundStyle(Color(red: 0.90, green: 0.00, blue: 0.05))
-                    .kerning(stage >= 2 ? 1.8 : 0)
-                    .contentTransition(.numericText())
-                    .animation(.easeOut(duration: 0.12), value: stage)
-
-                if showSpinner {
-                    ProgressView()
-                        .tint(.white.opacity(0.75))
-                        .scaleEffect(1.0)
-                        .transition(.opacity)
-                } else {
-                    Color.clear
-                        .frame(width: 24, height: 24)
+                ZStack {
+                    if phase == .logo {
+                        Image("NetflixLogo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: proxy.size.width * 0.18)
+                            .scaleEffect(logoScale)
+                            .transition(.opacity)
+                    } else {
+                        Image("NetflixWordmark")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: proxy.size.width * 0.72)
+                            .opacity(wordmarkOpacity)
+                            .mask(
+                                Rectangle()
+                                    .frame(
+                                        width: proxy.size.width * 0.72 * wordmarkWidth,
+                                        height: proxy.size.height
+                                    )
+                                    .frame(
+                                        maxWidth: .infinity,
+                                        maxHeight: .infinity,
+                                        alignment: .leading
+                                    )
+                            )
+                            .transition(.opacity)
+                    }
                 }
-
-                Spacer()
+                .position(
+                    x: proxy.size.width / 2,
+                    y: proxy.size.height * 0.50
+                )
             }
         }
+        .background(Color.black)
         .task {
-            for next in 1..<stages.count {
-                try? await Task.sleep(for: .milliseconds(next < 2 ? 320 : 180))
-                stage = next
+            withAnimation(.easeOut(duration: 0.35)) {
+                logoScale = 1.0
             }
 
-            try? await Task.sleep(for: .milliseconds(260))
-            withAnimation(.easeIn(duration: 0.20)) {
-                showSpinner = true
+            try? await Task.sleep(for: .milliseconds(650))
+
+            phase = .wordmark
+            wordmarkOpacity = 1.0
+
+            withAnimation(.easeOut(duration: 0.62)) {
+                wordmarkWidth = 1.0
             }
+
+            try? await Task.sleep(for: .milliseconds(1150))
         }
+    }
+
+    private enum IntroPhase {
+        case logo
+        case wordmark
     }
 }
 
