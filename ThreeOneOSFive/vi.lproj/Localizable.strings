@@ -1,11 +1,11 @@
 "app.subtitle" = "Trình chỉnh sửa MobileGestalt";
 "app.capability_editor" = "Trình chỉnh sửa tính năng MobileGestalt";
 "common.close" = "Đóng";
-"common.done" = "Concluído";
+"common.done" = "Xong";
 "common.ok" = "OK";
 "common.cancel" = "Hủy";
 "common.clear" = "Xóa tìm kiếm";
-"common.failed" = "Falha";
+"common.failed" = "Thất bại";
 "common.version" = "Phiên bản %@";
 "common.device" = "Thiết bị";
 "common.reboot" = "Khởi động lại";
@@ -73,10 +73,10 @@
 "dashboard.enterprise_signing" = "3105 chỉ hoạt động khi được ký bằng chứng chỉ doanh nghiệp. Không hỗ trợ SideStore, AltStore, 3uTools hoặc LiveContainer.";
 "dashboard.features" = "Tính năng";
 "dashboard.features_footer" = "Bật Dọn dẹp hoặc Hình nền để hiển thị tính năng đó trong thanh điều hướng.";
-"tab.home" = "Início";
-"tab.files" = "Arquivos";
-"tab.patches" = "Patches";
-"tab.cleaner" = "Limpeza";
+"tab.home" = "Trang chủ";
+"tab.files" = "Tệp";
+"tab.patches" = "Patch";
+"tab.cleaner" = "Dọn dẹp";
 
 "cleaner.title" = "Dọn dẹp";
 "cleaner.limited_mode" = "Dọn dẹp giới hạn";
@@ -176,13 +176,13 @@
 "patch.apply_confirm_title" = "Áp dụng patch này?";
 "patch.apply_confirm_message" = "Mọi bundle identifier và đường dẫn tương đối sẽ được kiểm tra lại. File gốc được sao lưu trước lần ghi đầu tiên.";
 "patch.restore_confirm_title" = "Khôi phục các file gốc?";
-"patch.created_message" = "O patch foi criado.";
-"patch.updated_message" = "O patch foi atualizado sem alterar a senha.";
-"patch.imported_message" = "O pacote .3105 foi importado.";
-"patch.unlocked_message" = "Desbloqueado. Este dispositivo não solicitará novamente a senha deste pacote.";
+"patch.created_message" = "Đã tạo dự án patch.";
+"patch.updated_message" = "Đã cập nhật dự án mà không thay đổi mật khẩu.";
+"patch.imported_message" = "Đã nhập gói .3105.";
+"patch.unlocked_message" = "Đã mở khóa. Thiết bị này sẽ không hỏi lại mật khẩu của gói này.";
 "patch.workspace_synced_message" = "Đã đồng bộ workspace của patch.";
-"patch.applied_message" = "Todos os patches foram aplicados e os arquivos originais foram salvos como backup.";
-"patch.restored_message" = "Os arquivos originais foram restaurados.";
+"patch.applied_message" = "Đã áp dụng mọi quy tắc và sao lưu các file gốc.";
+"patch.restored_message" = "Đã khôi phục các file gốc.";
 "patch.error.unsupported_format" = "Đây không phải là gói patch .3105 hợp lệ.";
 "patch.error.unsupported_version" = "Patch này yêu cầu phiên bản 3105 mới hơn. Hãy cập nhật ứng dụng trước khi nhập.";
 "patch.error.password_or_corrupt" = "Mật khẩu sai hoặc gói đã bị chỉnh sửa.";
@@ -195,8 +195,8 @@
 "patch.error.keychain" = "Không thể lưu hoặc đọc khóa mở gói một cách an toàn.";
 "patch.error.app_unavailable" = "Bundle app %@ chưa được cài hoặc không thể mở. Patch chưa thay đổi file nào.";
 "patch.error.symlink" = "Đường dẫn patch không được đi qua liên kết tượng trưng.";
-"patch.error.apply" = "Não foi possível aplicar o patch. As alterações anteriores foram revertidas.";
-"patch.error.restore" = "Não foi possível restaurar os arquivos originais com segurança.";
+"patch.error.apply" = "Không thể áp dụng patch. Mọi file đã ghi trước đó đã được rollback.";
+"patch.error.restore" = "Không thể khôi phục file gốc an toàn. App không ghi đè đích chưa được xác minh.";
 "patch.error.invalid_import_link" = "Liên kết nhập patch không hợp lệ. Hãy dùng liên kết HTTPS an toàn tới gói .3105.";
 "patch.error.remote_import" = "Không thể tải patch một cách an toàn. Hãy kiểm tra liên kết và thử lại.";
 
@@ -441,7 +441,7 @@
 "browser.tab_name_message" = "Nhập tên cho thẻ này.";
 "browser.open_new_tab" = "Mở trong thẻ mới";
 
-"tab.wallpapers" = "Papéis de parede";
+"tab.wallpapers" = "Hình nền";
 "wallpaper.title" = "Wallpaper Lab";
 "wallpaper.access" = "Quyền PosterBoard";
 "wallpaper.access_ready" = "Sẵn sàng cài đặt";

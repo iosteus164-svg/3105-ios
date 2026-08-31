@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E1B2C3D4E5F6012345678902 /* LocalLoginGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B2C3D4E5F6012345678901 /* LocalLoginGateView.swift */; };
 		D1B2C3D4E5F6012345678902 /* AnimatedPatchRowTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B2C3D4E5F6012345678901 /* AnimatedPatchRowTitle.swift */; };
 		B1B2C3D4E5F6012345678902 /* NetflixCoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F6012345678901 /* NetflixCoverView.swift */; };
 		A1B2C3D4E5F6012345678902 /* AnimatedTitleText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6012345678901 /* AnimatedTitleText.swift */; };
@@ -75,7 +74,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E1B2C3D4E5F6012345678901 /* LocalLoginGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/LocalLoginGateView.swift; sourceTree = SOURCE_ROOT; };
 		D1B2C3D4E5F6012345678901 /* AnimatedPatchRowTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/AnimatedPatchRowTitle.swift; sourceTree = SOURCE_ROOT; };
 		B1B2C3D4E5F6012345678901 /* NetflixCoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/NetflixCoverView.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F6012345678901 /* AnimatedTitleText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/AnimatedTitleText.swift; sourceTree = SOURCE_ROOT; };
@@ -420,7 +418,6 @@
 				A1B2C3D4E5F6012345678902 /* AnimatedTitleText.swift in Sources */,
 				B1B2C3D4E5F6012345678902 /* NetflixCoverView.swift in Sources */,
 				D1B2C3D4E5F6012345678902 /* AnimatedPatchRowTitle.swift in Sources */,
-				E1B2C3D4E5F6012345678902 /* LocalLoginGateView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

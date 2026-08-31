@@ -1,11 +1,11 @@
 "app.subtitle" = "MobileGestalt editor";
 "app.capability_editor" = "MobileGestalt capability editor";
 "common.close" = "Close";
-"common.done" = "Concluído";
+"common.done" = "Done";
 "common.ok" = "OK";
 "common.cancel" = "Cancel";
 "common.clear" = "Clear search";
-"common.failed" = "Falha";
+"common.failed" = "Failed";
 "common.version" = "Version %@";
 "common.device" = "Device";
 "common.reboot" = "Reboot";
@@ -73,10 +73,10 @@
 "dashboard.enterprise_signing" = "3105 only works when signed with an enterprise certificate. SideStore, AltStore, 3uTools and LiveContainer are not supported.";
 "dashboard.features" = "Features";
 "dashboard.features_footer" = "Turn on Cleaner or Wallpapers to show it in the app navigation.";
-"tab.home" = "Início";
-"tab.files" = "Arquivos";
+"tab.home" = "Home";
+"tab.files" = "Files";
 "tab.patches" = "Patches";
-"tab.cleaner" = "Limpeza";
+"tab.cleaner" = "Cleaner";
 
 "cleaner.title" = "Cleaner";
 "cleaner.limited_mode" = "Limited Cleanup";
@@ -176,13 +176,13 @@
 "patch.apply_confirm_title" = "Apply this patch?";
 "patch.apply_confirm_message" = "All bundle identifiers and relative paths will be validated again. Originals are backed up before the first write.";
 "patch.restore_confirm_title" = "Restore original files?";
-"patch.created_message" = "O patch foi criado.";
-"patch.updated_message" = "O patch foi atualizado sem alterar a senha.";
-"patch.imported_message" = "O pacote .3105 foi importado.";
-"patch.unlocked_message" = "Desbloqueado. Este dispositivo não solicitará novamente a senha deste pacote.";
+"patch.created_message" = "The patch project was created.";
+"patch.updated_message" = "The patch project was updated without changing its password.";
+"patch.imported_message" = "The .3105 package was imported.";
+"patch.unlocked_message" = "Unlocked. This device will not ask for this package password again.";
 "patch.workspace_synced_message" = "The patch workspace was synchronized.";
-"patch.applied_message" = "Todos os patches foram aplicados e os arquivos originais foram salvos como backup.";
-"patch.restored_message" = "Os arquivos originais foram restaurados.";
+"patch.applied_message" = "All patch rules were applied and the originals were backed up.";
+"patch.restored_message" = "The original files were restored.";
 "patch.error.unsupported_format" = "This is not a valid .3105 patch package.";
 "patch.error.unsupported_version" = "This patch requires a newer version of 3105. Update the app before importing it.";
 "patch.error.password_or_corrupt" = "The password is incorrect or the package was modified.";
@@ -195,8 +195,8 @@
 "patch.error.keychain" = "The remembered unlock key could not be saved or read securely.";
 "patch.error.app_unavailable" = "The app bundle %@ is not installed or cannot be opened. No patch files were changed.";
 "patch.error.symlink" = "Patch targets cannot pass through symbolic links.";
-"patch.error.apply" = "Não foi possível aplicar o patch. As alterações anteriores foram revertidas.";
-"patch.error.restore" = "Não foi possível restaurar os arquivos originais com segurança.";
+"patch.error.apply" = "The patch could not be applied. Any earlier writes were rolled back.";
+"patch.error.restore" = "The originals could not be restored safely. No unverified target was overwritten.";
 "patch.error.invalid_import_link" = "This patch import link is invalid. Use a secure HTTPS link to a .3105 package.";
 "patch.error.remote_import" = "The patch could not be downloaded securely. Check the link and try again.";
 
@@ -441,7 +441,7 @@
 "browser.tab_name_message" = "Enter a name for this tab.";
 "browser.open_new_tab" = "Open in New Tab";
 
-"tab.wallpapers" = "Papéis de parede";
+"tab.wallpapers" = "Wallpapers";
 "wallpaper.title" = "Wallpaper Lab";
 "wallpaper.access" = "PosterBoard Access";
 "wallpaper.access_ready" = "Ready to install";
