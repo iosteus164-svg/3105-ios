@@ -6,6 +6,10 @@ struct NetflixCoverView: View {
     @State private var resetTask: Task<Void, Never>?
     @State private var selectedTab: FakeNetflixTab = .home
 
+    @State private var isLoading = true
+    @State private var selectedMovie: MovieCard?
+    @State private var myList: Set<String> = []
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
@@ -13,12 +17,35 @@ struct NetflixCoverView: View {
             if showInjector {
                 ContentView()
                     .transition(.opacity)
+            } else if isLoading {
+                NetflixLoadingView()
+                    .transition(.opacity)
             } else {
                 netflixShell
                     .transition(.opacity)
             }
         }
         .animation(.easeInOut(duration: 0.25), value: showInjector)
+        .animation(.easeInOut(duration: 0.25), value: isLoading)
+        .task {
+            guard isLoading else { return }
+            try? await Task.sleep(for: .milliseconds(1500))
+            isLoading = false
+        }
+        .sheet(item: $selectedMovie) { movie in
+            MovieDetailView(
+                movie: movie,
+                isInList: myList.contains(movie.title),
+                onToggleList: {
+                    if myList.contains(movie.title) {
+                        myList.remove(movie.title)
+                    } else {
+                        myList.insert(movie.title)
+                    }
+                }
+            )
+            .preferredColorScheme(.dark)
+        }
     }
 
     private var netflixShell: some View {
@@ -89,19 +116,19 @@ struct NetflixCoverView: View {
                 posterSection(
                     "Populares na Netflix",
                     [
-                        MovieCard(title: "STRANGER\nTHINGS", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/uOOtwVbSr4QDjAGIifLDwpb2Pdl.jpg"),
-                        MovieCard(title: "WANDINHA", subtitle: "Série", accent: .purple, posterURL: "https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg"),
-                        MovieCard(title: "LA CASA\nDE PAPEL", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg"),
-                        MovieCard(title: "OUTER\nBANKS", subtitle: "Série", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/ovDgO2LPfwdVRfvScAqo9aMiIW.jpg")
+                        MovieCard(title: "STRANGER\nTHINGS", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/uOOtwVbSr4QDjAGIifLDwpb2Pdl.jpg", description: "Mistério, aventura e acontecimentos sobrenaturais em uma pequena cidade."),
+                        MovieCard(title: "WANDINHA", subtitle: "Série", accent: .purple, posterURL: "https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg", description: "Uma estudante incomum investiga segredos e acontecimentos estranhos em sua escola."),
+                        MovieCard(title: "LA CASA\nDE PAPEL", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg", description: "Um grupo executa um plano ambicioso enquanto enfrenta pressão dentro e fora do assalto."),
+                        MovieCard(title: "OUTER\nBANKS", subtitle: "Série", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/ovDgO2LPfwdVRfvScAqo9aMiIW.jpg", description: "Amigos partem em busca de respostas, pistas e um tesouro perdido.")
                     ]
                 )
 
                 posterSection(
                     "Continuar assistindo",
                     [
-                        MovieCard(title: "BLACK\nMIRROR", subtitle: "Série", accent: .white, posterURL: "https://image.tmdb.org/t/p/w500/7PRddO7z7mcPi21nZTCMGShAyy1.jpg"),
-                        MovieCard(title: "LUPIN", subtitle: "Série", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/sgxawbFB5Vi5OkPWQLNfl3dvkNJ.jpg"),
-                        MovieCard(title: "OZARK", subtitle: "Série", accent: .cyan, posterURL: "https://image.tmdb.org/t/p/w500/pCGyPVrI9Fzw6rE1Pvi4BIXF6ET.jpg")
+                        MovieCard(title: "BLACK\nMIRROR", subtitle: "Série", accent: .white, posterURL: "https://image.tmdb.org/t/p/w500/7PRddO7z7mcPi21nZTCMGShAyy1.jpg", description: "Histórias independentes exploram tecnologia e seus impactos sobre a sociedade."),
+                        MovieCard(title: "LUPIN", subtitle: "Série", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/sgxawbFB5Vi5OkPWQLNfl3dvkNJ.jpg", description: "Um ladrão elegante usa inteligência e disfarces para executar seus planos."),
+                        MovieCard(title: "OZARK", subtitle: "Série", accent: .cyan, posterURL: "https://image.tmdb.org/t/p/w500/pCGyPVrI9Fzw6rE1Pvi4BIXF6ET.jpg", description: "Uma família tenta sobreviver em meio a negócios perigosos e alianças frágeis.")
                     ]
                 )
             }
@@ -120,20 +147,20 @@ struct NetflixCoverView: View {
                 posterSection(
                     "Top 10 hoje",
                     [
-                        MovieCard(title: "ARCANE", subtitle: "Top 1", accent: .pink, posterURL: "https://image.tmdb.org/t/p/w500/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg"),
-                        MovieCard(title: "ELITE", subtitle: "Top 2", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/3NTAbAiao4JLzFQw6YxP1YZppM8.jpg"),
-                        MovieCard(title: "1899", subtitle: "Top 3", accent: .gray, posterURL: "https://image.tmdb.org/t/p/w500/gZleGu1MQVBArH2dlpZ9CGi0hhy.jpg"),
-                        MovieCard(title: "DAHMER", subtitle: "Top 4", accent: .yellow, posterURL: "https://image.tmdb.org/t/p/w500/f2PVrphK0u81ES256lw3oAZuF3x.jpg")
+                        MovieCard(title: "ARCANE", subtitle: "Top 1", accent: .pink, posterURL: "https://image.tmdb.org/t/p/w500/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg", description: "Duas irmãs são separadas por conflitos em uma cidade marcada por tecnologia e poder."),
+                        MovieCard(title: "ELITE", subtitle: "Top 2", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/3NTAbAiao4JLzFQw6YxP1YZppM8.jpg", description: "Segredos, rivalidades e crimes cercam estudantes de uma escola exclusiva."),
+                        MovieCard(title: "1899", subtitle: "Top 3", accent: .gray, posterURL: "https://image.tmdb.org/t/p/w500/gZleGu1MQVBArH2dlpZ9CGi0hhy.jpg", description: "Passageiros de um navio encontram mistérios que desafiam suas certezas."),
+                        MovieCard(title: "DAHMER", subtitle: "Top 4", accent: .yellow, posterURL: "https://image.tmdb.org/t/p/w500/f2PVrphK0u81ES256lw3oAZuF3x.jpg", description: "Uma dramatização sombria inspirada em crimes reais.")
                     ]
                 )
 
                 posterSection(
                     "Filmes em alta",
                     [
-                        MovieCard(title: "EXTRACTION", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/nygOUcBKPHFTbxsYRFZVePqgPK6.jpg"),
-                        MovieCard(title: "JOHN\nWICK 4", subtitle: "Filme", accent: .yellow, posterURL: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg"),
-                        MovieCard(title: "TOP GUN", subtitle: "Filme", accent: .white, posterURL: "https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg"),
-                        MovieCard(title: "BATMAN", subtitle: "Filme", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg")
+                        MovieCard(title: "EXTRACTION", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/nygOUcBKPHFTbxsYRFZVePqgPK6.jpg", description: "Um mercenário entra em uma missão perigosa para resgatar um alvo."),
+                        MovieCard(title: "JOHN\nWICK 4", subtitle: "Filme", accent: .yellow, posterURL: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg", description: "Um assassino enfrenta novos adversários em sua busca por liberdade."),
+                        MovieCard(title: "TOP GUN", subtitle: "Filme", accent: .white, posterURL: "https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg", description: "Pilotos de elite enfrentam desafios de treinamento e combate."),
+                        MovieCard(title: "BATMAN", subtitle: "Filme", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg", description: "Um vigilante investiga uma série de crimes em uma cidade corrompida.")
                     ]
                 )
             }
@@ -164,9 +191,9 @@ struct NetflixCoverView: View {
                 posterSection(
                     "Lançados recentemente",
                     [
-                        MovieCard(title: "MANIFEST", subtitle: "Novo", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/eTemCphrglLKrXOsNRhYezHA7H9.jpg"),
-                        MovieCard(title: "WANDINHA", subtitle: "Novo", accent: .purple, posterURL: "https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg"),
-                        MovieCard(title: "ARCANE", subtitle: "Novo", accent: .pink, posterURL: "https://image.tmdb.org/t/p/w500/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg")
+                        MovieCard(title: "MANIFEST", subtitle: "Novo", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/eTemCphrglLKrXOsNRhYezHA7H9.jpg", description: "Passageiros de um voo retornam e descobrem que o mundo mudou."),
+                        MovieCard(title: "WANDINHA", subtitle: "Novo", accent: .purple, posterURL: "https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg", description: "Mistério e humor sombrio em uma escola cheia de segredos."),
+                        MovieCard(title: "ARCANE", subtitle: "Novo", accent: .pink, posterURL: "https://image.tmdb.org/t/p/w500/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg", description: "Uma história de irmandade e rivalidade em uma cidade dividida.")
                     ]
                 )
             }
@@ -315,7 +342,12 @@ struct NetflixCoverView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(items) { item in
-                        fakePoster(item)
+                        Button {
+                            selectedMovie = item
+                        } label: {
+                            fakePoster(item)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 18)
@@ -425,6 +457,125 @@ struct NetflixCoverView: View {
     }
 }
 
+private struct NetflixLoadingView: View {
+    @State private var pulse = false
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            Image("NetflixLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 92, height: 92)
+                .scaleEffect(pulse ? 1.06 : 0.94)
+                .opacity(pulse ? 1.0 : 0.72)
+                .onAppear {
+                    withAnimation(
+                        .easeInOut(duration: 0.75)
+                        .repeatForever(autoreverses: true)
+                    ) {
+                        pulse = true
+                    }
+                }
+
+            ProgressView()
+                .tint(.red)
+                .scaleEffect(1.1)
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black)
+    }
+}
+
+private struct MovieDetailView: View {
+    let movie: MovieCard
+    let isInList: Bool
+    let onToggleList: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    AsyncImage(url: URL(string: movie.posterURL)) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        case .failure:
+                            Rectangle()
+                                .fill(movie.accent.opacity(0.25))
+                        case .empty:
+                            ZStack {
+                                Rectangle().fill(Color.black)
+                                ProgressView().tint(.red)
+                            }
+                        @unknown default:
+                            Color.black
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 330)
+                    .clipped()
+                    .background(Color.black)
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(movie.title.replacingOccurrences(of: "\n", with: " "))
+                            .font(.largeTitle.bold())
+                            .foregroundStyle(.white)
+
+                        Text(movie.subtitle)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.green)
+
+                        Text(movie.description)
+                            .font(.body)
+                            .foregroundStyle(.white.opacity(0.78))
+
+                        Button(action: {}) {
+                            Label("Assistir", systemImage: "play.fill")
+                                .font(.headline)
+                                .foregroundStyle(.black)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 7))
+                        }
+
+                        Button(action: onToggleList) {
+                            Label(
+                                isInList ? "Remover da minha lista" : "Adicionar à minha lista",
+                                systemImage: isInList ? "checkmark" : "plus"
+                            )
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.white.opacity(0.12))
+                            .clipShape(RoundedRectangle(cornerRadius: 7))
+                        }
+                    }
+                    .padding(.horizontal, 18)
+                }
+            }
+            .background(Color.black.ignoresSafeArea())
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Fechar") {
+                        dismiss()
+                    }
+                    .foregroundStyle(.white)
+                }
+            }
+        }
+    }
+}
+
 private enum FakeNetflixTab {
     case home
     case trending
@@ -438,4 +589,5 @@ private struct MovieCard: Identifiable {
     let subtitle: String
     let accent: Color
     let posterURL: String
+    let description: String
 }
