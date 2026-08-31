@@ -402,12 +402,6 @@ private struct PatchProjectDetailView: View {
                     }
                 }
 
-                Section {
-                    Button(action: prepareExport) {
-                        actionLabel("patch.export", systemImage: "square.and.arrow.up")
-                    }
-                    .disabled(isWorking)
-                }
             }
         }
         .listStyle(.insetGrouped)
