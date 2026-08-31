@@ -73,10 +73,10 @@
 "dashboard.enterprise_signing" = "3105 仅在使用企业证书签名时运行。不支持 SideStore、AltStore、3uTools 或 LiveContainer。";
 "dashboard.features" = "功能";
 "dashboard.features_footer" = "开启清理或壁纸后，该功能才会显示在应用导航中。";
-"tab.home" = "主页";
-"tab.files" = "文件";
-"tab.patches" = "补丁";
-"tab.cleaner" = "清理";
+"tab.home" = "Início";
+"tab.files" = "Arquivos";
+"tab.patches" = "Patches";
+"tab.cleaner" = "Limpeza";
 
 "cleaner.title" = "清理";
 "cleaner.limited_mode" = "有限清理";
@@ -441,7 +441,7 @@
 "browser.tab_name_message" = "输入此标签页的名称。";
 "browser.open_new_tab" = "在新标签页中打开";
 
-"tab.wallpapers" = "壁纸";
+"tab.wallpapers" = "Papéis de parede";
 "wallpaper.title" = "壁纸实验室";
 "wallpaper.access" = "PosterBoard 访问";
 "wallpaper.access_ready" = "可安装";

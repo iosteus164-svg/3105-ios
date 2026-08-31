@@ -5,6 +5,13 @@ struct AnimatedPatchRowTitle: View {
 
     @State private var isRed = false
 
+    private var staircaseDelay: Double {
+        let value = text.unicodeScalars.reduce(0) { partial, scalar in
+            partial + Int(scalar.value)
+        }
+        return Double(value % 7) * 0.12
+    }
+
     var body: some View {
         Text(text.uppercased())
             .font(.system(size: 17, weight: .bold))
@@ -12,15 +19,17 @@ struct AnimatedPatchRowTitle: View {
             .lineLimit(2)
             .multilineTextAlignment(.leading)
             .shadow(
-                color: isRed ? AppTheme.accent.opacity(0.42) : Color.clear,
+                color: isRed ? AppTheme.accent.opacity(0.45) : Color.clear,
                 radius: 2
             )
             .onAppear {
-                withAnimation(
-                    .easeInOut(duration: 0.60)
-                    .repeatForever(autoreverses: true)
-                ) {
-                    isRed = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + staircaseDelay) {
+                    withAnimation(
+                        .easeInOut(duration: 0.60)
+                        .repeatForever(autoreverses: true)
+                    ) {
+                        isRed = true
+                    }
                 }
             }
     }

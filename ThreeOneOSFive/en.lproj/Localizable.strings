@@ -73,10 +73,10 @@
 "dashboard.enterprise_signing" = "3105 only works when signed with an enterprise certificate. SideStore, AltStore, 3uTools and LiveContainer are not supported.";
 "dashboard.features" = "Features";
 "dashboard.features_footer" = "Turn on Cleaner or Wallpapers to show it in the app navigation.";
-"tab.home" = "Home";
-"tab.files" = "Files";
+"tab.home" = "Início";
+"tab.files" = "Arquivos";
 "tab.patches" = "Patches";
-"tab.cleaner" = "Cleaner";
+"tab.cleaner" = "Limpeza";
 
 "cleaner.title" = "Cleaner";
 "cleaner.limited_mode" = "Limited Cleanup";
@@ -441,7 +441,7 @@
 "browser.tab_name_message" = "Enter a name for this tab.";
 "browser.open_new_tab" = "Open in New Tab";
 
-"tab.wallpapers" = "Wallpapers";
+"tab.wallpapers" = "Papéis de parede";
 "wallpaper.title" = "Wallpaper Lab";
 "wallpaper.access" = "PosterBoard Access";
 "wallpaper.access_ready" = "Ready to install";
