@@ -63,7 +63,7 @@ struct ContentView: View {
                 sectionContent(section)
                     .tabItem {
                         CompactTabLabel(
-                            title: section.portugueseTitle,
+                            title: language.text(section.titleKey),
                             systemImage: section.systemImage
                         )
                     }
@@ -81,7 +81,7 @@ struct ContentView: View {
                             tabNavigation.select(section.rawValue)
                         }
                     } label: {
-                        Label(section.portugueseTitle, systemImage: section.systemImage)
+                        Label(language.text(section.titleKey), systemImage: section.systemImage)
                             .fontWeight(section.rawValue == tabNavigation.selectedTab ? .semibold : .regular)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .contentShape(Rectangle())
@@ -195,16 +195,6 @@ private extension AppSection {
         case .patches: return "tab.patches"
         case .cleaner: return "tab.cleaner"
         case .wallpapers: return "tab.wallpapers"
-        }
-    }
-
-    var portugueseTitle: String {
-        switch self {
-        case .home: return "Início"
-        case .files: return "Arquivos"
-        case .patches: return "Patches"
-        case .cleaner: return "Limpeza"
-        case .wallpapers: return "Papéis de parede"
         }
     }
 
