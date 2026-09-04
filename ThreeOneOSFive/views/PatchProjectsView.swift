@@ -80,37 +80,50 @@ struct PatchProjectsView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
+            ZStack {
+                Image("ExternalBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .opacity(0.88)
+
+                Color.black.opacity(0.20)
+                    .ignoresSafeArea()
+
+                VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 20) {
                     HStack(alignment: .center, spacing: 12) {
                         HStack(spacing: 10) {
-                            Image("ExternalEmblem")
+                            Image(systemName: "skull")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 48, height: 48)
+                                .frame(width: 19, height: 19)
 
                             VStack(alignment: .leading, spacing: 3) {
                                 Text("EXTERNAL")
-                                    .font(.system(size: 30, weight: .black, design: .rounded))
+                                    .font(.system(size: 22, weight: .black, design: .rounded))
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.82)
 
                                 Text("A I M B O T")
                                     .font(.system(size: 12, weight: .medium, design: .rounded))
                                     .foregroundStyle(Color.white.opacity(0.62))
                             }
                         }
-                        .foregroundStyle(Color.red)
+                        .foregroundStyle(AppTheme.accent)
 
                         Spacer()
 
                         HStack(spacing: 8) {
-                            Image("ExternalEmblem")
+                            Image(systemName: "skull")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 20, height: 20)
+                                .frame(width: 26, height: 26)
                             Text("© Teus ios")
-                                .font(.system(size: 18, weight: .black, design: .rounded))
+                                .font(.system(size: 15, weight: .black, design: .rounded))
+                                .lineLimit(1)
                         }
-                        .foregroundStyle(Color.red)
+                        .foregroundStyle(AppTheme.accent)
                         .padding(.horizontal, 15)
                         .frame(height: 54)
                         .background(Color.clear)
@@ -127,7 +140,7 @@ struct PatchProjectsView: View {
 
                     Text("SELECIONE O JOGO")
                         .font(.system(size: 18, weight: .black, design: .rounded))
-                        .foregroundStyle(Color.red)
+                        .foregroundStyle(AppTheme.accent)
 
                     HStack(spacing: 12) {
                         gameChoiceCard(
@@ -155,7 +168,7 @@ struct PatchProjectsView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "iphone")
                                 .font(.system(size: 16, weight: .medium, design: .rounded))
-                                .foregroundStyle(Color.red)
+                                .foregroundStyle(AppTheme.accent)
 
                             Text("iOS \(AppInfo.osVersion)")
                                 .font(.system(size: 12, weight: .medium, design: .rounded))
@@ -166,12 +179,12 @@ struct PatchProjectsView: View {
 
                         HStack(spacing: 7) {
                             Circle()
-                                .fill(appState.isSupported ? Color.green : Color.red)
-                                .frame(width: 19, height: 19)
+                                .fill(appState.isSupported ? Color.green : AppTheme.accent)
+                                .frame(width: 9, height: 9)
 
                             Text(appState.isSupported ? "SUPORTADO" : "NÃO SUPORTADO")
                                 .font(.system(size: 13, weight: .bold, design: .rounded))
-                                .foregroundStyle(appState.isSupported ? Color.green : Color.red)
+                                .foregroundStyle(appState.isSupported ? Color.green : AppTheme.accent)
                         }
                     }
 
@@ -200,21 +213,21 @@ struct PatchProjectsView: View {
                         patchCategory = 0
                     } label: {
                         HStack(spacing: 7) {
-                            Image("ExternalEmblem")
+                            Image(systemName: "skull")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 19, height: 19)
+                                .frame(width: 24, height: 24)
                             Text("Aimbot")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
-                            .foregroundStyle(patchCategory == 0 ? Color.red : Color.white.opacity(0.55))
+                            .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.55))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(patchCategory == 0 ? Color.red.opacity(0.20) : Color.black.opacity(0.58))
+                            .background(patchCategory == 0 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(patchCategory == 0 ? Color.red : Color.white.opacity(0.14), lineWidth: 1)
+                                    .stroke(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.14), lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
@@ -228,14 +241,14 @@ struct PatchProjectsView: View {
                             Text("Apostado")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
-                            .foregroundStyle(patchCategory == 1 ? Color.red : Color.white.opacity(0.55))
+                            .foregroundStyle(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.55))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(patchCategory == 1 ? Color.red.opacity(0.20) : Color.black.opacity(0.58))
+                            .background(patchCategory == 1 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(patchCategory == 1 ? Color.red : Color.white.opacity(0.14), lineWidth: 1)
+                                    .stroke(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.14), lineWidth: 1)
                             )
                     }
                     .buttonStyle(.plain)
@@ -272,7 +285,7 @@ struct PatchProjectsView: View {
                 .scrollContentBackground(.hidden)
                 .background(Color.clear)
             }
-            .background(Color.black)
+            .background(Color.clear)
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
@@ -328,6 +341,7 @@ struct PatchProjectsView: View {
             }
         }
     }
+        }
 
     private func gameChoiceCard(
         title: String,
@@ -361,7 +375,7 @@ struct PatchProjectsView: View {
 
                 Image(systemName: selected ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 17, weight: .bold, design: .rounded))
-                    .foregroundStyle(selected ? Color.red : Color.white.opacity(0.55))
+                    .foregroundStyle(selected ? AppTheme.accent : Color.white.opacity(0.55))
             }
             .padding(.horizontal, 8)
             .frame(maxWidth: .infinity, minHeight: 58)
@@ -369,7 +383,7 @@ struct PatchProjectsView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(selected ? Color.red.opacity(0.95) : Color.white.opacity(0.18),
+                    .stroke(selected ? AppTheme.accent.opacity(0.95) : Color.white.opacity(0.18),
                             lineWidth: selected ? 1.2 : 1)
             )
         }
@@ -396,7 +410,7 @@ struct PatchProjectsView: View {
 
                 Image(systemName: "scope")
                     .font(.system(size: 27, weight: .black, design: .rounded))
-                    .foregroundStyle(Color.red)
+                    .foregroundStyle(AppTheme.accent)
             }
 
             Group {
@@ -467,18 +481,18 @@ struct PatchProjectsView: View {
         HStack(alignment: .top, spacing: 14) {
             ZStack {
                 Circle()
-                    .stroke(Color.red, lineWidth: 2)
+                    .stroke(AppTheme.accent, lineWidth: 2)
                     .frame(width: 34, height: 34)
 
                 Image(systemName: "exclamationmark")
                     .font(.system(size: 20, weight: .black, design: .rounded))
-                    .foregroundStyle(Color.red)
+                    .foregroundStyle(AppTheme.accent)
             }
 
             VStack(alignment: .leading, spacing: 5) {
                 Text("ATENÇÃO")
                     .font(.system(size: 15, weight: .black, design: .rounded))
-                    .foregroundStyle(Color.red)
+                    .foregroundStyle(AppTheme.accent)
 
                 Text("Use com responsabilidade. O uso indevido pode resultar em banimento.")
                     .font(.system(size: 12, weight: .medium, design: .rounded))
