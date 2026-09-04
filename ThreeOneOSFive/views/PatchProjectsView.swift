@@ -81,11 +81,6 @@ struct PatchProjectsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Image("ExternalBackground")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .opacity(0.88)
 
                 Color.black.opacity(0.20)
                     .ignoresSafeArea()
@@ -215,9 +210,9 @@ struct PatchProjectsView: View {
                         HStack(spacing: 7) {
                             Image(systemName: "skull")
                                 .symbolRenderingMode(.monochrome)
-                                .font(.system(size: 22, weight: .black))
+                                .font(.system(size: 21, weight: .black))
                                 .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white)
-                                .frame(width: 30, height: 30)
+                                .frame(width: 28, height: 28)
                             Text("Aimbot")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }

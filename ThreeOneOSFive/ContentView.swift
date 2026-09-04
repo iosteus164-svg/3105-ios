@@ -197,7 +197,10 @@ private struct CompactTabLabel: View {
     var body: some View {
         if title == "Injetor" {
             Image(systemName: "skull")
-                .font(.system(size: 25, weight: .bold))
+                .symbolRenderingMode(.monochrome)
+                .font(.system(size: 22, weight: .black))
+                .foregroundStyle(isSelected ? AppTheme.accent : Color.white)
+                .frame(width: 28, height: 28)
         } else if let image = UIImage(
             systemName: systemImage,
             withConfiguration: UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)
