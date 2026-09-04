@@ -80,24 +80,14 @@ struct PatchProjectsView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                Image("ExternalBackground")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .opacity(0.88)
-
-                Color.black.opacity(0.20)
-                    .ignoresSafeArea()
-
-                VStack(spacing: 0) {
+            VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 20) {
                     HStack(alignment: .center, spacing: 12) {
                         HStack(spacing: 10) {
                             Image("ExternalSkull")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 19, height: 19)
+                                .frame(width: 48, height: 48)
 
                             VStack(alignment: .leading, spacing: 3) {
                                 Text("EXTERNAL")
@@ -116,7 +106,7 @@ struct PatchProjectsView: View {
                             Image("ExternalSkull")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 26, height: 26)
+                                .frame(width: 20, height: 20)
                             Text("© Teus ios")
                                 .font(.system(size: 18, weight: .black, design: .rounded))
                         }
@@ -213,7 +203,7 @@ struct PatchProjectsView: View {
                             Image("ExternalSkull")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 24, height: 24)
+                                .frame(width: 19, height: 19)
                             Text("Aimbot")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
@@ -282,7 +272,13 @@ struct PatchProjectsView: View {
                 .scrollContentBackground(.hidden)
                 .background(Color.clear)
             }
-            .background(Color.clear)
+            .background {
+                Image("ExternalBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .overlay(Color.black.opacity(0.38))
+                    .ignoresSafeArea()
+            }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
@@ -338,7 +334,6 @@ struct PatchProjectsView: View {
             }
         }
     }
-        }
 
     private func gameChoiceCard(
         title: String,
