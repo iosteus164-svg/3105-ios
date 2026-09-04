@@ -196,8 +196,10 @@ private struct CompactTabLabel: View {
     @ViewBuilder
     var body: some View {
         if title == "Injetor" {
-            Text("☠︎")
-                .font(.system(size: 21, weight: .bold, design: .rounded))
+            Image("ExternalSkull")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 30, height: 30)
         } else if let image = UIImage(
             systemName: systemImage,
             withConfiguration: UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)

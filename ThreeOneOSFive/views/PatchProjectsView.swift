@@ -79,21 +79,25 @@ struct PatchProjectsView: View {
     }
 
     var body: some View {
-        ZStack {
-            Image("ExternalBackground")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
-                .opacity(0.62)
+        NavigationStack {
+            ZStack {
+                Image("ExternalBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .opacity(0.96)
 
-            NavigationStack {
-            VStack(spacing: 0) {
+                Color.black.opacity(0.06)
+                    .ignoresSafeArea()
+
+                VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 20) {
                     HStack(alignment: .center, spacing: 12) {
                         HStack(spacing: 10) {
-                            Text("☠︎")
-                                .font(.system(size: 31, weight: .black, design: .rounded))
-                                .foregroundStyle(Color.red)
+                            Image("ExternalSkull")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 62, height: 62)
 
                             VStack(alignment: .leading, spacing: 3) {
                                 Text("EXTERNAL")
@@ -109,8 +113,10 @@ struct PatchProjectsView: View {
                         Spacer()
 
                         HStack(spacing: 8) {
-                            Text("☠︎")
-                                .font(.system(size: 20, weight: .black, design: .rounded))
+                            Image("ExternalSkull")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 26, height: 26)
                             Text("© Teus ios")
                                 .font(.system(size: 18, weight: .black, design: .rounded))
                         }
@@ -190,7 +196,7 @@ struct PatchProjectsView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(Color.clear)
+                .background(Color.black.opacity(0.55))
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -204,15 +210,17 @@ struct PatchProjectsView: View {
                         patchCategory = 0
                     } label: {
                         HStack(spacing: 7) {
-                            Text("☠︎")
-                                .font(.system(size: 16, weight: .bold, design: .rounded))
+                            Image("ExternalSkull")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
                             Text("Aimbot")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
                             .foregroundStyle(patchCategory == 0 ? Color.red : Color.white.opacity(0.55))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(patchCategory == 0 ? Color.red.opacity(0.12) : Color.black)
+                            .background(patchCategory == 0 ? Color.red.opacity(0.20) : Color.black.opacity(0.58))
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -233,7 +241,7 @@ struct PatchProjectsView: View {
                             .foregroundStyle(patchCategory == 1 ? Color.red : Color.white.opacity(0.55))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(patchCategory == 1 ? Color.red.opacity(0.12) : Color.black)
+                            .background(patchCategory == 1 ? Color.red.opacity(0.20) : Color.black.opacity(0.58))
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
@@ -277,6 +285,7 @@ struct PatchProjectsView: View {
             .background(Color.clear)
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
 
             .sheet(isPresented: $showImporter) {
                 FileDocumentPicker(
@@ -460,7 +469,7 @@ struct PatchProjectsView: View {
         }
         .padding(.vertical, 10)
         .listRowInsets(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 18))
-        .listRowBackground(Color.black.opacity(0.72))
+        .listRowBackground(Color.black.opacity(0.50))
         .listRowSeparator(.visible)
         .listRowSeparatorTint(Color.white.opacity(0.11))
     }
