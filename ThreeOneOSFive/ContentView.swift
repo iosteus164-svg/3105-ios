@@ -196,7 +196,7 @@ private struct CompactTabLabel: View {
     @ViewBuilder
     var body: some View {
         if title == "Injetor" {
-            Image("ExternalSkull")
+            Image("ExternalEmblem")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)

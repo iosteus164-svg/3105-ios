@@ -84,7 +84,7 @@ struct PatchProjectsView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     HStack(alignment: .center, spacing: 12) {
                         HStack(spacing: 10) {
-                            Image("ExternalSkull")
+                            Image("ExternalEmblem")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 48, height: 48)
@@ -103,7 +103,7 @@ struct PatchProjectsView: View {
                         Spacer()
 
                         HStack(spacing: 8) {
-                            Image("ExternalSkull")
+                            Image("ExternalEmblem")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 20, height: 20)
@@ -167,7 +167,7 @@ struct PatchProjectsView: View {
                         HStack(spacing: 7) {
                             Circle()
                                 .fill(appState.isSupported ? Color.green : Color.red)
-                                .frame(width: 9, height: 9)
+                                .frame(width: 19, height: 19)
 
                             Text(appState.isSupported ? "SUPORTADO" : "NÃO SUPORTADO")
                                 .font(.system(size: 13, weight: .bold, design: .rounded))
@@ -200,7 +200,7 @@ struct PatchProjectsView: View {
                         patchCategory = 0
                     } label: {
                         HStack(spacing: 7) {
-                            Image("ExternalSkull")
+                            Image("ExternalEmblem")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 19, height: 19)
@@ -272,13 +272,7 @@ struct PatchProjectsView: View {
                 .scrollContentBackground(.hidden)
                 .background(Color.clear)
             }
-            .background {
-                Image("ExternalBackground")
-                    .resizable()
-                    .scaledToFill()
-                    .overlay(Color.black.opacity(0.38))
-                    .ignoresSafeArea()
-            }
+            .background(Color.black)
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
