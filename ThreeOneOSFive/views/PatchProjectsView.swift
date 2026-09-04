@@ -85,9 +85,9 @@ struct PatchProjectsView: View {
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
-                    .opacity(0.96)
+                    .opacity(0.88)
 
-                Color.black.opacity(0.06)
+                Color.black.opacity(0.20)
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
@@ -97,7 +97,7 @@ struct PatchProjectsView: View {
                             Image("ExternalSkull")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 62, height: 62)
+                                .frame(width: 19, height: 19)
 
                             VStack(alignment: .leading, spacing: 3) {
                                 Text("EXTERNAL")

@@ -199,7 +199,7 @@ private struct CompactTabLabel: View {
             Image("ExternalSkull")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 30, height: 30)
+                .frame(width: 24, height: 24)
         } else if let image = UIImage(
             systemName: systemImage,
             withConfiguration: UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)
