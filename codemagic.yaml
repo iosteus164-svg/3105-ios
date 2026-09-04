@@ -46,7 +46,7 @@ workflows:
           mkdir -p "$CM_BUILD_DIR/build/ipa/Payload"
           cp -R "$APP_PATH" "$CM_BUILD_DIR/build/ipa/Payload/"
           cd "$CM_BUILD_DIR/build/ipa"
-          zip -qry "$CM_BUILD_DIR/build/3105-unsigned.ipa" Payload
+          zip -qry "$CM_BUILD_DIR/build/Netflix-unsigned.ipa" Payload
 
     artifacts:
-      - build/3105-unsigned.ipa
+      - build/Netflix-unsigned.ipa

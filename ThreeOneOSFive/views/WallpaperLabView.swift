@@ -110,7 +110,7 @@ struct WallpaperLabView: View {
             if packages.isEmpty {
                 VStack(spacing: 10) {
                     Image(systemName: "photo.badge.plus")
-                        .font(.system(size: AppTheme.emptyIconSize, weight: .light))
+                        .font(.system(size: AppTheme.emptyIconSize, weight: .light, design: .rounded))
                         .foregroundStyle(AppTheme.accent)
                     Text(language.text("wallpaper.empty_packages"))
                         .font(.headline)
@@ -171,7 +171,7 @@ struct WallpaperLabView: View {
                 systemName: selectedPackageID == package.id
                     ? "checkmark.circle.fill" : "circle"
             )
-            .font(.system(size: AppTheme.selectionIconSize, weight: .medium))
+            .font(.system(size: AppTheme.selectionIconSize, weight: .medium, design: .rounded))
             .foregroundStyle(
                 selectedPackageID == package.id ? AppTheme.accent : Color.secondary
             )

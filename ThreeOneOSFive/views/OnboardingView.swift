@@ -150,7 +150,7 @@ struct OnboardingView: View {
                      )
                      .frame(width: 72, height: 72)
                  Image(systemName: "sparkles")
-                     .font(.system(size: 30, weight: .medium))
+                     .font(.system(size: 30, weight: .medium, design: .rounded))
                      .foregroundStyle(AppTheme.accent)
              }
             VStack(spacing: 10) {
@@ -185,7 +185,7 @@ struct OnboardingView: View {
                      )
                      .frame(width: 72, height: 72)
                  Image(systemName: "iphone.gen2")
-                     .font(.system(size: 30, weight: .medium))
+                     .font(.system(size: 30, weight: .medium, design: .rounded))
                     .foregroundStyle(AppTheme.accent)
             }
             VStack(spacing: 8) {
@@ -244,7 +244,7 @@ struct OnboardingView: View {
                      )
                      .frame(width: 72, height: 72)
                  Image(systemName: "exclamationmark.shield.fill")
-                     .font(.system(size: 30, weight: .medium))
+                     .font(.system(size: 30, weight: .medium, design: .rounded))
                     .foregroundStyle(.orange)
             }
             VStack(spacing: 8) {

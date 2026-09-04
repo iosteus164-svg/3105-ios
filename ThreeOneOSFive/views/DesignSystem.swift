@@ -26,7 +26,7 @@ struct AppRowIcon: View {
             RoundedRectangle(cornerRadius: 7, style: .continuous)
                 .fill(tint.opacity(0.12))
             Image(systemName: systemName)
-                .font(.system(size: symbolSize, weight: .medium))
+                .font(.system(size: symbolSize, weight: .medium, design: .rounded))
                 .foregroundStyle(tint)
         }
         .frame(width: frameSize, height: frameSize)
@@ -42,7 +42,7 @@ struct AppSearchField: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: 14, weight: .medium, design: .rounded))
                 .foregroundStyle(.secondary)
                 .accessibilityHidden(true)
 
@@ -57,7 +57,7 @@ struct AppSearchField: View {
                     text = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
                         .foregroundStyle(.tertiary)
                 }
                 .buttonStyle(.plain)

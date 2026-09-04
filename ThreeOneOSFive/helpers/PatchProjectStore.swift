@@ -232,7 +232,7 @@ final class PatchProjectStore: ObservableObject {
         DevicePatchService.latestReceipt(projectID: projectID) != nil
     }
 
-    func setApplied(_ enabled: Bool, for item: PatchLibraryItem) {
+    func setApplied(_ enabled: Bool, for item: PatchLibraryItem, freeFireVariant: String = "normal") {
         guard !isBusy, !item.isLocked, let baseProject = item.project else { return }
 
         if enabled {
@@ -240,9 +240,15 @@ final class PatchProjectStore: ObservableObject {
             isBusy = true
             Task.detached(priority: .userInitiated) { [weak self] in
                 do {
-                    let project = item.summary.schemaVersion >= 2
+                    let sourceProject = item.summary.schemaVersion >= 2
                         ? try PatchProjectLibrary.synchronizeWorkspace(item: item)
                         : baseProject
+                    let project = await MainActor.run {
+                        Self.freeFireAdjustedProject(
+                            sourceProject,
+                            variant: freeFireVariant
+                        )
+                    }
                     _ = try DevicePatchService.apply(project: project)
                     await MainActor.run {
                         self?.reload()
@@ -279,6 +285,81 @@ final class PatchProjectStore: ObservableObject {
                 }
             }
         }
+    }
+
+
+    private static let freeFireNormalBundleID = "com.dts.freefireth"
+    private static let freeFireMaxBundleID = "com.dts.freefiremax"
+
+    private static let freeFireNormalAssetName =
+        "assetindexer.H5ak1JM1Eck~2FxRcJrEp~2FMzeuqmY~3D"
+
+    private static let freeFireMaxAssetName =
+        "assetindexer.PENojQAQf9a1l6Dzjs0n1Z3rtVU~3D"
+
+    private static func freeFireAdjustedProject(
+        _ project: PatchProject,
+        variant: String
+    ) -> PatchProject {
+        let useMax = variant.lowercased() == "max"
+        let destinationBundleID = useMax ? freeFireMaxBundleID : freeFireNormalBundleID
+        let destinationAssetName = useMax ? freeFireMaxAssetName : freeFireNormalAssetName
+
+        func adjustedBundleID(_ bundleID: String) -> String {
+            if bundleID == freeFireNormalBundleID || bundleID == freeFireMaxBundleID {
+                return destinationBundleID
+            }
+            return bundleID
+        }
+
+        func adjustedPath(_ path: String) -> String {
+            path
+                .replacingOccurrences(
+                    of: freeFireNormalAssetName,
+                    with: destinationAssetName
+                )
+                .replacingOccurrences(
+                    of: freeFireMaxAssetName,
+                    with: destinationAssetName
+                )
+        }
+
+        func adjustedFilename(_ filename: String) -> String {
+            if filename == freeFireNormalAssetName || filename == freeFireMaxAssetName {
+                return destinationAssetName
+            }
+
+            return filename
+                .replacingOccurrences(
+                    of: freeFireNormalAssetName,
+                    with: destinationAssetName
+                )
+                .replacingOccurrences(
+                    of: freeFireMaxAssetName,
+                    with: destinationAssetName
+                )
+        }
+
+        var adjusted = project
+
+        adjusted.bundleIdentifiers = project.bundleIdentifiers.map(adjustedBundleID)
+
+        adjusted.directories = project.directories.map { directory in
+            var value = directory
+            value.bundleID = adjustedBundleID(directory.bundleID)
+            value.relativePath = adjustedPath(directory.relativePath)
+            return value
+        }
+
+        adjusted.rules = project.rules.map { rule in
+            var value = rule
+            value.bundleID = adjustedBundleID(rule.bundleID)
+            value.relativePath = adjustedPath(rule.relativePath)
+            value.replacementFilename = adjustedFilename(rule.replacementFilename)
+            return value
+        }
+
+        return adjusted
     }
 
     func synchronizeWorkspace(projectID: UUID, reportsSuccess: Bool = false) {

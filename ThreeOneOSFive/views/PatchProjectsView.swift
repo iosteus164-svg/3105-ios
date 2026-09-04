@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 import UIKit
 import UniformTypeIdentifiers
 
@@ -9,17 +10,37 @@ private enum PatchPackagePickerPolicy {
 }
 
 struct PatchProjectsView: View {
+    @State private var patchCategory = 0
+    @EnvironmentObject private var appState: AppState
     @Environment(\.appLanguage) private var language
     @EnvironmentObject private var draftCoordinator: PatchDraftCoordinator
     @StateObject private var store = PatchProjectStore()
     @State private var showCreate = false
     @State private var showImporter = false
     @State private var searchText = ""
+    @AppStorage("selectedFreeFireVariant") private var selectedGameRaw = "normal"
 
     private var filteredItems: [PatchLibraryItem] {
+        let categoryItems = store.items.filter { item in
+            guard let project = item.project else { return false }
+
+            let isApostadoFile =
+                project.name.localizedCaseInsensitiveContains("cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs")
+                || project.directories.contains {
+                    $0.relativePath.localizedCaseInsensitiveContains("cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs")
+                }
+                || project.rules.contains {
+                    $0.relativePath.localizedCaseInsensitiveContains("cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs")
+                        || $0.replacementFilename.localizedCaseInsensitiveContains("cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs")
+                }
+
+            return patchCategory == 1 ? isApostadoFile : !isApostadoFile
+        }
+
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return store.items }
-        return store.items.filter { item in
+        guard !query.isEmpty else { return categoryItems }
+
+        return categoryItems.filter { item in
             if item.packageURL.lastPathComponent.localizedCaseInsensitiveContains(query) {
                 return true
             }
@@ -46,15 +67,184 @@ struct PatchProjectsView: View {
 #endif
     }
 
+
+    private enum FreeFireVariant: String {
+        case normal
+        case max
+    }
+
+    private var selectedGame: FreeFireVariant {
+        get { FreeFireVariant(rawValue: selectedGameRaw) ?? .normal }
+        nonmutating set { selectedGameRaw = newValue.rawValue }
+    }
+
     var body: some View {
-        NavigationStack {
+        ZStack {
+            Image("ExternalBackground")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .opacity(0.62)
+
+            NavigationStack {
             VStack(spacing: 0) {
-                AppSearchField(
-                    text: $searchText,
-                    prompt: language.text("patch.search"),
-                    clearLabel: language.text("common.clear")
+                VStack(alignment: .leading, spacing: 20) {
+                    HStack(alignment: .center, spacing: 12) {
+                        HStack(spacing: 10) {
+                            Text("☠︎")
+                                .font(.system(size: 31, weight: .black, design: .rounded))
+                                .foregroundStyle(Color.red)
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("EXTERNAL")
+                                    .font(.system(size: 30, weight: .black, design: .rounded))
+
+                                Text("A I M B O T")
+                                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                                    .foregroundStyle(Color.white.opacity(0.62))
+                            }
+                        }
+                        .foregroundStyle(Color.red)
+
+                        Spacer()
+
+                        HStack(spacing: 8) {
+                            Text("☠︎")
+                                .font(.system(size: 20, weight: .black, design: .rounded))
+                            Text("© Teus ios")
+                                .font(.system(size: 18, weight: .black, design: .rounded))
+                        }
+                        .foregroundStyle(Color.red)
+                        .padding(.horizontal, 15)
+                        .frame(height: 54)
+                        .background(Color.clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                        )
+                    }
+
+                    Rectangle()
+                        .fill(Color.white.opacity(0.10))
+                        .frame(height: 1)
+
+                    Text("SELECIONE O JOGO")
+                        .font(.system(size: 18, weight: .black, design: .rounded))
+                        .foregroundStyle(Color.red)
+
+                    HStack(spacing: 12) {
+                        gameChoiceCard(
+                            title: "FREE FIRE",
+                            bundle: "com.dts.freefireth",
+                            imageName: "FreeFireNormalIcon",
+                            selected: selectedGame == .normal
+                        ) { selectedGame = .normal }
+
+                        gameChoiceCard(
+                            title: "FREE FIRE MAX",
+                            bundle: "com.dts.freefiremax",
+                            imageName: "FreeFireMaxIcon",
+                            selected: selectedGame == .max
+                        ) { selectedGame = .max }
+                    }
+
+                }
+                .padding(.horizontal, 18)
+                .padding(.top, 18)
+                .padding(.bottom, 0)
+
+                VStack(spacing: 10) {
+                    HStack {
+                        HStack(spacing: 8) {
+                            Image(systemName: "iphone")
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundStyle(Color.red)
+
+                            Text("iOS \(AppInfo.osVersion)")
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .foregroundStyle(.white)
+                        }
+
+                        Spacer()
+
+                        HStack(spacing: 7) {
+                            Circle()
+                                .fill(appState.isSupported ? Color.green : Color.red)
+                                .frame(width: 9, height: 9)
+
+                            Text(appState.isSupported ? "SUPORTADO" : "NÃO SUPORTADO")
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .foregroundStyle(appState.isSupported ? Color.green : Color.red)
+                        }
+                    }
+
+                    Text(
+                        appState.isSupported
+                        ? "Esta versão do iOS é suportada."
+                        : "Esta versão do iOS não é suportada."
+                    )
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.62))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.clear)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(Color.white.opacity(0.16), lineWidth: 1)
                 )
-                Divider()
+                .padding(.horizontal, 18)
+                .padding(.bottom, 8)
+
+                HStack(spacing: 8) {
+                    Button {
+                        patchCategory = 0
+                    } label: {
+                        HStack(spacing: 7) {
+                            Text("☠︎")
+                                .font(.system(size: 16, weight: .bold, design: .rounded))
+                            Text("Aimbot")
+                                .font(.system(size: 14, weight: .bold, design: .rounded))
+                        }
+                            .foregroundStyle(patchCategory == 0 ? Color.red : Color.white.opacity(0.55))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(patchCategory == 0 ? Color.red.opacity(0.12) : Color.black)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .stroke(patchCategory == 0 ? Color.red : Color.white.opacity(0.14), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        patchCategory = 1
+                    } label: {
+                        HStack(spacing: 7) {
+                            Image(systemName: "eye.slash.fill")
+                                .font(.system(size: 14, weight: .bold))
+                            Text("Apostado")
+                                .font(.system(size: 14, weight: .bold, design: .rounded))
+                        }
+                            .foregroundStyle(patchCategory == 1 ? Color.red : Color.white.opacity(0.55))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(patchCategory == 1 ? Color.red.opacity(0.12) : Color.black)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .stroke(patchCategory == 1 ? Color.red : Color.white.opacity(0.14), lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 18)
+                .padding(.bottom, 8)
+
                 List {
                     if store.items.isEmpty && !store.isBusy {
                         emptyState
@@ -71,34 +261,23 @@ struct PatchProjectsView: View {
                         }
                     }
                 }
-                .listStyle(.insetGrouped)
-            }
-            .navigationTitle(language.text("patch.title"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button {
-                            showCreate = true
-                        } label: {
-                            Label(language.text("patch.new"), systemImage: "doc.badge.plus")
-                        }
-                        Button {
-                            showImporter = true
-                        } label: {
-                            Label(language.text("patch.import"), systemImage: "square.and.arrow.down")
-                        }
-                    } label: {
-                        if store.isBusy {
-                            ProgressView()
-                        } else {
-                            Image(systemName: "plus")
-                        }
-                    }
-                    .disabled(store.isBusy)
-                    .accessibilityLabel(language.text("patch.add"))
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
+                .safeAreaInset(edge: .bottom) {
+                    attentionCard
+                        .padding(.horizontal, 18)
+                        .padding(.top, 6)
+                        .padding(.bottom, 5)
+                        .background(Color.clear)
                 }
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
             }
+            .background(Color.clear)
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+
             .sheet(isPresented: $showImporter) {
                 FileDocumentPicker(
                     allowedContentTypes: PatchPackagePickerPolicy.allowedContentTypes,
@@ -150,6 +329,54 @@ struct PatchProjectsView: View {
             }
         }
     }
+        }
+
+    private func gameChoiceCard(
+        title: String,
+        bundle: String,
+        imageName: String,
+        selected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(Color(red: 0.10, green: 0.10, blue: 0.11))
+                        .frame(width: 28, height: 28)
+
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 34, height: 34)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+
+                Text(title)
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+                    .layoutPriority(1)
+
+                Spacer(minLength: 4)
+
+                Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .foregroundStyle(selected ? Color.red : Color.white.opacity(0.55))
+            }
+            .padding(.horizontal, 8)
+            .frame(maxWidth: .infinity, minHeight: 58)
+            .background(Color.clear)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(selected ? Color.red.opacity(0.95) : Color.white.opacity(0.18),
+                            lineWidth: selected ? 1.2 : 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
 
     private func consumeExternalImport() {
         guard let request = draftCoordinator.importRequest else { return }
@@ -159,18 +386,58 @@ struct PatchProjectsView: View {
 
     @ViewBuilder
     private func itemRow(_ item: PatchLibraryItem) -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color.black)
+                    .frame(width: 58, height: 58)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(Color.white.opacity(0.16), lineWidth: 1)
+                    )
+
+                Image(systemName: "scope")
+                    .font(.system(size: 27, weight: .black, design: .rounded))
+                    .foregroundStyle(Color.red)
+            }
+
             Group {
                 if item.isLocked {
                     Button { store.requestUnlock(for: item) } label: {
-                        PatchProjectRow(item: item, language: language)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(item.project?.name ?? language.text("patch.locked_project"))
+                                .font(.system(size: 15, weight: .black, design: .rounded))
+                                .foregroundStyle(.white)
+                                .lineLimit(2)
+
+                            Text(item.summary.schemaVersion >= 2
+                                 ? language.text("patch.workspace")
+                                 : language.text("patch.project"))
+                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.62))
+                                .lineLimit(1)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .buttonStyle(.plain)
                 } else {
                     NavigationLink {
                         PatchProjectDetailView(store: store, projectID: item.id)
                     } label: {
-                        PatchProjectRow(item: item, language: language)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(item.project?.name ?? language.text("patch.locked_project"))
+                                .font(.system(size: 15, weight: .black, design: .rounded))
+                                .foregroundStyle(.white)
+                                .lineLimit(2)
+
+                            Text(item.summary.schemaVersion >= 2
+                                 ? language.text("patch.workspace")
+                                 : language.text("patch.project"))
+                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .foregroundStyle(.white.opacity(0.62))
+                                .lineLimit(1)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .buttonStyle(.plain)
                 }
@@ -181,23 +448,61 @@ struct PatchProjectsView: View {
                 isOn: Binding(
                     get: { store.isApplied(projectID: item.id) },
                     set: { enabled in
-                        store.setApplied(enabled, for: item)
+                        store.setApplied(enabled, for: item, freeFireVariant: selectedGameRaw)
+                        if enabled {
+}
                     }
                 )
             )
             .labelsHidden()
-            .tint(AppTheme.accent)
+            .tint(.red)
             .disabled(item.isLocked || store.isBusy)
-            .accessibilityLabel(
-                store.isApplied(projectID: item.id) ? "Restaurar patch" : "Aplicar patch"
-            )
         }
+        .padding(.vertical, 10)
+        .listRowInsets(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 18))
+        .listRowBackground(Color.black.opacity(0.72))
+        .listRowSeparator(.visible)
+        .listRowSeparatorTint(Color.white.opacity(0.11))
+    }
+
+    private var attentionCard: some View {
+        HStack(alignment: .top, spacing: 14) {
+            ZStack {
+                Circle()
+                    .stroke(Color.red, lineWidth: 2)
+                    .frame(width: 34, height: 34)
+
+                Image(systemName: "exclamationmark")
+                    .font(.system(size: 20, weight: .black, design: .rounded))
+                    .foregroundStyle(Color.red)
+            }
+
+            VStack(alignment: .leading, spacing: 5) {
+                Text("ATENÇÃO")
+                    .font(.system(size: 15, weight: .black, design: .rounded))
+                    .foregroundStyle(Color.red)
+
+                Text("Use com responsabilidade. O uso indevido pode resultar em banimento.")
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.68))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer()
+        }
+        .padding(12)
+        .background(Color.clear)
+        .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                .stroke(Color.white.opacity(0.16), lineWidth: 1)
+        )
     }
 
     private var emptyState: some View {
         VStack(spacing: 12) {
             Image(systemName: "shippingbox")
-                .font(.system(size: AppTheme.emptyIconSize, weight: .light))
+                .font(.system(size: AppTheme.emptyIconSize, weight: .light, design: .rounded))
                 .foregroundStyle(AppTheme.accent)
             Text(language.text("patch.empty_title"))
                 .font(.headline)
@@ -216,7 +521,7 @@ struct PatchProjectsView: View {
     private var searchEmptyState: some View {
         VStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: AppTheme.emptyIconSize, weight: .light))
+                .font(.system(size: AppTheme.emptyIconSize, weight: .light, design: .rounded))
                 .foregroundStyle(.secondary)
             Text(language.text("patch.search_empty"))
                 .font(.headline)
@@ -290,15 +595,7 @@ private struct PatchUnlockView: View {
             }
             .navigationTitle(language.text("patch.unlock"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(language.text("common.cancel")) { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(language.text("patch.unlock"), action: unlock)
-                        .disabled(password.isEmpty || store.isBusy)
-                }
-            }
+
         }
     }
 
@@ -404,7 +701,7 @@ private struct PatchProjectDetailView: View {
 
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
         .navigationTitle("")
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -547,4 +844,40 @@ private struct PatchActivityView: UIViewControllerRepresentable {
         _ uiViewController: UIActivityViewController,
         context: Context
     ) {}
+}
+
+
+private final class PatchVoiceSpeaker {
+    static let shared = PatchVoiceSpeaker()
+
+    private let synthesizer = AVSpeechSynthesizer()
+
+    private init() {}
+
+    func speakActivated(_ fileName: String) {
+        if synthesizer.isSpeaking {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
+
+        var name = fileName
+            .replacingOccurrences(of: "@TEUSIOS", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Remove a file extension from the spoken name when present.
+        if let dot = name.lastIndex(of: ".") {
+            let suffix = name[name.index(after: dot)...]
+            if !suffix.contains(" ") && suffix.count <= 8 {
+                name = String(name[..<dot])
+            }
+        }
+
+        let phrase = name.isEmpty ? "Arquivo ativado" : "\(name) ativado"
+
+        let utterance = AVSpeechUtterance(string: phrase)
+        utterance.voice = AVSpeechSynthesisVoice(language: "pt-BR")
+        utterance.rate = 0.48
+        utterance.pitchMultiplier = 0.95
+        utterance.volume = 1.0
+        synthesizer.speak(utterance)
+    }
 }

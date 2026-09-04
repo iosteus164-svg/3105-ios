@@ -156,7 +156,7 @@ struct SettingsView: View {
                     }
                     Spacer()
                     Image(systemName: "arrow.up.right")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
                         .foregroundStyle(AppTheme.accent)
                         .frame(width: 28, height: 28)
                 }

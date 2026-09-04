@@ -15,10 +15,18 @@ struct NetflixCoverView: View {
             Color.black.ignoresSafeArea()
 
             if showInjector {
-                ContentView()
-                    .transition(.opacity)
+                ContentView(onReturnToNetflix: {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        showInjector = false
+                    }
+                })
+                .transition(.opacity)
             } else if isLoading {
-                NetflixLoadingView()
+                NetflixLoadingView {
+                    withAnimation(.easeOut(duration: 0.22)) {
+                        isLoading = false
+                    }
+                }
                     .transition(.opacity)
             } else {
                 netflixShell
@@ -27,11 +35,6 @@ struct NetflixCoverView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: showInjector)
         .animation(.easeInOut(duration: 0.25), value: isLoading)
-        .task {
-            guard isLoading else { return }
-            try? await Task.sleep(for: .milliseconds(3100))
-            isLoading = false
-        }
         .sheet(item: $selectedMovie) { movie in
             MovieDetailView(
                 movie: movie,
@@ -87,13 +90,13 @@ struct NetflixCoverView: View {
 
             Button(action: {}) {
                 Image(systemName: "airplayvideo")
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
             }
 
             Button(action: {}) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 19, weight: .semibold))
+                    .font(.system(size: 19, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
             }
 
@@ -128,7 +131,46 @@ struct NetflixCoverView: View {
                     [
                         MovieCard(title: "BLACK\nMIRROR", subtitle: "Série", accent: .white, posterURL: "https://image.tmdb.org/t/p/w500/7PRddO7z7mcPi21nZTCMGShAyy1.jpg", description: "Histórias independentes exploram tecnologia e seus impactos sobre a sociedade."),
                         MovieCard(title: "LUPIN", subtitle: "Série", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/sgxawbFB5Vi5OkPWQLNfl3dvkNJ.jpg", description: "Um ladrão elegante usa inteligência e disfarces para executar seus planos."),
-                        MovieCard(title: "OZARK", subtitle: "Série", accent: .cyan, posterURL: "https://image.tmdb.org/t/p/w500/pCGyPVrI9Fzw6rE1Pvi4BIXF6ET.jpg", description: "Uma família tenta sobreviver em meio a negócios perigosos e alianças frágeis.")
+                        MovieCard(title: "OZARK", subtitle: "Série", accent: .cyan, posterURL: "https://image.tmdb.org/t/p/w500/pCGyPVrI9Fzw6rE1Pvi4BIXF6ET.jpg", description: "Uma família tenta sobreviver em meio a negócios perigosos e alianças frágeis."),
+                        MovieCard(title: "DARK", subtitle: "Série", accent: .yellow, posterURL: "https://image.tmdb.org/t/p/w500/apbrbWs8M9lyOpJYU5WXrpFbk1Z.jpg", description: "Desaparecimentos revelam segredos e conexões entre diferentes gerações."),
+                        MovieCard(title: "THE CROWN", subtitle: "Série", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/1M876KPjulVwppEpldhdc8V4o68.jpg", description: "Drama acompanha décadas de mudanças, decisões e conflitos da monarquia britânica."),
+                        MovieCard(title: "NARCOS", subtitle: "Série", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/rTmal9fDbwh5F0waol2hq35U4ah.jpg", description: "Agentes enfrentam organizações criminosas em uma longa disputa por poder."),
+                        MovieCard(title: "VIKINGS\nVALHALLA", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/rDFy1fUU6OC3Mm0CLFB7u0gqg2P.jpg", description: "Guerreiros nórdicos enfrentam novas batalhas e disputas por território."),
+                        MovieCard(title: "COBRA KAI", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/6POBWybSBDBKjSs1VAQcnQC1qyt.jpg", description: "Antigos rivais voltam a se enfrentar através de uma nova geração de alunos."),
+                        MovieCard(title: "YOU", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/7bEYwjUvlJW7GerM8GYmqwl4oS3.jpg", description: "Uma obsessão perigosa transforma relacionamentos em um jogo de segredos."),
+                        MovieCard(title: "THE NIGHT\nAGENT", subtitle: "Série", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/x1kA8w8B7xWlYV3kYx7xY6YwQxQ.jpg", description: "Um agente se envolve em uma conspiração enquanto tenta proteger uma testemunha.")
+                    ]
+                )
+
+                posterSection(
+                    "Filmes para você",
+                    [
+                        MovieCard(title: "OPPENHEIMER", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", description: "Um físico assume um papel central em um dos projetos científicos mais importantes do século."),
+                        MovieCard(title: "INTERSTELLAR", subtitle: "Filme", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", description: "Exploradores atravessam o espaço em busca de uma nova esperança para a humanidade."),
+                        MovieCard(title: "BLADE RUNNER\n2049", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg", description: "Um agente descobre um segredo capaz de mudar o equilíbrio entre humanos e replicantes."),
+                        MovieCard(title: "DUNA\nPARTE 2", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg", description: "Paul Atreides une forças com os Fremen enquanto enfrenta escolhas que podem definir o futuro."),
+                        MovieCard(title: "THE GRAY\nMAN", subtitle: "Filme", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/8cXbitsS6dWQ5gfMTZdorpAAzEH.jpg", description: "Um agente altamente treinado passa a ser perseguido por inimigos de dentro da própria organização."),
+                        MovieCard(title: "RED NOTICE", subtitle: "Filme", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/lAXONuqg41NwUMuzMiFvicDET9Y.jpg", description: "Um agente e dois criminosos entram em uma disputa internacional cheia de reviravoltas."),
+                        MovieCard(title: "THE ADAM\nPROJECT", subtitle: "Filme", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/wFjboE0aFZNbVOF05fzrka9Fqyx.jpg", description: "Um piloto viaja no tempo e encontra uma versão mais jovem de si mesmo."),
+                        MovieCard(title: "ENOLA\nHOLMES", subtitle: "Filme", accent: .purple, posterURL: "https://image.tmdb.org/t/p/w500/riYInlsq2kf1AWoGm80JQW5dLKp.jpg", description: "Uma jovem investigadora parte em busca da mãe desaparecida."),
+                        MovieCard(title: "GLASS\nONION", subtitle: "Filme", accent: .yellow, posterURL: "https://image.tmdb.org/t/p/w500/vDGr1YdrlfbU9wxTOdpf3zChmv9.jpg", description: "Um detetive enfrenta um novo mistério durante uma reunião em uma ilha."),
+                        MovieCard(title: "DON'T LOOK\nUP", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/th4E1yqsE8DGpAseLiUrI60Hf8V.jpg", description: "Dois cientistas tentam alertar o mundo sobre uma ameaça que se aproxima.")
+                    ]
+                )
+
+                posterSection(
+                    "Ação e aventura",
+                    [
+                        MovieCard(title: "EXTRACTION\n2", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/7gKI9hpEMcZUQpNgKrkDzJpbnNS.jpg", description: "Um mercenário retorna para uma nova missão de resgate ainda mais perigosa."),
+                        MovieCard(title: "ARMY OF\nTHE DEAD", subtitle: "Filme", accent: .yellow, posterURL: "https://image.tmdb.org/t/p/w500/z8CExJekGrEThbpMXAmCFvvgoJR.jpg", description: "Um grupo entra em uma cidade isolada para tentar realizar um grande roubo."),
+                        MovieCard(title: "6 UNDERGROUND", subtitle: "Filme", accent: .green, posterURL: "https://image.tmdb.org/t/p/w500/lnWkyG3LLgbbrIEeyl5mK5VRFe4.jpg", description: "Uma equipe secreta tenta derrubar criminosos que parecem estar acima da lei."),
+                        MovieCard(title: "PROJECT\nPOWER", subtitle: "Filme", accent: .purple, posterURL: "https://image.tmdb.org/t/p/w500/TnOeov4w0sTtV2gqICqIxVi74V.jpg", description: "Uma droga misteriosa concede habilidades imprevisíveis por alguns minutos."),
+                        MovieCard(title: "THE OLD\nGUARD", subtitle: "Filme", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/cjr4NWURcVN3gW5FlHeabgBHLrY.jpg", description: "Um grupo de guerreiros imortais precisa proteger seu segredo e enfrentar uma nova ameaça."),
+                        MovieCard(title: "BRIGHT", subtitle: "Filme", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/whkT53Sv2vKAUiknQ13pqcWaPXB.jpg", description: "Dois policiais de origens muito diferentes enfrentam uma ameaça sobrenatural."),
+                        MovieCard(title: "TRIPLE\nFRONTIER", subtitle: "Filme", accent: .green, posterURL: "https://image.tmdb.org/t/p/w500/aBw8zYuAljVM1FeK5bZKITPH8ZD.jpg", description: "Ex-soldados se reúnem para uma missão arriscada na América do Sul."),
+                        MovieCard(title: "POLAR", subtitle: "Filme", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/qOBEpKVLl8Q9CZScbOcRRVISezV.jpg", description: "Um assassino prestes a se aposentar vira alvo de uma organização perigosa."),
+                        MovieCard(title: "CARTER", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/uzAh3Ub2YttCz13cnyB9PvhpmIL.jpg", description: "Um homem sem memória recebe ordens para cumprir uma missão extrema."),
+                        MovieCard(title: "HEART OF\nSTONE", subtitle: "Filme", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/vB8o2p4ETnrfiWEgVxHmHWP9yRl.jpg", description: "Uma agente tenta impedir que uma tecnologia poderosa caia em mãos erradas.")
                     ]
                 )
             }
@@ -160,7 +202,9 @@ struct NetflixCoverView: View {
                         MovieCard(title: "EXTRACTION", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/nygOUcBKPHFTbxsYRFZVePqgPK6.jpg", description: "Um mercenário entra em uma missão perigosa para resgatar um alvo."),
                         MovieCard(title: "JOHN\nWICK 4", subtitle: "Filme", accent: .yellow, posterURL: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg", description: "Um assassino enfrenta novos adversários em sua busca por liberdade."),
                         MovieCard(title: "TOP GUN", subtitle: "Filme", accent: .white, posterURL: "https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg", description: "Pilotos de elite enfrentam desafios de treinamento e combate."),
-                        MovieCard(title: "BATMAN", subtitle: "Filme", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg", description: "Um vigilante investiga uma série de crimes em uma cidade corrompida.")
+                        MovieCard(title: "BATMAN", subtitle: "Filme", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg", description: "Um vigilante investiga uma série de crimes em uma cidade corrompida."),
+                        MovieCard(title: "OPPENHEIMER", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", description: "Um físico assume um papel central em um dos projetos científicos mais importantes do século."),
+                        MovieCard(title: "INTERSTELLAR", subtitle: "Filme", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", description: "Exploradores atravessam o espaço em busca de uma nova esperança para a humanidade.")
                     ]
                 )
             }
@@ -260,7 +304,7 @@ struct NetflixCoverView: View {
                     .foregroundStyle(.red)
 
                 Text("THE WITCHER")
-                    .font(.system(size: 36, weight: .black))
+                    .font(.system(size: 36, weight: .black, design: .rounded))
                     .foregroundStyle(.white)
 
                 Text("Destino é uma fera. Você é o que faz dele.")
@@ -458,61 +502,81 @@ struct NetflixCoverView: View {
 }
 
 private struct NetflixLoadingView: View {
-    @State private var stage = 0
-    @State private var showSpinner = false
+    let onFinished: () -> Void
 
-    private let stages = [
-        "N",
-        "N",
-        "NE",
-        "NET",
-        "NETF",
-        "NETFL",
-        "NETFLI",
-        "NETFLIX"
-    ]
+    @State private var logoOpacity = 0.0
+    @State private var logoScale: CGFloat = 0.94
+    @State private var loadingProgress: CGFloat = 0.0
+    @State private var didFinish = false
 
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            VStack(spacing: 34) {
+            VStack(spacing: 30) {
                 Spacer()
 
-                Text(stages[min(stage, stages.count - 1)])
-                    .font(.system(size: 42, weight: .black, design: .default))
+                Text("NETFLIX")
+                    .font(.system(size: 52, weight: .black, design: .default))
+                    .tracking(-1.8)
                     .foregroundStyle(Color(red: 0.90, green: 0.00, blue: 0.05))
-                    .kerning(stage >= 2 ? 1.8 : 0)
-                    .contentTransition(.numericText())
-                    .animation(.easeOut(duration: 0.12), value: stage)
+                    .shadow(color: Color.red.opacity(0.22), radius: 12)
+                    .scaleEffect(logoScale)
+                    .opacity(logoOpacity)
 
-                if showSpinner {
-                    ProgressView()
-                        .tint(.white.opacity(0.75))
-                        .scaleEffect(1.0)
-                        .transition(.opacity)
-                } else {
-                    Color.clear
-                        .frame(width: 24, height: 24)
+                VStack(spacing: 10) {
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule()
+                                .fill(Color.white.opacity(0.13))
+
+                            Capsule()
+                                .fill(Color(red: 0.90, green: 0.00, blue: 0.05))
+                                .frame(width: geo.size.width * loadingProgress)
+                                .shadow(color: Color.red.opacity(0.55), radius: 5)
+                        }
+                    }
+                    .frame(width: 132, height: 3)
+
+                    Text("Carregando...")
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.58))
                 }
+                .opacity(logoOpacity)
 
                 Spacer()
             }
         }
-        .task {
-            for next in 1..<stages.count {
-                try? await Task.sleep(for: .milliseconds(next < 2 ? 320 : 180))
-                stage = next
+        .onAppear {
+            guard !didFinish else { return }
+
+            withAnimation(.easeOut(duration: 0.48)) {
+                logoOpacity = 1
+                logoScale = 1
             }
 
-            try? await Task.sleep(for: .milliseconds(260))
-            withAnimation(.easeIn(duration: 0.20)) {
-                showSpinner = true
+            withAnimation(.linear(duration: 1.75)) {
+                loadingProgress = 1
+            }
+
+            Task {
+                try? await Task.sleep(for: .seconds(1.9))
+                guard !Task.isCancelled, !didFinish else { return }
+                await MainActor.run {
+                    didFinish = true
+                    withAnimation(.easeOut(duration: 0.22)) {
+                        logoOpacity = 0
+                    }
+                }
+                try? await Task.sleep(for: .milliseconds(230))
+                guard !Task.isCancelled else { return }
+                await MainActor.run {
+                    onFinished()
+                }
             }
         }
     }
 }
-
 private struct MovieDetailView: View {
     let movie: MovieCard
     let isInList: Bool

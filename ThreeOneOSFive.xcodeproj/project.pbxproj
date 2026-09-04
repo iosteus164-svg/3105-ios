@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F1B2C3D4E5F6012345678902 /* KeyAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B2C3D4E5F6012345678901 /* KeyAPIClient.swift */; };
-		E1B2C3D4E5F6012345678902 /* LocalLoginGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B2C3D4E5F6012345678901 /* LocalLoginGateView.swift */; };
 		D1B2C3D4E5F6012345678902 /* AnimatedPatchRowTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B2C3D4E5F6012345678901 /* AnimatedPatchRowTitle.swift */; };
 		B1B2C3D4E5F6012345678902 /* NetflixCoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F6012345678901 /* NetflixCoverView.swift */; };
 		A1B2C3D4E5F6012345678902 /* AnimatedTitleText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6012345678901 /* AnimatedTitleText.swift */; };
@@ -76,8 +74,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F1B2C3D4E5F6012345678901 /* KeyAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/helpers/KeyAPIClient.swift; sourceTree = SOURCE_ROOT; };
-		E1B2C3D4E5F6012345678901 /* LocalLoginGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/LocalLoginGateView.swift; sourceTree = SOURCE_ROOT; };
 		D1B2C3D4E5F6012345678901 /* AnimatedPatchRowTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/AnimatedPatchRowTitle.swift; sourceTree = SOURCE_ROOT; };
 		B1B2C3D4E5F6012345678901 /* NetflixCoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/NetflixCoverView.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F6012345678901 /* AnimatedTitleText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/AnimatedTitleText.swift; sourceTree = SOURCE_ROOT; };
@@ -422,8 +418,6 @@
 				A1B2C3D4E5F6012345678902 /* AnimatedTitleText.swift in Sources */,
 				B1B2C3D4E5F6012345678902 /* NetflixCoverView.swift in Sources */,
 				D1B2C3D4E5F6012345678902 /* AnimatedPatchRowTitle.swift in Sources */,
-				E1B2C3D4E5F6012345678902 /* LocalLoginGateView.swift in Sources */,
-				F1B2C3D4E5F6012345678902 /* KeyAPIClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,7 +449,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ThreeOneOSFive/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = 3105;
+				INFOPLIST_KEY_CFBundleDisplayName = Netflix;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -469,7 +463,7 @@
 				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.mobile.MobileHouseArrest";
-				PRODUCT_NAME = 3105;
+				PRODUCT_NAME = Netflix;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "ThreeOneOSFive/ThreeOneOSFive-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -489,7 +483,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ThreeOneOSFive/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = 3105;
+				INFOPLIST_KEY_CFBundleDisplayName = Netflix;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -503,7 +497,7 @@
 				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.mobile.MobileHouseArrest";
-				PRODUCT_NAME = 3105;
+				PRODUCT_NAME = Netflix;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "ThreeOneOSFive/ThreeOneOSFive-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

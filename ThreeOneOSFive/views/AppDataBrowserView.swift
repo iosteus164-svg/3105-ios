@@ -234,7 +234,7 @@ struct AppDataBrowserView: View {
     private var emptyView: some View {
         VStack(spacing: 16) {
             Image(systemName: "folder.badge.questionmark")
-                .font(.system(size: AppTheme.emptyIconSize, weight: .light))
+                .font(.system(size: AppTheme.emptyIconSize, weight: .light, design: .rounded))
                 .foregroundStyle(.secondary)
             Text(errorMessage ?? language.text("browser.empty"))
                 .font(.subheadline)
@@ -250,7 +250,7 @@ struct AppDataBrowserView: View {
     private var searchEmptyView: some View {
         VStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: AppTheme.emptyIconSize, weight: .light))
+                .font(.system(size: AppTheme.emptyIconSize, weight: .light, design: .rounded))
                 .foregroundStyle(.secondary)
             Text(language.text("browser.search_empty"))
                 .font(.subheadline.weight(.medium))
@@ -400,7 +400,7 @@ struct BrowserAppIcon: View {
                     .scaledToFill()
             } else {
                 Image(systemName: "app")
-                    .font(.system(size: AppTheme.rowIconSize, weight: .medium))
+                    .font(.system(size: AppTheme.rowIconSize, weight: .medium, design: .rounded))
                     .foregroundStyle(.secondary)
             }
         }
