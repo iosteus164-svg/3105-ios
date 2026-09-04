@@ -199,7 +199,7 @@ private struct CompactTabLabel: View {
             Image(systemName: "skull")
                 .symbolRenderingMode(.monochrome)
                 .font(.system(size: 22, weight: .black))
-                .foregroundStyle(isSelected ? AppTheme.accent : Color.white)
+                .foregroundStyle(AppTheme.accent)
                 .frame(width: 28, height: 28)
         } else if let image = UIImage(
             systemName: systemImage,
