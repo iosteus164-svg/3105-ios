@@ -196,7 +196,7 @@ private struct CompactTabLabel: View {
     @ViewBuilder
     var body: some View {
         if title == "Injetor" {
-            Image(systemName: "shippingbox.fill")
+            Image(systemName: "scope")
                 .symbolRenderingMode(.monochrome)
                 .font(.system(size: 22, weight: .black))
                 .foregroundStyle(AppTheme.accent)

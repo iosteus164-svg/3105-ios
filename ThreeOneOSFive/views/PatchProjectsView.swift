@@ -89,7 +89,7 @@ struct PatchProjectsView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     HStack(alignment: .center, spacing: 12) {
                         HStack(spacing: 10) {
-                            Image(systemName: "shippingbox.fill")
+                            Image(systemName: "scope")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 19, height: 19)
@@ -110,7 +110,7 @@ struct PatchProjectsView: View {
                         Spacer()
 
                         HStack(spacing: 8) {
-                            Image(systemName: "shippingbox.fill")
+                            Image(systemName: "scope")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 26, height: 26)
@@ -208,7 +208,7 @@ struct PatchProjectsView: View {
                         patchCategory = 0
                     } label: {
                         HStack(spacing: 7) {
-                            Image(systemName: "shippingbox.fill")
+                            Image(systemName: "scope")
                                 .symbolRenderingMode(.monochrome)
                                 .font(.system(size: 21, weight: .black))
                                 .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white)
