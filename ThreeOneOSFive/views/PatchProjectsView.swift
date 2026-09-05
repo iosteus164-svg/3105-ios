@@ -111,7 +111,7 @@ struct PatchProjectsView: View {
 
                         HStack(spacing: 8) {
                             
-                            Text("© Astro_cheats")
+                            Text("© Teus ios")
                                 .font(.system(size: 15, weight: .black, design: .rounded))
                                 .lineLimit(1)
                         }
@@ -701,6 +701,19 @@ private struct PatchProjectDetailView: View {
                             : "patch.no_password"))
                             .font(.subheadline)
                     }
+                }
+
+                Section {
+                    Button {
+                        prepareExport()
+                    } label: {
+                        Label("EXPORTAR ARQUIVO", systemImage: "square.and.arrow.up")
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundStyle(AppTheme.accent)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isWorking)
                 }
 
             }
