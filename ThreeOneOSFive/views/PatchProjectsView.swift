@@ -208,17 +208,18 @@ struct PatchProjectsView: View {
                         patchCategory = 0
                     } label: {
                         HStack(spacing: 7) {
-                            Image(systemName: "scope")
+                            Image(systemName: "eye.fill")
                                 .symbolRenderingMode(.monochrome)
                                 .font(.system(size: 21, weight: .black))
                                 .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white)
-                                .frame(width: 28, height: 28)
+                                
                             Text("Aimbot")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
                             .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.55))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            
+                            
+                            .frame(maxWidth: .infinity, minHeight: 84).padding(.vertical, 10)
                             .background(patchCategory == 0 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
@@ -238,8 +239,9 @@ struct PatchProjectsView: View {
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
                             .foregroundStyle(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.55))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            
+                            
+                            .frame(maxWidth: .infinity, minHeight: 84).padding(.vertical, 10)
                             .background(patchCategory == 1 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
