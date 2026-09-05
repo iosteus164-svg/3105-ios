@@ -204,46 +204,44 @@ struct PatchProjectsView: View {
                     Button {
                         patchCategory = 0
                     } label: {
-                        HStack(spacing: 7) {
+                        HStack(spacing: 6) {
                             Image(systemName: "eye.slash.fill")
                                 .font(.system(size: 14, weight: .bold))
                             Text("Aimbot")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
-                            .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.55))
-                            
-                            
-                            .padding(.vertical, 10)
-                            .frame(width: 150, height: 46)
-                            .background(patchCategory == 0 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.14), lineWidth: 1)
-                            )
+                        .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.55))
+                        .frame(maxWidth: .infinity, minHeight: 40)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(patchCategory == 0 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.14), lineWidth: 1)
+                        )
                     }
                     .buttonStyle(.plain)
 
                     Button {
                         patchCategory = 1
                     } label: {
-                        HStack(spacing: 7) {
+                        HStack(spacing: 6) {
                             Image(systemName: "eye.slash.fill")
                                 .font(.system(size: 14, weight: .bold))
                             Text("Apostado")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
-                            .foregroundStyle(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.55))
-                            
-                            
-                            .padding(.vertical, 10)
-                            .frame(width: 150, height: 46)
-                            .background(patchCategory == 1 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.14), lineWidth: 1)
-                            )
+                        .foregroundStyle(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.55))
+                        .frame(maxWidth: .infinity, minHeight: 40)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(patchCategory == 1 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.14), lineWidth: 1)
+                        )
                     }
                     .buttonStyle(.plain)
                 }
