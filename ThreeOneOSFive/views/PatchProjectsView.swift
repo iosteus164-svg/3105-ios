@@ -110,11 +110,8 @@ struct PatchProjectsView: View {
                         Spacer()
 
                         HStack(spacing: 8) {
-                            Image(systemName: "scope")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 26, height: 26)
-                            Text("© Teus ios")
+                            
+                            Text("© Astro_cheats")
                                 .font(.system(size: 15, weight: .black, design: .rounded))
                                 .lineLimit(1)
                         }
@@ -208,18 +205,16 @@ struct PatchProjectsView: View {
                         patchCategory = 0
                     } label: {
                         HStack(spacing: 7) {
-                            Image(systemName: "eye.fill")
-                                .symbolRenderingMode(.monochrome)
-                                .font(.system(size: 21, weight: .black))
-                                .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white)
-                                
+                            Image(systemName: "eye.slash.fill")
+                                .font(.system(size: 14, weight: .bold))
                             Text("Aimbot")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))
                         }
                             .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.55))
                             
                             
-                            .frame(maxWidth: .infinity, minHeight: 84).padding(.vertical, 10)
+                            .padding(.vertical, 10)
+                            .frame(width: 150, height: 46)
                             .background(patchCategory == 0 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
@@ -241,7 +236,8 @@ struct PatchProjectsView: View {
                             .foregroundStyle(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.55))
                             
                             
-                            .frame(maxWidth: .infinity, minHeight: 84).padding(.vertical, 10)
+                            .padding(.vertical, 10)
+                            .frame(width: 150, height: 46)
                             .background(patchCategory == 1 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                             .overlay(
