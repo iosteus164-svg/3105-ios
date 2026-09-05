@@ -130,9 +130,34 @@ struct PatchProjectsView: View {
                         .fill(Color.white.opacity(0.10))
                         .frame(height: 1)
 
-                    Text("SELECIONE O JOGO")
-                        .font(.system(size: 18, weight: .black, design: .rounded))
-                        .foregroundStyle(AppTheme.accent)
+                    HStack(alignment: .center, spacing: 12) {
+                        Text("SELECIONE O JOGO")
+                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .foregroundStyle(AppTheme.accent)
+
+                        Spacer()
+
+                        Button {
+                            showImporter = true
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "tray.and.arrow.down.fill")
+                                    .font(.system(size: 12, weight: .bold))
+                                Text("IMPORTAR")
+                                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                            }
+                            .foregroundStyle(AppTheme.accent)
+                            .padding(.horizontal, 12)
+                            .frame(height: 36)
+                            .background(Color.black.opacity(0.58))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .stroke(AppTheme.accent.opacity(0.75), lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
 
                     HStack(spacing: 12) {
                         gameChoiceCard(
@@ -701,19 +726,6 @@ private struct PatchProjectDetailView: View {
                             : "patch.no_password"))
                             .font(.subheadline)
                     }
-                }
-
-                Section {
-                    Button {
-                        prepareExport()
-                    } label: {
-                        Label("EXPORTAR ARQUIVO", systemImage: "square.and.arrow.up")
-                            .font(.system(size: 15, weight: .bold, design: .rounded))
-                            .foregroundStyle(AppTheme.accent)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(isWorking)
                 }
 
             }
