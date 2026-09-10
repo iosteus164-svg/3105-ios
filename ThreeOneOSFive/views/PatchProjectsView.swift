@@ -10,7 +10,6 @@ private enum PatchPackagePickerPolicy {
 }
 
 struct PatchProjectsView: View {
-    @State private var patchCategory = 0
     @EnvironmentObject private var appState: AppState
     @Environment(\.appLanguage) private var language
     @EnvironmentObject private var draftCoordinator: PatchDraftCoordinator
@@ -19,28 +18,14 @@ struct PatchProjectsView: View {
     @State private var showImporter = false
     @State private var searchText = ""
     @AppStorage("selectedFreeFireVariant") private var selectedGameRaw = "normal"
+    @AppStorage(AppTheme.themeStorageKey) private var selectedThemeRaw = "red"
 
     private var filteredItems: [PatchLibraryItem] {
-        let categoryItems = store.items.filter { item in
-            guard let project = item.project else { return false }
-
-            let isApostadoFile =
-                project.name.localizedCaseInsensitiveContains("cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs")
-                || project.directories.contains {
-                    $0.relativePath.localizedCaseInsensitiveContains("cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs")
-                }
-                || project.rules.contains {
-                    $0.relativePath.localizedCaseInsensitiveContains("cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs")
-                        || $0.replacementFilename.localizedCaseInsensitiveContains("cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs")
-                }
-
-            return patchCategory == 1 ? isApostadoFile : !isApostadoFile
-        }
-
+        let allItems = store.items.filter { $0.project != nil }
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return categoryItems }
+        guard !query.isEmpty else { return allItems }
 
-        return categoryItems.filter { item in
+        return allItems.filter { item in
             if item.packageURL.lastPathComponent.localizedCaseInsensitiveContains(query) {
                 return true
             }
@@ -78,6 +63,64 @@ struct PatchProjectsView: View {
         nonmutating set { selectedGameRaw = newValue.rawValue }
     }
 
+
+    private func openSelectedFreeFire() {
+        let candidates: [String]
+        let appStoreURL: String
+
+        switch selectedGame {
+        case .normal:
+            candidates = [
+                "freefire://",
+                "garena-freefire://"
+            ]
+            appStoreURL = "https://apps.apple.com/app/id1300146617"
+
+        case .max:
+            candidates = [
+                "freefiremax://",
+                "garena-freefiremax://"
+            ]
+            appStoreURL = "https://apps.apple.com/app/id1480516829"
+        }
+
+        openFirstAvailableGameURL(candidates, index: 0, appStoreURL: appStoreURL)
+    }
+
+    private func openFirstAvailableGameURL(
+        _ candidates: [String],
+        index: Int,
+        appStoreURL: String
+    ) {
+        guard index < candidates.count else {
+            if let fallback = URL(string: appStoreURL) {
+                UIApplication.shared.open(fallback)
+            }
+            return
+        }
+
+        guard let url = URL(string: candidates[index]) else {
+            openFirstAvailableGameURL(
+                candidates,
+                index: index + 1,
+                appStoreURL: appStoreURL
+            )
+            return
+        }
+
+        UIApplication.shared.open(url, options: [:]) { success in
+            guard !success else { return }
+
+            DispatchQueue.main.async {
+                openFirstAvailableGameURL(
+                    candidates,
+                    index: index + 1,
+                    appStoreURL: appStoreURL
+                )
+            }
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -109,11 +152,41 @@ struct PatchProjectsView: View {
 
                         Spacer()
 
-                        HStack(spacing: 8) {
-                            
+                        HStack(spacing: 10) {
                             Text("© Teus ios")
                                 .font(.system(size: 15, weight: .black, design: .rounded))
                                 .lineLimit(1)
+                                .foregroundStyle(AppTheme.accent)
+
+                            Menu {
+                                Button {
+                                    selectedThemeRaw = "red"
+                                } label: {
+                                    Label(
+                                        "Vermelho",
+                                        systemImage: selectedThemeRaw == "red"
+                                            ? "checkmark.circle.fill"
+                                            : "circle"
+                                    )
+                                }
+
+                                Button {
+                                    selectedThemeRaw = "white"
+                                } label: {
+                                    Label(
+                                        "Branco",
+                                        systemImage: selectedThemeRaw == "white"
+                                            ? "checkmark.circle.fill"
+                                            : "circle"
+                                    )
+                                }
+                            } label: {
+                                Image(systemName: "gearshape.fill")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundStyle(AppTheme.accent)
+                                    .frame(width: 34, height: 34)
+                            }
+                            .buttonStyle(.plain)
                         }
                         .foregroundStyle(AppTheme.accent)
                         .padding(.horizontal, 15)
@@ -130,34 +203,9 @@ struct PatchProjectsView: View {
                         .fill(Color.white.opacity(0.10))
                         .frame(height: 1)
 
-                    HStack(alignment: .center, spacing: 12) {
-                        Text("SELECIONE O JOGO")
-                            .font(.system(size: 18, weight: .black, design: .rounded))
-                            .foregroundStyle(AppTheme.accent)
-
-                        Spacer()
-
-                        Button {
-                            showImporter = true
-                        } label: {
-                            HStack(spacing: 6) {
-                                Image(systemName: "tray.and.arrow.down.fill")
-                                    .font(.system(size: 12, weight: .bold))
-                                Text("IMPORTAR")
-                                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                            }
-                            .foregroundStyle(AppTheme.accent)
-                            .padding(.horizontal, 12)
-                            .frame(height: 36)
-                            .background(Color.black.opacity(0.58))
-                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(AppTheme.accent.opacity(0.75), lineWidth: 1)
-                            )
-                        }
-                        .buttonStyle(.plain)
-                    }
+                    Text("SELECIONE O JOGO")
+                        .font(.system(size: 18, weight: .black, design: .rounded))
+                        .foregroundStyle(AppTheme.accent)
 
                     HStack(spacing: 12) {
                         gameChoiceCard(
@@ -174,6 +222,32 @@ struct PatchProjectsView: View {
                             selected: selectedGame == .max
                         ) { selectedGame = .max }
                     }
+
+                    Button {
+                        openSelectedFreeFire()
+                    } label: {
+                        HStack(spacing: 9) {
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 13, weight: .bold))
+
+                            Text(
+                                selectedGame == .normal
+                                ? "ABRIR FREE FIRE"
+                                : "ABRIR FREE FIRE MAX"
+                            )
+                            .font(.system(size: 14, weight: .black, design: .rounded))
+                        }
+                        .foregroundStyle(Color.black)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 11, style: .continuous)
+                                .stroke(Color.white.opacity(0.90), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
 
                 }
                 .padding(.horizontal, 18)
@@ -225,54 +299,6 @@ struct PatchProjectsView: View {
                 .padding(.horizontal, 18)
                 .padding(.bottom, 8)
 
-                HStack(spacing: 8) {
-                    Button {
-                        patchCategory = 0
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "eye.slash.fill")
-                                .font(.system(size: 14, weight: .bold))
-                            Text("Aimbot")
-                                .font(.system(size: 14, weight: .bold, design: .rounded))
-                        }
-                        .foregroundStyle(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.55))
-                        .frame(maxWidth: .infinity, minHeight: 40)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(patchCategory == 0 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(patchCategory == 0 ? AppTheme.accent : Color.white.opacity(0.14), lineWidth: 1)
-                        )
-                    }
-                    .buttonStyle(.plain)
-
-                    Button {
-                        patchCategory = 1
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "eye.slash.fill")
-                                .font(.system(size: 14, weight: .bold))
-                            Text("Apostado")
-                                .font(.system(size: 14, weight: .bold, design: .rounded))
-                        }
-                        .foregroundStyle(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.55))
-                        .frame(maxWidth: .infinity, minHeight: 40)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(patchCategory == 1 ? AppTheme.accent.opacity(0.20) : Color.black.opacity(0.58))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(patchCategory == 1 ? AppTheme.accent : Color.white.opacity(0.14), lineWidth: 1)
-                        )
-                    }
-                    .buttonStyle(.plain)
-                }
-                .padding(.horizontal, 18)
-                .padding(.bottom, 8)
-
                 List {
                     if store.items.isEmpty && !store.isBusy {
                         emptyState
@@ -288,6 +314,18 @@ struct PatchProjectsView: View {
                             offsets.map { filteredItems[$0] }.forEach(store.delete)
                         }
                     }
+
+                    CleanerView(compactMode: true)
+                        .listRowInsets(
+                            EdgeInsets(
+                                top: 10,
+                                leading: 18,
+                                bottom: 10,
+                                trailing: 18
+                            )
+                        )
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
@@ -484,14 +522,13 @@ struct PatchProjectsView: View {
                 )
             )
             .labelsHidden()
-            .tint(.red)
+            .tint(AppTheme.accent)
             .disabled(item.isLocked || store.isBusy)
         }
         .padding(.vertical, 10)
         .listRowInsets(EdgeInsets(top: 0, leading: 18, bottom: 0, trailing: 18))
         .listRowBackground(Color.black.opacity(0.50))
-        .listRowSeparator(.visible)
-        .listRowSeparatorTint(Color.white.opacity(0.11))
+        .listRowSeparator(.hidden)
     }
 
     private var attentionCard: some View {

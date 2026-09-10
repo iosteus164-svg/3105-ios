@@ -76,56 +76,19 @@ struct ContentView: View {
 
     private var compactLayout: some View {
         TabView(selection: tabSelection) {
-            ForEach(featureVisibility.visibleSections) { section in
-                sectionContent(section)
-                    .tabItem {
-                        CompactTabLabel(
-                            title: section.portugueseTitle,
-                            systemImage: section.systemImage
-                        )
-                    }
-                    .tag(section.rawValue)
-            }
+            PatchProjectsView()
+                .tabItem {
+                    CompactTabLabel(
+                        title: "Injetor",
+                        systemImage: "scope"
+                    )
+                }
+                .tag(AppSection.patches.rawValue)
         }
     }
 
     private var regularLayout: some View {
-        NavigationSplitView {
-            List {
-                ForEach(featureVisibility.visibleSections) { section in
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.18)) {
-                            tabNavigation.select(section.rawValue)
-                        }
-                    } label: {
-                        Label(section.portugueseTitle, systemImage: section.systemImage)
-                            .fontWeight(section.rawValue == tabNavigation.selectedTab ? .semibold : .regular)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .listRowBackground(
-                        section.rawValue == tabNavigation.selectedTab
-                            ? AppTheme.accent.opacity(0.14)
-                            : Color.clear
-                    )
-                    .accessibilityAddTraits(
-                        section.rawValue == tabNavigation.selectedTab ? .isSelected : []
-                    )
-                }
-            }
-            .navigationTitle("")
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    AnimatedTitleText(text: "External")
-                }
-            }
-            .navigationSplitViewColumnWidth(min: 210, ideal: 240, max: 300)
-        } detail: {
-            sectionContent(selectedVisibleSection)
-                .id(selectedVisibleSection.rawValue)
-        }
-        .navigationSplitViewStyle(.balanced)
+        PatchProjectsView()
     }
 
     @ViewBuilder

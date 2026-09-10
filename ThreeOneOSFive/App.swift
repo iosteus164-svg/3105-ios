@@ -12,12 +12,27 @@ struct ThreeOneOSFiveApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        configureTabBarAppearance()
         setupLogCapture()
         log("app: 3105 launching — iOS \(AppInfo.osVersion) (\(AppInfo.osBuild)) \(AppInfo.machineName)")
     }
 
     private var language: AppLanguage {
         AppLanguage(rawValue: languageCode) ?? .english
+    }
+
+
+    private func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+        appearance.shadowColor = .clear
+        appearance.shadowImage = UIImage()
+
+        UITabBar.appearance().standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
     }
 
     private func checkForUpdate() {

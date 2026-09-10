@@ -1,6 +1,11 @@
 import SwiftUI
 
 struct CleanerView: View {
+    let compactMode: Bool
+
+    init(compactMode: Bool = false) {
+        self.compactMode = compactMode
+    }
     @Environment(\.appLanguage) private var language
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var records: [CleanerAppRecord] = []
@@ -62,28 +67,84 @@ struct CleanerView: View {
         isScanning || isCleaning
     }
 
+    @ViewBuilder
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                AppSearchField(
-                    text: $searchText,
-                    prompt: language.text("cleaner.search"),
-                    clearLabel: language.text("common.clear")
-                )
-                Divider()
-                cleanerList
-                    .listStyle(.insetGrouped)
+        if compactMode {
+            compactCleaner
+        } else {
+            NavigationStack {
+                VStack(spacing: 0) {
+                    AppSearchField(
+                        text: $searchText,
+                        prompt: language.text("cleaner.search"),
+                        clearLabel: language.text("common.clear")
+                    )
+                    Divider()
+                    cleanerList
+                        .listStyle(.insetGrouped)
+                }
+                .navigationTitle(language.text("cleaner.title"))
+                .navigationBarTitleDisplayMode(.inline)
+                .scrollDismissesKeyboard(.interactively)
+                .toolbar { toolbarContent }
+                .alert(item: $activeAlert, content: alert(for:))
+                .onAppear {
+                    guard !hasLoaded else { return }
+                    hasLoaded = true
+                    reload()
+                }
             }
-            .navigationTitle(language.text("cleaner.title"))
-            .navigationBarTitleDisplayMode(.inline)
-            .scrollDismissesKeyboard(.interactively)
-            .toolbar { toolbarContent }
-            .alert(item: $activeAlert, content: alert(for:))
-            .onAppear {
-                guard !hasLoaded else { return }
-                hasLoaded = true
-                reload()
+        }
+    }
+
+    private var compactCleaner: some View {
+        Button {
+            activeAlert = .confirmation
+        } label: {
+            HStack(spacing: 9) {
+                if isBusy {
+                    ProgressView()
+                        .tint(AppTheme.accent)
+                } else {
+                    Image(systemName: "trash.fill")
+                        .font(.system(size: 15, weight: .bold))
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(isCleaning ? "LIMPANDO..." : (isScanning ? "VERIFICANDO..." : "LIMPAR TUDO"))
+                        .font(.system(size: 14, weight: .black, design: .rounded))
+                    if !isScanning && !records.isEmpty {
+                        Text("Tudo selecionado · \(sizeText(selectedBytes))")
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .opacity(0.62)
+                    }
+                }
+
+                Spacer()
+
+                if !isBusy {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .bold))
+                        .opacity(0.45)
+                }
             }
+            .foregroundStyle(AppTheme.accent)
+            .padding(.horizontal, 14)
+            .frame(maxWidth: .infinity, minHeight: 50)
+            .background(Color.black.opacity(0.58))
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(Color.white.opacity(0.14), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(isBusy || records.isEmpty)
+        .alert(item: $activeAlert, content: alert(for:))
+        .onAppear {
+            guard !hasLoaded else { return }
+            hasLoaded = true
+            reload()
         }
     }
 
@@ -427,7 +488,7 @@ struct CleanerView: View {
                 )
             ]
             records = samples
-            selectedBundleIDs = Set(samples.prefix(2).map(\.id))
+            selectedBundleIDs = Set(samples.map(\.id))
             scannedAppCount = 388
             isScanning = false
             if ProcessInfo.processInfo.arguments.contains("--simulate-cleaner-warning") {
@@ -457,6 +518,7 @@ struct CleanerView: View {
                 DispatchQueue.main.async {
                     guard scanID == requestID else { return }
                     records = snapshot
+                    selectedBundleIDs = Set(snapshot.map(\.id))
                     scannedAppCount = count
                 }
             }
