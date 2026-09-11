@@ -107,7 +107,7 @@ struct CleanerView: View {
                         .tint(.white)
                 } else {
                     Image(systemName: "paintbrush.fill")
-                        .font(.system(size: 21, weight: .black))
+                        .font(.system(size: 13, weight: .black, design: .rounded))
                 }
 
                 Text(isCleaning ? "Limpando..." : (isScanning ? "Verificando..." : "Limpar Lixo"))

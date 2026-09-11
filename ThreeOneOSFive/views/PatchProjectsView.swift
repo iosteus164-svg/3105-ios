@@ -345,16 +345,16 @@ struct PatchProjectsView: View {
                 Spacer()
 
                 Image(systemName: "play.fill")
-                    .font(.system(size: 17, weight: .black))
+                    .font(.system(size: 13, weight: .black))
 
                 Text("Abrir jogo")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
 
                 Spacer()
             }
             .foregroundStyle(.white)
-            .padding(.horizontal, 18)
-            .frame(maxWidth: .infinity, minHeight: 68)
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity, minHeight: 46)
             .background(
                 LinearGradient(
                     colors: [
@@ -366,7 +366,7 @@ struct PatchProjectsView: View {
                     endPoint: .trailing
                 )
             )
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
         }
         .buttonStyle(.plain)
     }
