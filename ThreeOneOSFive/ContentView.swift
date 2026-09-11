@@ -43,11 +43,6 @@ struct ContentView: View {
                     compactLayout
                 }
             }
-
-            GlobalRedParticleBackground()
-                .allowsHitTesting(false)
-                .ignoresSafeArea()
-                .opacity(1.0)
         }
         .tint(AppTheme.accent)
         .imageScale(.small)
@@ -75,16 +70,7 @@ struct ContentView: View {
     }
 
     private var compactLayout: some View {
-        TabView(selection: tabSelection) {
-            PatchProjectsView()
-                .tabItem {
-                    CompactTabLabel(
-                        title: "Injetor",
-                        systemImage: "scope"
-                    )
-                }
-                .tag(AppSection.patches.rawValue)
-        }
+        PatchProjectsView()
     }
 
     private var regularLayout: some View {

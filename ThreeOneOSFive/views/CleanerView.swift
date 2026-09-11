@@ -101,41 +101,43 @@ struct CleanerView: View {
         Button {
             activeAlert = .confirmation
         } label: {
-            HStack(spacing: 9) {
+            HStack(spacing: 13) {
                 if isBusy {
                     ProgressView()
-                        .tint(AppTheme.accent)
+                        .tint(.white)
                 } else {
-                    Image(systemName: "trash.fill")
-                        .font(.system(size: 15, weight: .bold))
+                    Image(systemName: "paintbrush.fill")
+                        .font(.system(size: 21, weight: .black))
                 }
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(isCleaning ? "LIMPANDO..." : (isScanning ? "VERIFICANDO..." : "LIMPAR TUDO"))
-                        .font(.system(size: 14, weight: .black, design: .rounded))
-                    if !isScanning && !records.isEmpty {
-                        Text("Tudo selecionado · \(sizeText(selectedBytes))")
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
-                            .opacity(0.62)
-                    }
-                }
+                Text(isCleaning ? "Limpando..." : (isScanning ? "Verificando..." : "Limpar Tudo"))
+                    .font(.system(size: 20, weight: .black, design: .rounded))
 
                 Spacer()
 
-                if !isBusy {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .bold))
-                        .opacity(0.45)
+                if !isBusy && !records.isEmpty {
+                    Text(sizeText(selectedBytes))
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.46))
                 }
             }
-            .foregroundStyle(AppTheme.accent)
-            .padding(.horizontal, 14)
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .background(Color.black.opacity(0.58))
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 22)
+            .frame(maxWidth: .infinity, minHeight: 78)
+            .background(
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(0.10),
+                        Color.white.opacity(0.035)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(Color.white.opacity(0.14), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.white.opacity(0.22), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)

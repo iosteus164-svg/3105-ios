@@ -8,7 +8,7 @@ enum AppTheme {
         case "white":
             return .white
         default:
-            return Color(red: 0.72, green: 0.00, blue: 0.06)
+            return Color(red: 1.00, green: 0.08, blue: 0.10)
         }
     }
     static let pageBackground = Color(uiColor: .systemBackground)
