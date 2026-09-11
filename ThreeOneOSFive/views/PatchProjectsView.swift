@@ -17,12 +17,9 @@ struct PatchProjectsView: View {
     @State private var showCreate = false
     @State private var showImporter = false
     @State private var searchText = ""
-    @State private var patchCategory = 0
 
     @AppStorage("selectedFreeFireVariant") private var selectedGameRaw = "normal"
     @AppStorage(AppTheme.themeStorageKey) private var selectedThemeRaw = "red"
-
-    private let apostadoMarker = "cache_res.CfnFf59sr1SbsqQ6JqTKsEusjKs"
 
     private enum FreeFireVariant: String {
         case normal
@@ -35,10 +32,7 @@ struct PatchProjectsView: View {
     }
 
     private var categoryItems: [PatchLibraryItem] {
-        let all = store.items.filter { $0.project != nil }
-        return all.filter { item in
-            patchCategory == 1 ? isApostado(item) : !isApostado(item)
-        }
+        store.items.filter { $0.project != nil }
     }
 
     private var filteredItems: [PatchLibraryItem] {
@@ -82,15 +76,12 @@ struct PatchProjectsView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 20) {
                         heroHeader
-                        injectorTitle
                         gameSelector
-                        categorySelector
+                        openGameButton
 
                         if !filteredItems.isEmpty {
                             projectSection
                         }
-
-                        openGameButton
 
                         CleanerView(compactMode: true)
                             .padding(.top, 4)
@@ -169,7 +160,7 @@ struct PatchProjectsView: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 4) {
                     Image(systemName: "crown.fill")
-                        .font(.system(size: 22, weight: .black))
+                        .font(.system(size: 16, weight: .black))
                         .foregroundStyle(AppTheme.accent)
                         .rotationEffect(.degrees(-8))
 
@@ -250,24 +241,6 @@ struct PatchProjectsView: View {
         .frame(minHeight: 180)
     }
 
-    private var injectorTitle: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 0) {
-                Text("Inje")
-                    .foregroundStyle(.white)
-                Text("tor")
-                    .foregroundStyle(AppTheme.accent)
-            }
-            .font(.system(size: 48, weight: .black, design: .rounded))
-
-            Text("DESEMPENHO   |   CONTROLE   |   VANTAGEM")
-                .font(.system(size: 9, weight: .medium, design: .rounded))
-                .tracking(4)
-                .foregroundStyle(.white.opacity(0.48))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
     private var gameSelector: some View {
         VStack(spacing: 14) {
             HStack {
@@ -318,32 +291,6 @@ struct PatchProjectsView: View {
         )
     }
 
-    private var categorySelector: some View {
-        HStack(spacing: 14) {
-            categoryCard(
-                title: "Aimbot",
-                subtitle: "MAIS PRECISÃO\nEM CADA MOVIMENTO",
-                systemImage: "scope",
-                selected: patchCategory == 0
-            ) {
-                withAnimation(.easeInOut(duration: 0.18)) {
-                    patchCategory = 0
-                }
-            }
-
-            categoryCard(
-                title: "Apostado",
-                subtitle: "MAIS DANO\nMAIS RESULTADOS",
-                systemImage: "bolt.fill",
-                selected: patchCategory == 1
-            ) {
-                withAnimation(.easeInOut(duration: 0.18)) {
-                    patchCategory = 1
-                }
-            }
-        }
-    }
-
     private var projectSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("CONFIGURAÇÕES")
@@ -364,10 +311,10 @@ struct PatchProjectsView: View {
             VStack(spacing: 7) {
                 HStack(spacing: 14) {
                     Image(systemName: "play.fill")
-                        .font(.system(size: 25, weight: .black))
+                        .font(.system(size: 18, weight: .black))
 
                     Text("Abrir jogo")
-                        .font(.system(size: 28, weight: .black, design: .rounded))
+                        .font(.system(size: 18, weight: .black, design: .rounded))
 
                     Spacer()
 
@@ -385,8 +332,8 @@ struct PatchProjectsView: View {
                 .opacity(0.72)
             }
             .foregroundStyle(.white)
-            .padding(.horizontal, 24)
-            .frame(maxWidth: .infinity, minHeight: 105)
+            .padding(.horizontal, 18)
+            .frame(maxWidth: .infinity, minHeight: 68)
             .background(
                 LinearGradient(
                     colors: [
@@ -437,114 +384,41 @@ struct PatchProjectsView: View {
     ) -> some View {
         Button(action: action) {
             HStack(spacing: 10) {
-                Image(imageName)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 48, height: 48)
-                    .clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(Color(red: 0.10, green: 0.10, blue: 0.11))
+                        .frame(width: 28, height: 28)
+
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 34, height: 34)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
 
                 Text(title)
-                    .font(.system(size: 14, weight: .black, design: .rounded))
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
                     .foregroundStyle(.white)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.78)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+                    .layoutPriority(1)
 
                 Spacer(minLength: 4)
 
                 Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 17, weight: .black))
-                    .foregroundStyle(selected ? AppTheme.accent : Color.white.opacity(0.42))
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .foregroundStyle(selected ? AppTheme.accent : Color.white.opacity(0.55))
             }
-            .padding(.horizontal, 12)
-            .frame(maxWidth: .infinity, minHeight: 76)
-            .background(
-                LinearGradient(
-                    colors: selected
-                        ? [AppTheme.accent.opacity(0.26), Color.black.opacity(0.80)]
-                        : [Color.white.opacity(0.05), Color.black.opacity(0.70)],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .padding(.horizontal, 8)
+            .frame(maxWidth: .infinity, minHeight: 58)
+            .background(Color.clear)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .stroke(
-                        selected ? AppTheme.accent : Color.white.opacity(0.17),
-                        lineWidth: selected ? 1.6 : 1
+                        selected ? AppTheme.accent.opacity(0.95) : Color.white.opacity(0.18),
+                        lineWidth: selected ? 1.2 : 1
                     )
-            )
-            .shadow(
-                color: selected ? AppTheme.accent.opacity(0.38) : .clear,
-                radius: 12
-            )
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func categoryCard(
-        title: String,
-        subtitle: String,
-        systemImage: String,
-        selected: Bool,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            ZStack {
-                LinearGradient(
-                    colors: [
-                        Color.black.opacity(0.78),
-                        AppTheme.accent.opacity(selected ? 0.22 : 0.07),
-                        Color.black.opacity(0.86)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-
-                VStack(spacing: 12) {
-                    HStack {
-                        Spacer()
-
-                        Capsule()
-                            .fill(selected ? AppTheme.accent : Color.white.opacity(0.15))
-                            .frame(width: 42, height: 22)
-                            .overlay(alignment: selected ? .trailing : .leading) {
-                                Circle()
-                                    .fill(Color.white)
-                                    .frame(width: 18, height: 18)
-                                    .padding(2)
-                            }
-                    }
-
-                    Image(systemName: systemImage)
-                        .font(.system(size: 46, weight: .black))
-                        .foregroundStyle(AppTheme.accent)
-
-                    Text(title)
-                        .font(.system(size: 21, weight: .black, design: .rounded))
-                        .foregroundStyle(.white)
-
-                    Text(subtitle)
-                        .font(.system(size: 8, weight: .medium, design: .rounded))
-                        .tracking(2.5)
-                        .foregroundStyle(.white.opacity(0.54))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(2)
-                }
-                .padding(15)
-            }
-            .frame(maxWidth: .infinity, minHeight: 190)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(
-                        selected ? AppTheme.accent : Color.white.opacity(0.16),
-                        lineWidth: selected ? 1.5 : 1
-                    )
-            )
-            .shadow(
-                color: selected ? AppTheme.accent.opacity(0.34) : .clear,
-                radius: 14
             )
         }
         .buttonStyle(.plain)
@@ -619,25 +493,6 @@ struct PatchProjectsView: View {
             .foregroundStyle(.white.opacity(0.50))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private func isApostado(_ item: PatchLibraryItem) -> Bool {
-        guard let project = item.project else { return false }
-
-        if project.name.localizedCaseInsensitiveContains("apostado") {
-            return true
-        }
-
-        if project.directories.contains(where: {
-            $0.relativePath.localizedCaseInsensitiveContains(apostadoMarker)
-        }) {
-            return true
-        }
-
-        return project.rules.contains(where: {
-            $0.relativePath.localizedCaseInsensitiveContains(apostadoMarker)
-                || $0.replacementFilename.localizedCaseInsensitiveContains(apostadoMarker)
-        })
     }
 
     private func openSelectedFreeFire() {

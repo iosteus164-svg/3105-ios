@@ -110,7 +110,7 @@ struct CleanerView: View {
                         .font(.system(size: 21, weight: .black))
                 }
 
-                Text(isCleaning ? "Limpando..." : (isScanning ? "Verificando..." : "Limpar Tudo"))
+                Text(isCleaning ? "Limpando..." : (isScanning ? "Verificando..." : "Limpar Lixo"))
                     .font(.system(size: 20, weight: .black, design: .rounded))
 
                 Spacer()
