@@ -572,12 +572,7 @@ struct PatchProjectsView: View {
                     }
                     .buttonStyle(.plain)
                 } else {
-                    NavigationLink {
-                        PatchProjectDetailView(store: store, projectID: item.id)
-                    } label: {
-                        projectText(item)
-                    }
-                    .buttonStyle(.plain)
+                    projectText(item)
                 }
             }
 
