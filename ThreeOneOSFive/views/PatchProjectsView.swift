@@ -77,6 +77,7 @@ struct PatchProjectsView: View {
                     VStack(spacing: 20) {
                         heroHeader
                         gameSelector
+                        supportStatusCard
                         openGameButton
 
                         if !filteredItems.isEmpty {
@@ -285,10 +286,6 @@ struct PatchProjectsView: View {
         .padding(16)
         .background(Color.black.opacity(0.56))
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(AppTheme.accent.opacity(0.58), lineWidth: 1)
-        )
     }
 
     private var projectSection: some View {
@@ -304,32 +301,56 @@ struct PatchProjectsView: View {
         }
     }
 
+    private var supportStatusCard: some View {
+        let supported = appState.isSupported
+        let statusColor = supported
+            ? Color(red: 0.18, green: 0.86, blue: 0.40)
+            : Color(red: 1.00, green: 0.12, blue: 0.16)
+
+        return HStack(spacing: 10) {
+            Circle()
+                .fill(statusColor)
+                .frame(width: 9, height: 9)
+                .shadow(color: statusColor.opacity(0.65), radius: 5)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("iOS \(AppInfo.osVersion)")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.65))
+
+                Text(supported ? "VERSÃO SUPORTADA" : "VERSÃO NÃO SUPORTADA")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(statusColor)
+            }
+
+            Spacer()
+
+            Image(systemName: supported ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(statusColor)
+        }
+        .padding(.horizontal, 14)
+        .frame(maxWidth: .infinity, minHeight: 54)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.white.opacity(0.035))
+        )
+    }
+
     private var openGameButton: some View {
         Button {
             openSelectedFreeFire()
         } label: {
-            VStack(spacing: 7) {
-                HStack(spacing: 14) {
-                    Image(systemName: "play.fill")
-                        .font(.system(size: 18, weight: .black))
+            HStack(spacing: 10) {
+                Spacer()
 
-                    Text("Abrir jogo")
-                        .font(.system(size: 18, weight: .black, design: .rounded))
+                Image(systemName: "play.fill")
+                    .font(.system(size: 17, weight: .black))
 
-                    Spacer()
+                Text("Abrir jogo")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
 
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 22, weight: .black))
-                }
-
-                Text(
-                    selectedGame == .normal
-                    ? "CARREGUE  ·  INJETE  ·  JOGUE"
-                    : "FREE FIRE MAX  ·  INJETE  ·  JOGUE"
-                )
-                .font(.system(size: 9, weight: .medium, design: .rounded))
-                .tracking(3.7)
-                .opacity(0.72)
+                Spacer()
             }
             .foregroundStyle(.white)
             .padding(.horizontal, 18)
@@ -346,11 +367,6 @@ struct PatchProjectsView: View {
                 )
             )
             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(AppTheme.accent, lineWidth: 1.5)
-            )
-            .shadow(color: AppTheme.accent.opacity(0.48), radius: 16)
         }
         .buttonStyle(.plain)
     }
@@ -413,13 +429,6 @@ struct PatchProjectsView: View {
             .frame(maxWidth: .infinity, minHeight: 58)
             .background(Color.clear)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(
-                        selected ? AppTheme.accent.opacity(0.95) : Color.white.opacity(0.18),
-                        lineWidth: selected ? 1.2 : 1
-                    )
-            )
         }
         .buttonStyle(.plain)
     }

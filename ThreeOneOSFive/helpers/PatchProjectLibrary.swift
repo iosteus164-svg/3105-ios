@@ -39,6 +39,8 @@ enum PatchProjectLibrary {
     }
 
     static func load(fileManager: FileManager = .default) -> [PatchLibraryItem] {
+        installBundledPackagesIfNeeded(fileManager: fileManager)
+
         guard let root = try? packageRootURL(fileManager: fileManager),
               let urls = try? fileManager.contentsOfDirectory(
                 at: root,
@@ -79,6 +81,83 @@ enum PatchProjectLibrary {
         }
         return byID.values.sorted {
             ($0.project?.updatedAt ?? .distantPast) > ($1.project?.updatedAt ?? .distantPast)
+        }
+    }
+
+    private static func installBundledPackagesIfNeeded(
+        fileManager: FileManager = .default
+    ) {
+        guard let bundledRoot = Bundle.main.resourceURL?.appendingPathComponent(
+            "BundledPatches",
+            isDirectory: true
+        ),
+        let bundledURLs = try? fileManager.contentsOfDirectory(
+            at: bundledRoot,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        ),
+        let destinationRoot = try? packageRootURL(fileManager: fileManager) else {
+            return
+        }
+
+        let existingIDs: Set<UUID> = Set(loadPackageIDs(
+            from: destinationRoot,
+            fileManager: fileManager
+        ))
+
+        var installedIDs = existingIDs
+
+        for sourceURL in bundledURLs where sourceURL.pathExtension.lowercased() == "3105" {
+            guard let data = try? readPackage(at: sourceURL),
+                  let summary = try? PatchPackageCodec.inspect(data),
+                  !installedIDs.contains(summary.packageID) else {
+                continue
+            }
+
+            let destinationURL = destinationRoot.appendingPathComponent(sourceURL.lastPathComponent)
+            do {
+                if fileManager.fileExists(atPath: destinationURL.path) {
+                    let base = sourceURL.deletingPathExtension().lastPathComponent
+                    var suffix = 2
+                    var candidate = destinationRoot
+                        .appendingPathComponent("\(base)-\(suffix)")
+                        .appendingPathExtension("3105")
+                    while fileManager.fileExists(atPath: candidate.path) {
+                        suffix += 1
+                        candidate = destinationRoot
+                            .appendingPathComponent("\(base)-\(suffix)")
+                            .appendingPathExtension("3105")
+                    }
+                    try data.write(to: candidate, options: [.atomic, .completeFileProtection])
+                } else {
+                    try data.write(to: destinationURL, options: [.atomic, .completeFileProtection])
+                }
+                installedIDs.insert(summary.packageID)
+            } catch {
+                log("patch: bundled package install failed for \(sourceURL.lastPathComponent)")
+            }
+        }
+    }
+
+    private static func loadPackageIDs(
+        from root: URL,
+        fileManager: FileManager
+    ) -> [UUID] {
+        guard let urls = try? fileManager.contentsOfDirectory(
+            at: root,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]
+        ) else {
+            return []
+        }
+
+        return urls.compactMap { url in
+            guard url.pathExtension.lowercased() == "3105",
+                  let data = try? readPackage(at: url),
+                  let summary = try? PatchPackageCodec.inspect(data) else {
+                return nil
+            }
+            return summary.packageID
         }
     }
 
