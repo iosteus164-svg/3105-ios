@@ -531,14 +531,18 @@ private struct TeusIOSKeyGateView: View {
     private let validKey = "TEUSIOS"
 
     private var expirationDate: Date {
-        var components = DateComponents()
-        components.year = 2026
-        components.month = 9
-        components.day = 30
-        components.hour = 23
-        components.minute = 59
-        components.second = 59
-        return Calendar.current.date(from: components) ?? .distantPast
+        let defaults = UserDefaults.standard
+        let key = "teusios.key.firstLaunch.10min"
+
+        let startDate: Date
+        if let saved = defaults.object(forKey: key) as? Date {
+            startDate = saved
+        } else {
+            startDate = Date()
+            defaults.set(startDate, forKey: key)
+        }
+
+        return startDate.addingTimeInterval(10 * 60)
     }
 
     var body: some View {
