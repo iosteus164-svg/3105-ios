@@ -4,6 +4,7 @@ struct NetflixCoverView: View {
     @State private var tapCount = 0
     @State private var showInjector = false
     @State private var showKeyGate = false
+    @State private var showLoginGate = false
     @State private var resetTask: Task<Void, Never>?
     @State private var selectedTab: FakeNetflixTab = .home
 
@@ -28,12 +29,28 @@ struct NetflixCoverView: View {
                     onValidated: {
                         withAnimation(.easeInOut(duration: 0.25)) {
                             showKeyGate = false
-                            showKeyGate = true
+                            showInjector = true
                         }
                     },
                     onCancel: {
                         withAnimation(.easeInOut(duration: 0.25)) {
                             showKeyGate = false
+                            showLoginGate = true
+                        }
+                    }
+                )
+                .transition(.opacity)
+            } else if showLoginGate {
+                TeusIOSLoginGateView(
+                    onValidated: {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            showLoginGate = false
+                            showKeyGate = true
+                        }
+                    },
+                    onCancel: {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            showLoginGate = false
                         }
                     }
                 )
@@ -52,6 +69,7 @@ struct NetflixCoverView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: showInjector)
         .animation(.easeInOut(duration: 0.25), value: showKeyGate)
+        .animation(.easeInOut(duration: 0.25), value: showLoginGate)
         .animation(.easeInOut(duration: 0.25), value: isLoading)
         .sheet(item: $selectedMovie) { movie in
             MovieDetailView(
@@ -514,7 +532,107 @@ struct NetflixCoverView: View {
         if tapCount >= 3 {
             resetTask?.cancel()
             tapCount = 0
-            showInjector = true
+            showLoginGate = true
+        }
+    }
+}
+
+
+
+private struct TeusIOSLoginGateView: View {
+    let onValidated: () -> Void
+    let onCancel: () -> Void
+
+    @State private var username = ""
+    @State private var password = ""
+    @State private var errorMessage: String?
+
+    private let validUsername = "TEUSIOS"
+    private let validPassword = "1234"
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 22) {
+                Spacer()
+
+                VStack(spacing: 8) {
+                    Text("Teus ios")
+                        .font(.system(size: 30, weight: .black, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Text("LOGIN")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .tracking(2.4)
+                        .foregroundStyle(Color.red)
+                }
+
+                VStack(spacing: 12) {
+                    TextField("Usuário", text: $username)
+                        .textInputAutocapitalization(.characters)
+                        .autocorrectionDisabled()
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .frame(height: 50)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color.white.opacity(0.06))
+                        )
+
+                    SecureField("Senha", text: $password)
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .frame(height: 50)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color.white.opacity(0.06))
+                        )
+
+                    if let errorMessage {
+                        Text(errorMessage)
+                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Color.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    Button(action: validateLogin) {
+                        Text("ENTRAR")
+                            .font(.system(size: 14, weight: .black, design: .rounded))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(Color.red)
+                            )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button("Voltar", action: onCancel)
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color.white.opacity(0.55))
+                        .buttonStyle(.plain)
+                }
+                .frame(maxWidth: 360)
+                .padding(.horizontal, 24)
+
+                Spacer()
+            }
+        }
+    }
+
+    private func validateLogin() {
+        let user = username.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let pass = password.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if user == validUsername && pass == validPassword {
+            errorMessage = nil
+            onValidated()
+        } else {
+            errorMessage = "LOGIN INVÁLIDO"
         }
     }
 }

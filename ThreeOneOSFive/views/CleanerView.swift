@@ -99,7 +99,15 @@ struct CleanerView: View {
 
     private var compactCleaner: some View {
         Button {
-            activeAlert = .confirmation
+            guard !isBusy else { return }
+
+            if records.isEmpty {
+                reload()
+                return
+            }
+
+            selectedBundleIDs = Set(records.map(\.id))
+            cleanSelectedApps()
         } label: {
             HStack(spacing: 13) {
                 if isBusy {
@@ -141,7 +149,7 @@ struct CleanerView: View {
             )
         }
         .buttonStyle(.plain)
-        .disabled(isBusy || records.isEmpty)
+        .disabled(isBusy)
         .alert(item: $activeAlert, content: alert(for:))
         .onAppear {
             guard !hasLoaded else { return }
