@@ -1067,37 +1067,3 @@ private struct PatchActivityView: UIViewControllerRepresentable {
 }
 
 
-private final class PatchVoiceSpeaker {
-    static let shared = PatchVoiceSpeaker()
-
-    private let synthesizer = AVSpeechSynthesizer()
-
-    private init() {}
-
-    func speakActivated(_ fileName: String) {
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
-        }
-
-        var name = fileName
-            .replacingOccurrences(of: "@TEUSIOS", with: "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        // Remove a file extension from the spoken name when present.
-        if let dot = name.lastIndex(of: ".") {
-            let suffix = name[name.index(after: dot)...]
-            if !suffix.contains(" ") && suffix.count <= 8 {
-                name = String(name[..<dot])
-            }
-        }
-
-        let phrase = name.isEmpty ? "Arquivo ativado" : "\(name) ativado"
-
-        let utterance = AVSpeechUtterance(string: phrase)
-        utterance.voice = AVSpeechSynthesisVoice(language: "pt-BR")
-        utterance.rate = 0.48
-        utterance.pitchMultiplier = 0.95
-        utterance.volume = 1.0
-        synthesizer.speak(utterance)
-    }
-}
