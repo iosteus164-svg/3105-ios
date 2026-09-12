@@ -174,18 +174,23 @@ struct PatchProjectsView: View {
                     .font(.system(size: 36, weight: .black, design: .rounded))
                     .italic()
 
-                    Image("WarKing")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 250, height: 105)
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .stroke(AppTheme.accent.opacity(0.35), lineWidth: 1)
-                        )
-                        .shadow(color: AppTheme.accent.opacity(0.22), radius: 10)
-                        .padding(.top, 5)
-                        .allowsHitTesting(false)
+                    GeometryReader { proxy in
+                        Image("WarKing")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: proxy.size.width, height: proxy.size.height)
+                            .clipped()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 190)
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(AppTheme.accent.opacity(0.35), lineWidth: 1)
+                    )
+                    .shadow(color: AppTheme.accent.opacity(0.22), radius: 10)
+                    .padding(.top, 5)
+                    .allowsHitTesting(false)
 
                     Text("MAIS QUE UM INJETOR,\nUM DIFERENCIAL")
                         .font(.system(size: 9, weight: .semibold, design: .rounded))
@@ -499,15 +504,9 @@ struct PatchProjectsView: View {
 
         switch selectedGame {
         case .normal:
-            candidates = [
-                "freefire://",
-                "garena-freefire://"
-            ]
+            candidates = ["freefire://", "garena-freefire://"]
         case .max:
-            candidates = [
-                "freefiremax://",
-                "garena-freefiremax://"
-            ]
+            candidates = ["freefiremax://", "garena-freefiremax://"]
         }
 
         openFirstAvailableGameURL(candidates, index: 0)
