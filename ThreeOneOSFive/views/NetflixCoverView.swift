@@ -34,7 +34,6 @@ struct NetflixCoverView: View {
                     onCancel: {
                         withAnimation(.easeInOut(duration: 0.25)) {
                             showKeyGate = false
-                            showKeyGate = true
                         }
                     }
                 )
@@ -522,6 +521,7 @@ struct NetflixCoverView: View {
 
 
 
+
 private struct TeusIOSKeyGateView: View {
     let onValidated: () -> Void
     let onCancel: () -> Void
@@ -530,15 +530,17 @@ private struct TeusIOSKeyGateView: View {
     @State private var errorMessage: String?
     @FocusState private var keyFocused: Bool
 
-    private let validKey = "TEUSIOS10"
+    private let validKey = "SMTO6DLCDZ9ARH3S"
 
-    private let activationDateKey = "teusios.key.activation.TEUSIOS10"
-
-    private var expirationDate: Date? {
-        guard let activationDate = UserDefaults.standard.object(forKey: activationDateKey) as? Date else {
-            return nil
-        }
-        return activationDate.addingTimeInterval(10 * 60)
+    private var expirationDate: Date {
+        var components = DateComponents()
+        components.year = 2026
+        components.month = 10
+        components.day = 20
+        components.hour = 23
+        components.minute = 59
+        components.second = 59
+        return Calendar.current.date(from: components) ?? .distantPast
     }
 
     var body: some View {
@@ -557,6 +559,13 @@ private struct TeusIOSKeyGateView: View {
                         .font(.system(size: 11, weight: .bold, design: .rounded))
                         .tracking(2.4)
                         .foregroundStyle(Color.red)
+
+                    VStack(spacing: 4) {
+                        Text("Validade: 20/10/2026")
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.80))
+                    }
+                    .padding(.top, 4)
                 }
 
                 VStack(spacing: 12) {
@@ -619,16 +628,9 @@ private struct TeusIOSKeyGateView: View {
             .uppercased()
 
         if normalized == validKey {
-            let defaults = UserDefaults.standard
-
-            if let expirationDate {
-                guard Date() <= expirationDate else {
-                    errorMessage = "KEY EXPIRADA"
-                    return
-                }
-            } else {
-                // Os 10 minutos começam somente na primeira validação bem-sucedida.
-                defaults.set(Date(), forKey: activationDateKey)
+            guard Date() <= expirationDate else {
+                errorMessage = "KEY EXPIRADA"
+                return
             }
 
             errorMessage = nil
