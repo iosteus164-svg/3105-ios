@@ -526,8 +526,16 @@ private struct TeusIOSKeyGateView: View {
     let onValidated: () -> Void
     let onCancel: () -> Void
 
+    private enum Phase {
+        case entry
+        case loading
+        case approved
+    }
+
     @State private var keyText = ""
     @State private var errorMessage: String?
+    @State private var phase: Phase = .entry
+    @State private var loadingProgress: CGFloat = 0
     @FocusState private var keyFocused: Bool
 
     private let validKey = "SMTO6DLCDZ9ARH3S"
@@ -545,31 +553,91 @@ private struct TeusIOSKeyGateView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            LinearGradient(
+                colors: [
+                    Color.black,
+                    Color(red: 0.055, green: 0.005, blue: 0.085),
+                    Color.black
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
-            VStack(spacing: 22) {
-                Spacer()
+            Image("WarKing")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+                .opacity(0.18)
+                .blur(radius: 2)
 
-                VStack(spacing: 8) {
-                    Text("Teus ios")
-                        .font(.system(size: 30, weight: .black, design: .rounded))
-                        .foregroundStyle(.white)
+            LinearGradient(
+                colors: [
+                    Color.black.opacity(0.28),
+                    Color.black.opacity(0.62),
+                    Color.black.opacity(0.82)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
 
-                    Text("VALIDAÇÃO DE KEY")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .tracking(2.4)
-                        .foregroundStyle(Color.red)
+            switch phase {
+            case .entry:
+                entryView
+                    .transition(.opacity)
 
-                    VStack(spacing: 4) {
-                        Text("Validade: 20/10/2026")
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.80))
-                    }
-                    .padding(.top, 4)
-                }
+            case .loading:
+                loadingView
+                    .transition(.opacity)
 
-                VStack(spacing: 12) {
-                    SecureField("Digite sua key", text: $keyText)
+            case .approved:
+                approvedView
+                    .transition(.scale(scale: 0.96).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.28), value: phase)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.30) {
+                keyFocused = true
+            }
+        }
+    }
+
+    private var brand: some View {
+        VStack(spacing: 5) {
+            HStack(spacing: 7) {
+                Text("TEUS")
+                    .foregroundStyle(.white)
+                Text("IOS")
+                    .foregroundStyle(Color(red: 0.72, green: 0.16, blue: 1.00))
+            }
+            .font(.system(size: 31, weight: .black, design: .rounded))
+
+            Text("INJETOR PREMIUM")
+                .font(.system(size: 10, weight: .bold, design: .rounded))
+                .tracking(5.5)
+                .foregroundStyle(.white.opacity(0.72))
+        }
+    }
+
+    private var entryView: some View {
+        VStack(spacing: 25) {
+            Spacer()
+
+            brand
+
+            Image(systemName: "key.fill")
+                .font(.system(size: 42, weight: .semibold))
+                .foregroundStyle(Color(red: 0.72, green: 0.16, blue: 1.00))
+                .shadow(color: Color.purple.opacity(0.75), radius: 15)
+
+            VStack(spacing: 12) {
+                HStack(spacing: 11) {
+                    Image(systemName: "key")
+                        .foregroundStyle(Color(red: 0.72, green: 0.16, blue: 1.00))
+
+                    SecureField("Insira sua key", text: $keyText)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
                         .focused($keyFocused)
@@ -577,48 +645,234 @@ private struct TeusIOSKeyGateView: View {
                         .onSubmit(validateKey)
                         .font(.system(size: 15, weight: .semibold, design: .rounded))
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 14)
+                }
+                .padding(.horizontal, 15)
+                .frame(height: 54)
+                .background(
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .fill(Color.black.opacity(0.58))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                .stroke(Color.purple.opacity(0.60), lineWidth: 1)
+                        )
+                )
+
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(red: 0.95, green: 0.25, blue: 0.42))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                Button(action: validateKey) {
+                    Text("ENTRAR")
+                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .tracking(1.5)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .background(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.66, green: 0.05, blue: 0.95),
+                                    Color(red: 0.40, green: 0.02, blue: 0.75)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            in: RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        )
+                        .shadow(color: Color.purple.opacity(0.30), radius: 12, y: 4)
+                }
+                .buttonStyle(.plain)
+
+                Button("Voltar", action: onCancel)
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.48))
+                    .buttonStyle(.plain)
+            }
+            .frame(maxWidth: 365)
+            .padding(.horizontal, 24)
+
+            Spacer()
+
+            footer
+        }
+        .padding(.bottom, 28)
+    }
+
+    private var loadingView: some View {
+        VStack(spacing: 28) {
+            Spacer()
+
+            brand
+
+            Text("CARREGANDO...")
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .tracking(4)
+                .foregroundStyle(.white)
+
+            VStack(spacing: 12) {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.white.opacity(0.10))
+
+                        Capsule()
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color(red: 0.54, green: 0.06, blue: 0.92),
+                                        Color(red: 0.80, green: 0.20, blue: 1.00)
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: geo.size.width * loadingProgress)
+                            .shadow(color: Color.purple.opacity(0.60), radius: 7)
+                    }
+                }
+                .frame(height: 8)
+
+                HStack {
+                    Text("AGUARDE UM INSTANTE")
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .tracking(3)
+                        .foregroundStyle(.white.opacity(0.48))
+
+                    Spacer()
+
+                    Text(loadingProgress < 1 ? "72%" : "100%")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.84))
+                }
+            }
+            .frame(maxWidth: 365)
+            .padding(.horizontal, 24)
+
+            Spacer()
+
+            footer
+        }
+        .padding(.bottom, 28)
+    }
+
+    private var approvedView: some View {
+        VStack(spacing: 26) {
+            Spacer()
+
+            brand
+
+            VStack(spacing: 18) {
+                ZStack {
+                    Circle()
+                        .stroke(Color.purple.opacity(0.70), lineWidth: 3)
+                        .frame(width: 66, height: 66)
+                        .shadow(color: Color.purple.opacity(0.55), radius: 12)
+
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 29, weight: .black))
+                        .foregroundStyle(Color(red: 0.74, green: 0.20, blue: 1.00))
+                }
+
+                VStack(spacing: 6) {
+                    Text("APROVADO")
+                        .font(.system(size: 22, weight: .black, design: .rounded))
+                        .foregroundStyle(Color(red: 0.76, green: 0.22, blue: 1.00))
+
+                    Text("INJETOR LIBERADO COM SUCESSO")
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .tracking(2.4)
+                        .foregroundStyle(.white.opacity(0.60))
+                }
+
+                HStack(spacing: 12) {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 23, weight: .semibold))
+                        .foregroundStyle(Color(red: 0.76, green: 0.22, blue: 1.00))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("EXPIRA EM")
+                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .tracking(2)
+                            .foregroundStyle(.white.opacity(0.52))
+
+                        Text("20/10/2026")
+                            .font(.system(size: 20, weight: .black, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .frame(height: 74)
+                .background(
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .fill(Color.white.opacity(0.045))
+                )
+
+                Button {
+                    onValidated()
+                } label: {
+                    Text("CONTINUAR")
+                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .tracking(1.2)
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
                         .frame(height: 50)
                         .background(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(Color.white.opacity(0.06))
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.66, green: 0.05, blue: 0.95),
+                                    Color(red: 0.42, green: 0.03, blue: 0.78)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            in: RoundedRectangle(cornerRadius: 13, style: .continuous)
                         )
-
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.system(size: 11, weight: .semibold, design: .rounded))
-                            .foregroundStyle(Color.red)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-
-                    Button(action: validateKey) {
-                        Text("VALIDAR KEY")
-                            .font(.system(size: 14, weight: .black, design: .rounded))
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 48)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(Color.red)
-                            )
-                    }
-                    .buttonStyle(.plain)
-
-                    Button("Voltar", action: onCancel)
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Color.white.opacity(0.55))
-                        .buttonStyle(.plain)
                 }
-                .frame(maxWidth: 360)
-                .padding(.horizontal, 24)
+                .buttonStyle(.plain)
+            }
+            .padding(22)
+            .frame(maxWidth: 385)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Color.black.opacity(0.68))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .stroke(Color.purple.opacity(0.58), lineWidth: 1)
+                    )
+            )
+            .padding(.horizontal, 20)
 
-                Spacer()
-            }
+            Spacer()
+
+            footer
         }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                keyFocused = true
-            }
+        .padding(.bottom, 28)
+    }
+
+    private var footer: some View {
+        HStack(spacing: 12) {
+            Rectangle()
+                .fill(Color.purple.opacity(0.80))
+                .frame(width: 72, height: 1)
+
+            Text("TEUS")
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .tracking(4)
+                .foregroundStyle(.white.opacity(0.70))
+
+            Text("IOS")
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .tracking(4)
+                .foregroundStyle(Color.purple.opacity(0.90))
+
+            Rectangle()
+                .fill(Color.purple.opacity(0.80))
+                .frame(width: 72, height: 1)
         }
     }
 
@@ -627,21 +881,41 @@ private struct TeusIOSKeyGateView: View {
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .uppercased()
 
-        if normalized == validKey {
-            guard Date() <= expirationDate else {
-                errorMessage = "KEY EXPIRADA"
-                return
-            }
-
-            errorMessage = nil
-            keyFocused = false
-            onValidated()
-        } else {
+        guard normalized == validKey else {
             errorMessage = "KEY INVÁLIDA"
+            return
+        }
+
+        guard Date() <= expirationDate else {
+            errorMessage = "KEY EXPIRADA"
+            return
+        }
+
+        errorMessage = nil
+        keyFocused = false
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            phase = .loading
+        }
+
+        loadingProgress = 0.08
+
+        withAnimation(.linear(duration: 1.55)) {
+            loadingProgress = 1
+        }
+
+        Task {
+            try? await Task.sleep(for: .seconds(1.7))
+            guard !Task.isCancelled else { return }
+
+            await MainActor.run {
+                withAnimation(.easeInOut(duration: 0.30)) {
+                    phase = .approved
+                }
+            }
         }
     }
 }
-
 
 private struct NetflixLoadingView: View {
     let onFinished: () -> Void

@@ -4,11 +4,13 @@ enum AppTheme {
     static let themeStorageKey = "ui.selectedTheme"
 
     static var accent: Color {
-        switch UserDefaults.standard.string(forKey: themeStorageKey) ?? "red" {
+        switch UserDefaults.standard.string(forKey: themeStorageKey) ?? "purple" {
         case "white":
             return .white
+        case "purple":
+            return Color(red: 0.64, green: 0.12, blue: 0.96)
         default:
-            return Color(red: 1.00, green: 0.08, blue: 0.10)
+            return Color(red: 0.64, green: 0.12, blue: 0.96)
         }
     }
     static let pageBackground = Color(uiColor: .systemBackground)

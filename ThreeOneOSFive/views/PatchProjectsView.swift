@@ -19,7 +19,7 @@ struct PatchProjectsView: View {
     @State private var searchText = ""
 
     @AppStorage("selectedFreeFireVariant") private var selectedGameRaw = "normal"
-    @AppStorage(AppTheme.themeStorageKey) private var selectedThemeRaw = "red"
+    @AppStorage(AppTheme.themeStorageKey) private var selectedThemeRaw = "purple"
 
     private enum FreeFireVariant: String {
         case normal
@@ -174,6 +174,19 @@ struct PatchProjectsView: View {
                     .font(.system(size: 36, weight: .black, design: .rounded))
                     .italic()
 
+                    Image("WarKing")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 250, height: 105)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(AppTheme.accent.opacity(0.35), lineWidth: 1)
+                        )
+                        .shadow(color: AppTheme.accent.opacity(0.22), radius: 10)
+                        .padding(.top, 5)
+                        .allowsHitTesting(false)
+
                     Text("MAIS QUE UM INJETOR,\nUM DIFERENCIAL")
                         .font(.system(size: 9, weight: .semibold, design: .rounded))
                         .tracking(4)
@@ -185,30 +198,13 @@ struct PatchProjectsView: View {
             }
 
             HStack(alignment: .top, spacing: 10) {
-                if UIImage(named: "WarKing") != nil {
-                    Image("WarKing")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 150, height: 178)
-                        .clipped()
-                        .opacity(0.88)
-                        .mask(
-                            LinearGradient(
-                                colors: [.clear, .black, .black, .clear],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .allowsHitTesting(false)
-                }
-
                 Menu {
                     Button {
-                        selectedThemeRaw = "red"
+                        selectedThemeRaw = "purple"
                     } label: {
                         Label(
-                            "Vermelho",
-                            systemImage: selectedThemeRaw == "red"
+                            "Roxo",
+                            systemImage: selectedThemeRaw == "purple"
                                 ? "checkmark.circle.fill"
                                 : "circle"
                         )
@@ -226,15 +222,9 @@ struct PatchProjectsView: View {
                     }
                 } label: {
                     Image(systemName: "gearshape.fill")
-                        .font(.system(size: 19, weight: .black))
+                        .font(.system(size: 23, weight: .bold))
                         .foregroundStyle(.white)
-                        .frame(width: 46, height: 46)
-                        .background(Color.black.opacity(0.62))
-                        .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 13, style: .continuous)
-                                .stroke(AppTheme.accent.opacity(0.75), lineWidth: 1)
-                        )
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
