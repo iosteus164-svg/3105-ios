@@ -15,6 +15,7 @@ private enum WallpaperPackagePickerPolicy {
 
 struct PatchProjectsView: View {
     @Environment(\.appLanguage) private var language
+    @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var draftCoordinator: PatchDraftCoordinator
     @EnvironmentObject private var store: PatchProjectStore
     @AppStorage(FeatureVisibility.cleanerStorageKey) private var cleanerEnabled = true
@@ -31,6 +32,50 @@ struct PatchProjectsView: View {
     @State private var simulatedWallpaperDetailGate = OneShotPresentationGate()
     let onOpenSettings: () -> Void
     let onOpenLogs: () -> Void
+
+    private var injectorHeader: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(AppTheme.accent.opacity(0.14))
+                Image(systemName: "scope")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundStyle(AppTheme.accent)
+            }
+            .frame(width: 52, height: 52)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("INJETOR")
+                    .font(.system(size: 22, weight: .black, design: .rounded))
+                    .foregroundStyle(.white)
+                Text("iOS \(AppInfo.osVersion) • Build \(AppInfo.osBuild)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+
+            Spacer(minLength: 8)
+
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(appState.isSupported ? Color.green : Color.red)
+                    .frame(width: 7, height: 7)
+                Text(appState.isSupported ? "SUPORTADO" : "NÃO SUPORTADO")
+                    .font(.caption2.bold())
+                    .foregroundStyle(appState.isSupported ? Color.green : Color.red)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 7)
+            .background(
+                (appState.isSupported ? Color.green : Color.red).opacity(0.10),
+                in: Capsule()
+            )
+        }
+        .padding(.horizontal, AppTheme.pageInset)
+        .padding(.top, 12)
+        .padding(.bottom, 8)
+        .background(Color.black)
+    }
 
     private var filteredItems: [PatchLibraryItem] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -67,11 +112,11 @@ struct PatchProjectsView: View {
     }
 
     private var hasLocalContent: Bool {
-        !store.items.isEmpty || !wallpaperPackages.isEmpty
+        !store.items.isEmpty
     }
 
     private var hasSearchResults: Bool {
-        !filteredItems.isEmpty || !filteredWallpaperPackages.isEmpty
+        !filteredItems.isEmpty
     }
 
     init(
@@ -90,6 +135,7 @@ struct PatchProjectsView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                injectorHeader
                 AppSearchField(
                     text: $searchText,
                     prompt: language.text("installed.search"),
@@ -108,7 +154,7 @@ struct PatchProjectsView: View {
                             .listRowSeparator(.hidden)
                     } else {
                         if !filteredItems.isEmpty {
-                            Section(language.text("patch.title")) {
+                            Section("HS") {
                                 ForEach(filteredItems) { item in
                                     itemRow(item)
                                 }
@@ -117,74 +163,25 @@ struct PatchProjectsView: View {
                                 }
                             }
                         }
-                        if !filteredWallpaperPackages.isEmpty {
-                            Section(language.text("tab.wallpapers")) {
-                                ForEach(filteredWallpaperPackages) { package in
-                                    NavigationLink {
-                                        InstalledWallpaperPackageDetailView(
-                                            package: package,
-                                            onApplied: reloadWallpaperPackages
-                                        )
-                                    } label: {
-                                        wallpaperRow(package)
-                                    }
-                                    .swipeActions(
-                                        edge: .trailing,
-                                        allowsFullSwipe: false
-                                    ) {
-                                        Button(role: .destructive) {
-                                            wallpaperPendingDeletion = package
-                                        } label: {
-                                            Label(
-                                                language.text("common.delete"),
-                                                systemImage: "trash"
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if cleanerEnabled {
-                        Section(language.text("repository.utilities")) {
-                            cleanerRow
-                        }
                     }
                 }
                 .listStyle(.insetGrouped)
             }
-            .navigationTitle(language.text("tab.installed"))
+            .navigationTitle("INJETOR")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button {
-                            showCreate = true
-                        } label: {
-                            Label(language.text("patch.new"), systemImage: "doc.badge.plus")
-                        }
-                        Button {
-                            showImporter = true
-                        } label: {
-                            Label(language.text("patch.import"), systemImage: "square.and.arrow.down")
-                        }
-                        Button {
-                            showWallpaperImporter = true
-                        } label: {
-                            Label(
-                                language.text("wallpaper.import"),
-                                systemImage: "photo.badge.plus"
-                            )
-                        }
+                    Button {
+                        showImporter = true
                     } label: {
-                        if store.isBusy || isImportingWallpapers {
+                        if store.isBusy {
                             ProgressView()
                         } else {
-                            Image(systemName: "plus")
+                            Image(systemName: "square.and.arrow.down")
                         }
                     }
-                    .disabled(store.isBusy || isImportingWallpapers)
-                    .accessibilityLabel(language.text("patch.add"))
+                    .disabled(store.isBusy)
+                    .accessibilityLabel("Importar")
                 }
                 AppUtilityToolbar(
                     language: language,
@@ -445,8 +442,9 @@ struct PatchProjectsView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-            Button(language.text("patch.new")) { showCreate = true }
-                .buttonStyle(.bordered)
+            Button("IMPORTAR") { showImporter = true }
+                .buttonStyle(.borderedProminent)
+                .tint(AppTheme.accent)
                 .controlSize(.large)
         }
         .frame(maxWidth: .infinity)

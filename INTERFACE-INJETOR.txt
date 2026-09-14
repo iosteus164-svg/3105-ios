@@ -1,0 +1,10 @@
+Reconstrucao visual do injetor
+
+- Removidas as abas Home / New / Sources / Files / Search da interface principal.
+- Tela unica com titulo INJETOR.
+- Status SUPORTADO / NAO SUPORTADO com versao e build do iOS.
+- Secao visual de pacotes renomeada para HS.
+- Botao principal de importacao de .3105.
+- Cleaner e Wallpapers removidos apenas da interface.
+- 3 toques continuam retornando para a tela Netflix.
+- Nenhum arquivo de helpers/, exploit/, kexploit/ ou codec .3105 foi alterado.
