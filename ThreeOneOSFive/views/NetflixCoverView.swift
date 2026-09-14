@@ -528,14 +528,12 @@ private struct TeusIOSKeyGateView: View {
 
     private enum Phase {
         case entry
-        case loading
         case approved
     }
 
     @State private var keyText = ""
     @State private var errorMessage: String?
     @State private var phase: Phase = .entry
-    @State private var loadingProgress: CGFloat = 0
     @FocusState private var keyFocused: Bool
 
     private let validKey = "BMNA4XQ3MYHNL2TG"
@@ -585,10 +583,6 @@ private struct TeusIOSKeyGateView: View {
             switch phase {
             case .entry:
                 entryView
-                    .transition(.opacity)
-
-            case .loading:
-                loadingView
                     .transition(.opacity)
 
             case .approved:
@@ -690,63 +684,6 @@ private struct TeusIOSKeyGateView: View {
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white.opacity(0.48))
                     .buttonStyle(.plain)
-            }
-            .frame(maxWidth: 365)
-            .padding(.horizontal, 24)
-
-            Spacer()
-
-            footer
-        }
-        .padding(.bottom, 28)
-    }
-
-    private var loadingView: some View {
-        VStack(spacing: 28) {
-            Spacer()
-
-            brand
-
-            Text("CARREGANDO...")
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .tracking(4)
-                .foregroundStyle(.white)
-
-            VStack(spacing: 12) {
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Capsule()
-                            .fill(Color.white.opacity(0.10))
-
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 0.54, green: 0.06, blue: 0.92),
-                                        Color(red: 0.80, green: 0.20, blue: 1.00)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(width: geo.size.width * loadingProgress)
-                            .shadow(color: Color.purple.opacity(0.60), radius: 7)
-                    }
-                }
-                .frame(height: 8)
-
-                HStack {
-                    Text("AGUARDE UM INSTANTE")
-                        .font(.system(size: 9, weight: .bold, design: .rounded))
-                        .tracking(3)
-                        .foregroundStyle(.white.opacity(0.48))
-
-                    Spacer()
-
-                    Text(loadingProgress < 1 ? "72%" : "100%")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.84))
-                }
             }
             .frame(maxWidth: 365)
             .padding(.horizontal, 24)
@@ -894,25 +831,8 @@ private struct TeusIOSKeyGateView: View {
         errorMessage = nil
         keyFocused = false
 
-        withAnimation(.easeInOut(duration: 0.25)) {
-            phase = .loading
-        }
-
-        loadingProgress = 0.08
-
-        withAnimation(.linear(duration: 1.55)) {
-            loadingProgress = 1
-        }
-
-        Task {
-            try? await Task.sleep(for: .seconds(1.7))
-            guard !Task.isCancelled else { return }
-
-            await MainActor.run {
-                withAnimation(.easeInOut(duration: 0.30)) {
-                    phase = .approved
-                }
-            }
+        withAnimation(.easeInOut(duration: 0.30)) {
+            phase = .approved
         }
     }
 }

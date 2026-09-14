@@ -157,34 +157,20 @@ struct PatchProjectsView: View {
                         gameSelector
                         supportStatusCard
                         openGameButton
-                        importButton
-
-                        AppSearchField(
-                            text: $searchText,
-                            prompt: language.text("installed.search"),
-                            clearLabel: language.text("common.clear")
-                        )
-                        .padding(.top, 2)
 
                         if !hasLocalContent && (store.isBusy || isImportingWallpapers) {
                             loadingState
-                        } else if !hasLocalContent {
-                            emptyState
-                        } else if !hasSearchResults && !store.isBusy {
+                        } else if hasLocalContent && !hasSearchResults && !store.isBusy {
                             searchEmptyState
                         } else if !filteredItems.isEmpty {
                             VStack(alignment: .leading, spacing: 10) {
-                                Text("HS")
-                                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                                    .tracking(3.4)
-                                    .foregroundStyle(.white.opacity(0.52))
-
                                 ForEach(filteredItems) { item in
                                     itemRow(item)
                                 }
                             }
                         }
 
+                        cleanerRow
                         footer
                     }
                     .padding(.horizontal, 18)
@@ -319,8 +305,6 @@ struct PatchProjectsView: View {
                 }
                 Divider()
                 Button { showImporter = true } label: { Label("Importar", systemImage: "square.and.arrow.down") }
-                Button(action: onOpenSettings) { Label("Ajustes", systemImage: "gearshape") }
-                Button(action: onOpenLogs) { Label("Logs", systemImage: "doc.text.magnifyingglass") }
             } label: {
                 Image(systemName: "gearshape.fill")
                     .font(.system(size: 23, weight: .bold))
@@ -516,23 +500,23 @@ struct PatchProjectsView: View {
         Button {
             showCleaner = true
         } label: {
-            HStack(spacing: 12) {
-                AppRowIcon(systemName: "sparkles")
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(language.text("tab.cleaner"))
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(.primary)
-                    Text(language.text("repository.cleaner_subtitle"))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+            HStack(spacing: 10) {
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.tertiary)
-                    .accessibilityHidden(true)
+                Image(systemName: "trash.fill")
+                    .font(.system(size: 13, weight: .bold))
+                Text("LIMPAR LIXO")
+                    .font(.system(size: 12, weight: .black, design: .rounded))
+                    .tracking(1.2)
+                Spacer()
             }
-            .contentShape(Rectangle())
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity, minHeight: 46)
+            .background(Color.black.opacity(0.62))
+            .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 13, style: .continuous)
+                    .stroke(AppTheme.accent.opacity(0.55), lineWidth: 1)
+            )
         }
         .buttonStyle(.plain)
     }
@@ -605,38 +589,13 @@ struct PatchProjectsView: View {
 
     @ViewBuilder
     private func itemRow(_ item: PatchLibraryItem) -> some View {
-        if item.isLocked {
-            Button { store.requestUnlock(for: item) } label: {
-                PatchProjectRow(item: item, language: language)
-            }
-            .buttonStyle(.plain)
-        } else {
-            NavigationLink {
-                PatchProjectDetailView(store: store, projectID: item.id)
-            } label: {
-                PatchProjectRow(item: item, language: language)
-            }
-        }
-    }
+        VStack(spacing: 10) {
+            PatchProjectRow(item: item, language: language)
 
-    private var emptyState: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "shippingbox")
-                .font(.system(size: AppTheme.emptyIconSize, weight: .light))
-                .foregroundStyle(AppTheme.accent)
-            Text(language.text("installed.empty_title"))
-                .font(.headline)
-            Text(language.text("installed.empty_message"))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-            Button("IMPORTAR") { showImporter = true }
-                .buttonStyle(.borderedProminent)
-                .tint(AppTheme.accent)
-                .controlSize(.large)
+            if !item.isLocked, let project = item.project {
+                InlinePatchControls(project: project)
+            }
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 64)
     }
 
     private var loadingState: some View {
@@ -755,6 +714,147 @@ private struct PatchProjectRow: View {
                 : "patch.rules_count",
             Int64((item.project?.rules.count ?? 0) + (item.project?.directories.count ?? 0))
         )
+    }
+}
+
+private struct InlinePatchControls: View {
+    let project: PatchProject
+
+    @State private var receipt: PatchTransactionReceipt?
+    @State private var isWorking = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    @State private var showAlert = false
+    @State private var showChangedConfirmation = false
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Button { activate() } label: {
+                HStack(spacing: 7) {
+                    if isWorking && receipt == nil { ProgressView().controlSize(.small) }
+                    Image(systemName: "bolt.fill")
+                    Text("ATIVAR")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 42)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(AppTheme.accent)
+            .disabled(isWorking || receipt != nil)
+
+            Button(role: .destructive) { prepareDeactivate() } label: {
+                HStack(spacing: 7) {
+                    Image(systemName: "power")
+                    Text("DESATIVAR")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 42)
+            }
+            .buttonStyle(.bordered)
+            .disabled(isWorking || receipt == nil)
+        }
+        .padding(.horizontal, 2)
+        .onAppear { refreshReceipt() }
+        .alert(alertTitle, isPresented: $showAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(alertMessage)
+        }
+        .alert("Arquivos alterados", isPresented: $showChangedConfirmation) {
+            Button("CANCELAR", role: .cancel) {}
+            Button("DESATIVAR MESMO", role: .destructive) { deactivate(allowChangedTargets: true) }
+        } message: {
+            Text("Alguns arquivos mudaram depois da ativação. Deseja restaurar os arquivos originais mesmo assim?")
+        }
+    }
+
+    private func refreshReceipt() {
+        receipt = DevicePatchService.latestReceipt(projectID: project.id)
+    }
+
+    private func activate() {
+        guard receipt == nil else { return }
+        isWorking = true
+        Task.detached(priority: .userInitiated) {
+            do {
+                let newReceipt = try DevicePatchService.apply(project: project)
+                await MainActor.run {
+                    receipt = newReceipt
+                    isWorking = false
+                    alertTitle = "Ativado"
+                    alertMessage = "O arquivo foi ativado com sucesso."
+                    showAlert = true
+                }
+            } catch {
+                await MainActor.run {
+                    isWorking = false
+                    refreshReceipt()
+                    alertTitle = "Falha"
+                    alertMessage = "Não foi possível ativar o arquivo."
+                    showAlert = true
+                }
+            }
+        }
+    }
+
+    private func prepareDeactivate() {
+        guard let currentReceipt = receipt else { return }
+        isWorking = true
+        Task.detached(priority: .userInitiated) {
+            do {
+                let inspection = try DevicePatchService.inspectRestore(receipt: currentReceipt)
+                if inspection.changedTargets.isEmpty {
+                    try DevicePatchService.restore(receipt: currentReceipt)
+                    await MainActor.run {
+                        receipt = nil
+                        isWorking = false
+                        alertTitle = "Desativado"
+                        alertMessage = "Os arquivos originais foram restaurados."
+                        showAlert = true
+                    }
+                } else {
+                    await MainActor.run {
+                        isWorking = false
+                        showChangedConfirmation = true
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    isWorking = false
+                    refreshReceipt()
+                    alertTitle = "Falha"
+                    alertMessage = "Não foi possível desativar o arquivo."
+                    showAlert = true
+                }
+            }
+        }
+    }
+
+    private func deactivate(allowChangedTargets: Bool) {
+        guard let currentReceipt = receipt else { return }
+        isWorking = true
+        Task.detached(priority: .userInitiated) {
+            do {
+                try DevicePatchService.restore(receipt: currentReceipt, allowChangedTargets: allowChangedTargets)
+                await MainActor.run {
+                    receipt = nil
+                    isWorking = false
+                    alertTitle = "Desativado"
+                    alertMessage = "Os arquivos originais foram restaurados."
+                    showAlert = true
+                }
+            } catch {
+                await MainActor.run {
+                    isWorking = false
+                    refreshReceipt()
+                    alertTitle = "Falha"
+                    alertMessage = "Não foi possível desativar o arquivo."
+                    showAlert = true
+                }
+            }
+        }
     }
 }
 
