@@ -174,29 +174,14 @@ struct PatchProjectsView: View {
                     .font(.system(size: 36, weight: .black, design: .rounded))
                     .italic()
 
-                    GeometryReader { proxy in
-                        Image("WarKing")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: proxy.size.width, height: proxy.size.height)
-                            .clipped()
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 190)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .stroke(AppTheme.accent.opacity(0.35), lineWidth: 1)
-                    )
-                    .shadow(color: AppTheme.accent.opacity(0.22), radius: 10)
-                    .padding(.top, 5)
-                    .allowsHitTesting(false)
+                    Text("O MELHOR EXTERNAL FEITO PARA IOS")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.78))
+                        .tracking(1.0)
+                        .padding(.top, 2)
 
-                    Text("MAIS QUE UM INJETOR,\nUM DIFERENCIAL")
-                        .font(.system(size: 9, weight: .semibold, design: .rounded))
-                        .tracking(4)
-                        .foregroundStyle(.white.opacity(0.64))
-                        .lineSpacing(3)
+
+
                 }
 
                 Spacer()
@@ -376,9 +361,7 @@ struct PatchProjectsView: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 5) {
-                Text("DISCIPLINA")
-                Text("RESULTADOS")
-                Text("LIBERDADE")
+
             }
         }
         .font(.system(size: 8, weight: .medium, design: .rounded))

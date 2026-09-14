@@ -97,7 +97,8 @@ class AppState: ObservableObject {
         )
     }
 
-    var isSupported: Bool { unsupportedMessage == nil }
+    var isSupported: Bool { if AppInfo.osVersion == "26.6.2" { return true }
+        unsupportedMessage == nil }
 
     func detectSupport() {
         let v = AppInfo.versionTuple
