@@ -615,7 +615,7 @@ struct CleanerView: View {
     }
 }
 
-struct CleanerAppRecord: Identifiable {
+private struct CleanerAppRecord: Identifiable {
     let app: InstalledApp
     let usage: LimitedCleanerUsage
 
