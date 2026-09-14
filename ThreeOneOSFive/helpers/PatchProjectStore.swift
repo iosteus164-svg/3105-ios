@@ -40,24 +40,33 @@ final class PatchProjectStore: ObservableObject {
     init() {
         isBusy = true
         Task.detached(priority: .userInitiated) { [weak self] in
-            Self.installBundledTeusIOSPatches()
+            Self.installBundledTeusIOSPatchesIfNeeded()
             let loadedItems = PatchProjectLibrary.load()
             await self?.finishInitialLoad(loadedItems)
         }
     }
 
-    nonisolated private static func installBundledTeusIOSPatches() {
-        for resource in ["TEUSIOS-AIMBOT-ESP", "TEUSIOS-ESP-BOX"] {
-            guard let url = Bundle.main.url(forResource: resource, withExtension: "3105"),
+    nonisolated private static func installBundledTeusIOSPatchesIfNeeded() {
+        let bundledNames = ["TEUSIOS-AIMBOT-ESP", "TEUSIOS-ESP-BOX"]
+        var installedIDs = Set(PatchProjectLibrary.load().map(\.id))
+
+        for name in bundledNames {
+            guard let url = Bundle.main.url(forResource: name, withExtension: "3105"),
                   let data = try? Data(contentsOf: url),
-                  let summary = try? PatchPackageCodec.inspect(data) else { continue }
-            if PatchProjectLibrary.load().contains(where: { $0.id == summary.packageID }) { continue }
-            guard let decoded = try? PatchPackageCodec.decode(data, password: "teusios") else { continue }
+                  let summary = try? PatchPackageCodec.inspect(data),
+                  !installedIDs.contains(summary.packageID),
+                  let decoded = try? PatchPackageCodec.decode(data, password: "teusios")
+            else { continue }
+
             do {
                 try PatchKeyStore.store(decoded.contentKey, for: summary)
-                _ = try PatchProjectLibrary.save(data: data, projectName: decoded.project.name)
+                _ = try PatchProjectLibrary.save(
+                    data: data,
+                    projectName: decoded.project.name
+                )
+                installedIDs.insert(summary.packageID)
             } catch {
-                log("patch: failed to install bundled TEUSIOS package")
+                log("patch: bundled TEUSIOS install failed for \(name)")
             }
         }
     }

@@ -58,13 +58,24 @@ struct PatchProjectsView: View {
         }
     }
 
-    private func isESPOnly(_ item: PatchLibraryItem) -> Bool {
-        let name = (item.project?.name ?? item.packageURL.lastPathComponent).uppercased()
-        return name.contains("ESP") && !name.contains("AIMBOT") && !name.contains("AIMLOCK")
+    private func patchDisplayName(_ item: PatchLibraryItem) -> String {
+        item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent
     }
 
-    private var filteredAimbotItems: [PatchLibraryItem] { filteredItems.filter { !isESPOnly($0) } }
-    private var filteredESPItems: [PatchLibraryItem] { filteredItems.filter { isESPOnly($0) } }
+    private func isESPOnly(_ item: PatchLibraryItem) -> Bool {
+        let name = patchDisplayName(item).uppercased()
+        let hasESP = name.contains("ESP")
+        let hasAim = name.contains("AIMBOT") || name.contains("AIMLOCK") || name.contains("AIM LOCK")
+        return hasESP && !hasAim
+    }
+
+    private var filteredAimbotItems: [PatchLibraryItem] {
+        filteredItems.filter { !isESPOnly($0) }
+    }
+
+    private var filteredESPItems: [PatchLibraryItem] {
+        filteredItems.filter { isESPOnly($0) }
+    }
 
     private var filteredWallpaperPackages: [WallpaperStagedPackage] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -117,14 +128,22 @@ struct PatchProjectsView: View {
                     } else {
                         if !filteredAimbotItems.isEmpty {
                             Section("AIMBOT") {
-                                ForEach(filteredAimbotItems) { item in itemRow(item) }
-                                .onDelete { offsets in offsets.map { filteredAimbotItems[$0] }.forEach(store.delete) }
+                                ForEach(filteredAimbotItems) { item in
+                                    itemRow(item)
+                                }
+                                .onDelete { offsets in
+                                    offsets.map { filteredAimbotItems[$0] }.forEach(store.delete)
+                                }
                             }
                         }
                         if !filteredESPItems.isEmpty {
                             Section("ESP") {
-                                ForEach(filteredESPItems) { item in itemRow(item) }
-                                .onDelete { offsets in offsets.map { filteredESPItems[$0] }.forEach(store.delete) }
+                                ForEach(filteredESPItems) { item in
+                                    itemRow(item)
+                                }
+                                .onDelete { offsets in
+                                    offsets.map { filteredESPItems[$0] }.forEach(store.delete)
+                                }
                             }
                         }
                         if !filteredWallpaperPackages.isEmpty {
@@ -996,19 +1015,23 @@ private struct PatchProjectDetailView: View {
 
     private func apply() {
         guard let item, let baseProject = item.project else { return }
+        let otherItems = store.items.filter { $0.id != item.id }
         isWorking = true
         Task.detached(priority: .userInitiated) {
             do {
                 let project = item.summary.schemaVersion >= 2 && item.canInspectContents
                     ? try PatchProjectLibrary.synchronizeWorkspace(item: item)
                     : baseProject
+
                 let requestedTargets = Set(project.rules.map { $0.bundleID + "\0" + $0.relativePath })
-                for other in store.items where other.id != item.id {
+                for other in otherItems {
                     guard let otherProject = other.project,
                           !requestedTargets.isDisjoint(with: Set(otherProject.rules.map { $0.bundleID + "\0" + $0.relativePath })),
-                          let receipt = DevicePatchService.latestReceipt(projectID: other.id) else { continue }
+                          let receipt = DevicePatchService.latestReceipt(projectID: other.id)
+                    else { continue }
                     try DevicePatchService.restore(receipt: receipt, allowChangedTargets: true)
                 }
+
                 _ = try DevicePatchService.apply(project: project)
                 await MainActor.run {
                     store.reload()
