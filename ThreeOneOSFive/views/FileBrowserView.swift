@@ -35,22 +35,11 @@ struct FileBrowserView: View {
     @State private var transferSession: FileTransferSession?
     @State private var transferConflict: FileTransferConflict?
     @State private var deleteTargets: [FileEntry] = []
-    @AppStorage(FileBrowserSortOrder.storageKey)
-    private var sortOrderRaw = FileBrowserSortOrder.nameAscending.rawValue
 
     private var filteredEntries: [FileEntry] {
         let query = fileSearchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        let filtered = query.isEmpty
-            ? entries
-            : entries.filter { $0.name.localizedCaseInsensitiveContains(query) }
-        return FileBrowserSortPolicy.sorted(
-            filtered,
-            order: sortOrder,
-            name: \.name,
-            isDirectory: \.isDirectory,
-            size: \.size,
-            modifiedAt: \.modifiedAt
-        )
+        guard !query.isEmpty else { return entries }
+        return entries.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
 
     private var selectedEntries: [FileEntry] {
@@ -139,9 +128,6 @@ struct FileBrowserView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     FilesTabToolbarButton(session: filesTabSession)
                 }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                sortMenu
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(isSelecting
@@ -367,27 +353,6 @@ struct FileBrowserView: View {
         }
     }
 
-    private var sortOrder: FileBrowserSortOrder {
-        FileBrowserSortOrder(rawValue: sortOrderRaw) ?? .nameAscending
-    }
-
-    private var sortMenu: some View {
-        Menu {
-            Picker(language.text("browser.sort"), selection: $sortOrderRaw) {
-                ForEach(FileBrowserSortOrder.allCases) { order in
-                    Label(
-                        language.text(order.localizationKey),
-                        systemImage: order.systemImage
-                    )
-                    .tag(order.rawValue)
-                }
-            }
-        } label: {
-            Image(systemName: "arrow.up.arrow.down")
-        }
-        .accessibilityLabel(language.text("browser.sort"))
-    }
-
     @ViewBuilder
     private func fileRow(_ entry: FileEntry) -> some View {
         if isSelecting {
@@ -517,7 +482,7 @@ struct FileBrowserView: View {
     private var fileEmptyView: some View {
         VStack(spacing: 10) {
             Image(systemName: "folder")
-                .font(.system(size: AppTheme.emptyIconSize, weight: .light))
+                .font(.system(size: AppTheme.emptyIconSize, weight: .light, design: .rounded))
                 .foregroundStyle(.secondary)
             Text(language.text("browser.empty_folder"))
                 .font(.subheadline)
@@ -530,7 +495,7 @@ struct FileBrowserView: View {
     private var searchEmptyView: some View {
         VStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: AppTheme.emptyIconSize, weight: .light))
+                .font(.system(size: AppTheme.emptyIconSize, weight: .light, design: .rounded))
                 .foregroundStyle(.secondary)
             Text(language.text("browser.search_empty"))
                 .font(.subheadline.weight(.medium))
@@ -1197,17 +1162,6 @@ struct FileBrowserView: View {
                 selectedEntryIDs.formIntersection(Set(loadedEntries.map(\.id)))
                 isLoadingEntries = false
             }
-            for directory in loadedEntries where directory.isDirectory {
-                let summary = try? FileBrowserMetadataScanner.directorySummary(
-                    at: URL(fileURLWithPath: directory.path, isDirectory: true)
-                )
-                DispatchQueue.main.async {
-                    guard currentPath == path,
-                          let index = entries.firstIndex(where: { $0.id == directory.id })
-                    else { return }
-                    entries[index] = directory.withDirectorySummary(summary)
-                }
-            }
         }
     }
 
@@ -1503,35 +1457,6 @@ private struct FileEntryRow: View {
         return AppTheme.accent
     }
 
-    private var detailText: String {
-        var components: [String] = []
-        if entry.isDirectory {
-            switch entry.size {
-            case -1:
-                components.append(language.text("browser.calculating_size"))
-            case -2:
-                components.append(language.text("browser.size_unavailable"))
-            default:
-                components.append(entry.sizeText)
-            }
-            if let childCount = entry.childCount {
-                components.append(language.text("browser.children_count", Int64(childCount)))
-            }
-        } else {
-            components.append(entry.sizeText)
-        }
-        if let modifiedAt = entry.modifiedAt {
-            components.append(
-                DateFormatter.localizedString(
-                    from: modifiedAt,
-                    dateStyle: .short,
-                    timeStyle: .short
-                )
-            )
-        }
-        return components.joined(separator: " · ")
-    }
-
     var body: some View {
         HStack(spacing: 11) {
             AppRowIcon(
@@ -1546,18 +1471,16 @@ private struct FileEntryRow: View {
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
                     .truncationMode(.middle)
-                Text(detailText)
+                Text(entry.isDirectory ? language.text("browser.folder") : entry.sizeText)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
             }
 
             Spacer(minLength: 4)
 
             if let selectionState {
                 Image(systemName: selectionState ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: AppTheme.selectionIconSize, weight: .medium))
+                    .font(.system(size: AppTheme.selectionIconSize, weight: .medium, design: .rounded))
                     .foregroundStyle(selectionState ? AppTheme.accent : Color.secondary)
                     .accessibilityHidden(true)
             }
@@ -1628,7 +1551,7 @@ private struct FileSelectionActionBar: View {
         Button(role: role, action: action) {
             VStack(spacing: 3) {
                 Image(systemName: systemImage)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
                 Text(language.text(key))
                     .font(.caption2)
                     .lineLimit(1)
@@ -1708,7 +1631,7 @@ struct FileQuickLookView: View {
             } else if previewFailed {
                 VStack(spacing: 12) {
                     Image(systemName: "doc.questionmark")
-                        .font(.system(size: AppTheme.emptyIconSize, weight: .light))
+                        .font(.system(size: AppTheme.emptyIconSize, weight: .light, design: .rounded))
                         .foregroundStyle(.secondary)
                     Text(language.text("browser.preview_error"))
                         .font(.subheadline)

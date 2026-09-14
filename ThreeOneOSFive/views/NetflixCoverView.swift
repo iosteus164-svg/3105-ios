@@ -706,12 +706,6 @@ private struct TeusIOSKeyGateView: View {
             Spacer()
 
             brand
-
-            Text("CARREGANDO...")
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .tracking(4)
-                .foregroundStyle(.white)
-
             VStack(spacing: 12) {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
@@ -740,12 +734,6 @@ private struct TeusIOSKeyGateView: View {
                         .font(.system(size: 9, weight: .bold, design: .rounded))
                         .tracking(3)
                         .foregroundStyle(.white.opacity(0.48))
-
-                    Spacer()
-
-                    Text(loadingProgress < 1 ? "72%" : "100%")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.84))
                 }
             }
             .frame(maxWidth: 365)

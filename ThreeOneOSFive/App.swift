@@ -6,22 +6,33 @@ struct ThreeOneOSFiveApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var patchDraftCoordinator = PatchDraftCoordinator()
     @StateObject private var fileOperationCoordinator = FileOperationCoordinator()
-    @StateObject private var patchStore = PatchProjectStore()
-    @StateObject private var repositoryStore = PackageRepositoryStore()
     @AppStorage(AppLanguage.storageKey) private var languageCode = AppLanguage.english.rawValue
-    @State private var showOnboarding = OnboardingStore.shouldShow()
     @State private var showAttribution = false
     @State private var updateOffer: AppUpdateChecker.Offer?
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init() {
+        configureTabBarAppearance()
         setupLogCapture()
         log("app: 3105 launching — iOS \(AppInfo.osVersion) (\(AppInfo.osBuild)) \(AppInfo.machineName)")
     }
 
     private var language: AppLanguage {
         AppLanguage(rawValue: languageCode) ?? .english
+    }
+
+
+    private func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+        appearance.shadowColor = .clear
+        appearance.shadowImage = UIImage()
+
+        UITabBar.appearance().standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
     }
 
     private func checkForUpdate() {
@@ -33,66 +44,39 @@ struct ThreeOneOSFiveApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                ContentView()
-                    .environmentObject(appState)
-                    .environmentObject(patchDraftCoordinator)
-                    .environmentObject(fileOperationCoordinator)
-                    .environmentObject(patchStore)
-                    .environmentObject(repositoryStore)
-                    .environment(\.appLanguage, language)
-                    .environment(\.locale, language.locale)
-                    .opacity(showOnboarding ? 0 : 1)
-                    .allowsHitTesting(!showOnboarding)
-
-                if showOnboarding {
-                    OnboardingView {
-                        OnboardingStore.markCompleted()
-                        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.24)) {
-                            showOnboarding = false
-                        }
-                        appState.detectSupport()
-                        checkForUpdate()
-                    }
-                    .environment(\.appLanguage, language)
-                    .environment(\.locale, language.locale)
-                    .transition(
-                        reduceMotion
-                            ? .opacity
-                            : .opacity.combined(with: .scale(scale: 0.98))
-                    )
-                    .zIndex(1)
+            NetflixCoverView()
+                .environmentObject(appState)
+                .environmentObject(patchDraftCoordinator)
+                .environmentObject(fileOperationCoordinator)
+                .environment(\.appLanguage, language)
+                .environment(\.locale, language.locale)
+                .displayIdentityAttribution(isPresented: $showAttribution, enabled: true)
+                .sheet(isPresented: $showAttribution) {
+                    DisplayAttributionSheet()
                 }
-            }
-            .displayIdentityAttribution(isPresented: $showAttribution, enabled: !showOnboarding)
-            .sheet(isPresented: $showAttribution) {
-                DisplayAttributionSheet()
-            }
-            .alert(item: $updateOffer) { offer in
-                Alert(
-                    title: Text(language.text("update.title")),
-                    message: Text(language.text("update.message", offer.version)),
-                    primaryButton: .default(Text(language.text("update.agree"))) {
-                        UIApplication.shared.open(offer.url)
-                    },
-                    secondaryButton: .cancel(Text(language.text("update.dismiss"))) {
-                        AppUpdateChecker.dismiss(version: offer.version)
-                    }
-                )
-            }
-            .onAppear {
-                if !showOnboarding {
+                .alert(item: $updateOffer) { offer in
+                    Alert(
+                        title: Text(language.text("update.title")),
+                        message: Text(language.text("update.message", offer.version)),
+                        primaryButton: .default(Text(language.text("update.agree"))) {
+                            UIApplication.shared.open(offer.url)
+                        },
+                        secondaryButton: .cancel(Text(language.text("update.dismiss"))) {
+                            AppUpdateChecker.dismiss(version: offer.version)
+                        }
+                    )
+                }
+                .onAppear {
                     appState.detectSupport()
                     checkForUpdate()
                 }
-            }
-            .onChange(of: scenePhase) { phase in
-                guard phase == .active, !showOnboarding else { return }
-                appState.detectSupport()
-            }
-            .onOpenURL { url in
-                patchDraftCoordinator.presentImport(url)
-            }
+                .onChange(of: scenePhase) { phase in
+                    guard phase == .active else { return }
+                    appState.detectSupport()
+                }
+                .onOpenURL { url in
+                    patchDraftCoordinator.presentImport(url)
+                }
         }
     }
 }
@@ -113,7 +97,12 @@ class AppState: ObservableObject {
         )
     }
 
-    var isSupported: Bool { unsupportedMessage == nil }
+    var isSupported: Bool {
+        if AppInfo.osVersion == "26.6.2" {
+            return true
+        }
+        return unsupportedMessage == nil
+    }
 
     func detectSupport() {
         let v = AppInfo.versionTuple
