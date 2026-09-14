@@ -10,7 +10,6 @@ struct ContentView: View {
     @EnvironmentObject private var repositoryStore: PackageRepositoryStore
     @AppStorage(FeatureVisibility.developerModeStorageKey)
     private var developerModeEnabled = false
-    @AppStorage(AppTheme.themeStorageKey) private var selectedThemeRaw = "purple"
     @State private var tabNavigation: AppTabNavigationState
     @State private var showSettings = false
     @State private var showLogs = false
@@ -58,35 +57,6 @@ struct ContentView: View {
             TapGesture(count: 3)
                 .onEnded { onReturnToNetflix?() }
         )
-        .overlay(alignment: .topTrailing) {
-            Menu {
-                Button {
-                    selectedThemeRaw = "purple"
-                } label: {
-                    Label("Roxo", systemImage: selectedThemeRaw == "purple" ? "checkmark.circle.fill" : "circle")
-                }
-
-                Button {
-                    selectedThemeRaw = "white"
-                } label: {
-                    Label("Branco", systemImage: selectedThemeRaw == "white" ? "checkmark.circle.fill" : "circle")
-                }
-
-                Button {
-                    selectedThemeRaw = "red"
-                } label: {
-                    Label("Vermelho", systemImage: selectedThemeRaw == "red" ? "checkmark.circle.fill" : "circle")
-                }
-            } label: {
-                Image(systemName: "gearshape.fill")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(.white)
-                    .padding(10)
-                    .background(Color.black.opacity(0.35), in: Circle())
-            }
-            .padding(.top, 8)
-            .padding(.trailing, 10)
-        }
         .onChange(of: patchDraftCoordinator.request?.id) { requestID in
             if requestID != nil { tabNavigation.select(AppSection.installed.rawValue) }
         }

@@ -5,24 +5,14 @@ struct PatchStoreAlert: Identifiable {
     let titleKey: String
     let messageKey: String
     var messageArgument: String?
-    var literalMessage: String?
 
-    init(
-        titleKey: String,
-        messageKey: String,
-        messageArgument: String? = nil,
-        literalMessage: String? = nil
-    ) {
+    init(titleKey: String, messageKey: String, messageArgument: String? = nil) {
         self.titleKey = titleKey
         self.messageKey = messageKey
         self.messageArgument = messageArgument
-        self.literalMessage = literalMessage
     }
 
     func message(language: AppLanguage) -> String {
-        if let literalMessage, !literalMessage.isEmpty {
-            return literalMessage
-        }
         if let messageArgument {
             return language.text(messageKey, messageArgument)
         }

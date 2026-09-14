@@ -2,29 +2,6 @@ import CryptoKit
 import Darwin
 import Foundation
 
-private struct PatchApplyDiagnosticError: LocalizedError {
-    let stage: String
-    let path: String
-    let code: Int32?
-    let underlying: Error?
-
-    var errorDescription: String? {
-        var lines = [
-            "Falha ao aplicar o patch.",
-            "Etapa: \(stage)",
-            "Caminho: \(path)"
-        ]
-        if let code {
-            lines.append("errno: \(code) (\(String(cString: strerror(code))))")
-        }
-        if let underlying {
-            let ns = underlying as NSError
-            lines.append("Erro: \(ns.domain) \(ns.code) — \(ns.localizedDescription)")
-        }
-        return lines.joined(separator: "\n")
-    }
-}
-
 struct PatchTransactionReceipt: Equatable, Identifiable {
     let id: UUID
     let projectID: UUID
@@ -327,7 +304,6 @@ enum PatchTransaction {
                 journalURL: journalURL
             )
         } catch {
-            let originalError = error
             do {
                 try restoreRecords(
                     records,
@@ -342,7 +318,7 @@ enum PatchTransaction {
             } catch {
                 // Preserve the prepared journal and backups for explicit recovery.
             }
-            throw originalError
+            throw PatchPackageError.applyFailed
         }
     }
 
@@ -945,40 +921,14 @@ enum PatchTransaction {
             if let protection = current[.protectionKey] { attributes[.protectionKey] = protection }
         }
         guard fileManager.createFile(atPath: staging.path, contents: data, attributes: attributes) else {
-            let code = errno
-            throw PatchApplyDiagnosticError(
-                stage: "createFile (arquivo temporário)",
-                path: staging.path,
-                code: code,
-                underlying: nil
-            )
+            throw PatchPackageError.applyFailed
         }
         defer { try? fileManager.removeItem(at: staging) }
-        do {
-            let handle = try FileHandle(forWritingTo: staging)
-            do {
-                try handle.synchronize()
-                try handle.close()
-            } catch {
-                try? handle.close()
-                throw error
-            }
-        } catch {
-            throw PatchApplyDiagnosticError(
-                stage: "FileHandle/synchronize",
-                path: staging.path,
-                code: nil,
-                underlying: error
-            )
-        }
+        let handle = try FileHandle(forWritingTo: staging)
+        try handle.synchronize()
+        try handle.close()
         guard rename(staging.path, target.path) == 0 else {
-            let code = errno
-            throw PatchApplyDiagnosticError(
-                stage: "rename (substituição final)",
-                path: target.path,
-                code: code,
-                underlying: nil
-            )
+            throw PatchPackageError.applyFailed
         }
     }
 

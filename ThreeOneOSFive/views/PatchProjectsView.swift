@@ -1008,17 +1008,9 @@ private struct PatchProjectDetailView: View {
                     )
                 }
             } catch {
-                let nsError = error as NSError
-                let detail = error.localizedDescription.isEmpty
-                    ? "\(nsError.domain) \(nsError.code)"
-                    : error.localizedDescription
                 await MainActor.run {
                     isWorking = false
-                    actionAlert = PatchStoreAlert(
-                        titleKey: "common.failed",
-                        messageKey: "patch.error.apply",
-                        literalMessage: detail
-                    )
+                    actionAlert = PatchStoreAlert(titleKey: "common.failed", messageKey: "patch.error.apply")
                 }
             }
         }
