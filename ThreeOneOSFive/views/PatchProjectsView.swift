@@ -30,6 +30,19 @@ struct PatchProjectsView: View {
     @State private var isImportingWallpapers = false
     @State private var showSimulatedWallpaperDetail = false
     @State private var simulatedWallpaperDetailGate = OneShotPresentationGate()
+    @AppStorage("selectedFreeFireVariant") private var selectedGameRaw = "normal"
+    @AppStorage(AppTheme.themeStorageKey) private var selectedThemeRaw = "purple"
+
+    private enum FreeFireVariant: String {
+        case normal
+        case max
+    }
+
+    private var selectedGame: FreeFireVariant {
+        get { FreeFireVariant(rawValue: selectedGameRaw) ?? .normal }
+        nonmutating set { selectedGameRaw = newValue.rawValue }
+    }
+
     let onOpenSettings: () -> Void
     let onOpenLogs: () -> Void
 
@@ -134,61 +147,55 @@ struct PatchProjectsView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                injectorHeader
-                AppSearchField(
-                    text: $searchText,
-                    prompt: language.text("installed.search"),
-                    clearLabel: language.text("common.clear")
-                )
-                Divider()
-                List {
-                    if !hasLocalContent && (store.isBusy || isImportingWallpapers) {
-                        loadingState
-                            .listRowSeparator(.hidden)
-                    } else if !hasLocalContent {
-                        emptyState
-                            .listRowSeparator(.hidden)
-                    } else if !hasSearchResults && !store.isBusy {
-                        searchEmptyState
-                            .listRowSeparator(.hidden)
-                    } else {
-                        if !filteredItems.isEmpty {
-                            Section("HS") {
+            ZStack {
+                WarRedBackground()
+                    .ignoresSafeArea()
+
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 18) {
+                        heroHeader
+                        gameSelector
+                        supportStatusCard
+                        openGameButton
+                        importButton
+
+                        AppSearchField(
+                            text: $searchText,
+                            prompt: language.text("installed.search"),
+                            clearLabel: language.text("common.clear")
+                        )
+                        .padding(.top, 2)
+
+                        if !hasLocalContent && (store.isBusy || isImportingWallpapers) {
+                            loadingState
+                        } else if !hasLocalContent {
+                            emptyState
+                        } else if !hasSearchResults && !store.isBusy {
+                            searchEmptyState
+                        } else if !filteredItems.isEmpty {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("HS")
+                                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                                    .tracking(3.4)
+                                    .foregroundStyle(.white.opacity(0.52))
+
                                 ForEach(filteredItems) { item in
                                     itemRow(item)
                                 }
-                                .onDelete { offsets in
-                                    offsets.map { filteredItems[$0] }.forEach(store.delete)
-                                }
                             }
                         }
+
+                        footer
                     }
+                    .padding(.horizontal, 18)
+                    .padding(.top, 14)
+                    .padding(.bottom, 28)
                 }
-                .listStyle(.insetGrouped)
             }
-            .navigationTitle("INJETOR")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showImporter = true
-                    } label: {
-                        if store.isBusy {
-                            ProgressView()
-                        } else {
-                            Image(systemName: "square.and.arrow.down")
-                        }
-                    }
-                    .disabled(store.isBusy)
-                    .accessibilityLabel("Importar")
-                }
-                AppUtilityToolbar(
-                    language: language,
-                    onOpenSettings: onOpenSettings,
-                    onOpenLogs: onOpenLogs
-                )
-            }
+            .toolbar(.hidden, for: .navigationBar)
+            .preferredColorScheme(.dark)
             .sheet(isPresented: $showImporter) {
                 FileDocumentPicker(
                     allowedContentTypes: PatchPackagePickerPolicy.allowedContentTypes,
@@ -200,9 +207,7 @@ struct PatchProjectsView: View {
                             store.importPackage(at: url)
                         }
                     },
-                    onCancel: {
-                        showImporter = false
-                    }
+                    onCancel: { showImporter = false }
                 )
                 .ignoresSafeArea()
             }
@@ -214,9 +219,7 @@ struct PatchProjectsView: View {
                     store.create(project: project, password: password)
                 }
             }
-            .sheet(isPresented: $showCleaner) {
-                CleanerView()
-            }
+            .sheet(isPresented: $showCleaner) { CleanerView() }
             .sheet(item: $draftCoordinator.request) { request in
                 PatchProjectEditorView(
                     existingProject: nil,
@@ -238,9 +241,7 @@ struct PatchProjectsView: View {
                             importWallpaperPackages(urls)
                         }
                     },
-                    onCancel: {
-                        showWallpaperImporter = false
-                    }
+                    onCancel: { showWallpaperImporter = false }
                 )
                 .ignoresSafeArea()
             }
@@ -254,13 +255,8 @@ struct PatchProjectsView: View {
             .alert(item: $wallpaperPendingDeletion) { package in
                 Alert(
                     title: Text(language.text("wallpaper.delete_title")),
-                    message: Text(language.text(
-                        "wallpaper.delete_message",
-                        package.displayName
-                    )),
-                    primaryButton: .destructive(
-                        Text(language.text("common.delete"))
-                    ) {
+                    message: Text(language.text("wallpaper.delete_message", package.displayName)),
+                    primaryButton: .destructive(Text(language.text("common.delete"))) {
                         deleteWallpaperPackage(package)
                     },
                     secondaryButton: .cancel(Text(language.text("common.cancel")))
@@ -269,16 +265,6 @@ struct PatchProjectsView: View {
             .onAppear {
                 reloadWallpaperPackages()
                 consumeExternalImport()
-#if targetEnvironment(simulator)
-                if ProcessInfo.processInfo.arguments.contains(
-                    "--simulate-wallpaper-detail"
-                ), !wallpaperPackages.isEmpty,
-                   simulatedWallpaperDetailGate.claim() {
-                    DispatchQueue.main.async {
-                        showSimulatedWallpaperDetail = true
-                    }
-                }
-#endif
             }
             .navigationDestination(isPresented: $showSimulatedWallpaperDetail) {
                 if let package = wallpaperPackages.first {
@@ -294,6 +280,208 @@ struct PatchProjectsView: View {
         }
     }
 
+    private var heroHeader: some View {
+        ZStack(alignment: .topTrailing) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Image(systemName: "crown.fill")
+                        .font(.system(size: 16, weight: .black))
+                        .foregroundStyle(AppTheme.accent)
+                        .rotationEffect(.degrees(-8))
+
+                    HStack(spacing: 3) {
+                        Text("Teus").foregroundStyle(.white)
+                        Text("ios").foregroundStyle(AppTheme.accent)
+                    }
+                    .font(.system(size: 36, weight: .black, design: .rounded))
+                    .italic()
+
+                    Text("O MELHOR EXTERNAL FEITO PARA IOS")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.78))
+                        .tracking(1.0)
+                        .padding(.top, 2)
+                }
+                Spacer()
+            }
+
+            Menu {
+                Section("Tema") {
+                    Button { selectedThemeRaw = "purple" } label: {
+                        Label("Roxo", systemImage: selectedThemeRaw == "purple" ? "checkmark.circle.fill" : "circle")
+                    }
+                    Button { selectedThemeRaw = "white" } label: {
+                        Label("Branco", systemImage: selectedThemeRaw == "white" ? "checkmark.circle.fill" : "circle")
+                    }
+                    Button { selectedThemeRaw = "red" } label: {
+                        Label("Vermelho", systemImage: selectedThemeRaw == "red" ? "checkmark.circle.fill" : "circle")
+                    }
+                }
+                Divider()
+                Button { showImporter = true } label: { Label("Importar", systemImage: "square.and.arrow.down") }
+                Button(action: onOpenSettings) { Label("Ajustes", systemImage: "gearshape") }
+                Button(action: onOpenLogs) { Label("Logs", systemImage: "doc.text.magnifyingglass") }
+            } label: {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 23, weight: .bold))
+                    .foregroundStyle(.white)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(minHeight: 150)
+    }
+
+    private var gameSelector: some View {
+        VStack(spacing: 14) {
+            HStack {
+                HStack(spacing: 9) {
+                    Image(systemName: "gamecontroller.fill")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(AppTheme.accent)
+                    Text("SELECIONE O JOGO")
+                        .font(.system(size: 15, weight: .black, design: .rounded))
+                        .tracking(2.3)
+                        .foregroundStyle(.white)
+                }
+                Spacer()
+                Text("ESCOLHA SEU CAMPO\nDE BATALHA")
+                    .font(.system(size: 8, weight: .medium, design: .rounded))
+                    .tracking(2.6)
+                    .foregroundStyle(.white.opacity(0.45))
+                    .multilineTextAlignment(.trailing)
+            }
+            HStack(spacing: 12) {
+                gameChoiceCard(title: "Free Fire", imageName: "FreeFireNormalIcon", selected: selectedGame == .normal) {
+                    selectedGame = .normal
+                }
+                gameChoiceCard(title: "Free Fire Max", imageName: "FreeFireMaxIcon", selected: selectedGame == .max) {
+                    selectedGame = .max
+                }
+            }
+        }
+        .padding(16)
+        .background(Color.black.opacity(0.56))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(AppTheme.accent.opacity(0.18), lineWidth: 1))
+    }
+
+    private var supportStatusCard: some View {
+        let supported = appState.isSupported
+        let statusColor = supported ? Color(red: 0.18, green: 0.86, blue: 0.40) : Color(red: 1.00, green: 0.12, blue: 0.16)
+        return HStack(spacing: 10) {
+            Circle().fill(statusColor).frame(width: 9, height: 9).shadow(color: statusColor.opacity(0.65), radius: 5)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("iOS \(AppInfo.osVersion)")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.65))
+                Text(supported ? "VERSÃO SUPORTADA" : "VERSÃO NÃO SUPORTADA")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(statusColor)
+            }
+            Spacer()
+            Image(systemName: supported ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(statusColor)
+        }
+        .padding(.horizontal, 14)
+        .frame(maxWidth: .infinity, minHeight: 54)
+        .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.white.opacity(0.035)))
+    }
+
+    private var openGameButton: some View {
+        Button(action: openSelectedFreeFire) {
+            HStack(spacing: 10) {
+                Spacer()
+                Image(systemName: "play.fill").font(.system(size: 13, weight: .black))
+                Text("Abrir jogo").font(.system(size: 13, weight: .bold, design: .rounded))
+                Spacer()
+            }
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity, minHeight: 46)
+            .background(LinearGradient(colors: [AppTheme.accent.opacity(selectedThemeRaw == "white" ? 0.20 : 0.95), AppTheme.accent.opacity(selectedThemeRaw == "white" ? 0.10 : 0.38), .black.opacity(0.70)], startPoint: .leading, endPoint: .trailing))
+            .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var importButton: some View {
+        Button { showImporter = true } label: {
+            HStack(spacing: 9) {
+                Image(systemName: "square.and.arrow.down.fill")
+                Text("IMPORTAR")
+                    .font(.system(size: 12, weight: .black, design: .rounded))
+                    .tracking(1.2)
+            }
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .background(Color.black.opacity(0.62))
+            .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous).stroke(AppTheme.accent.opacity(0.55), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .disabled(store.isBusy)
+    }
+
+    private var footer: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("TEUS IOS")
+                Text("SEMPRE UM PASSO À FRENTE")
+            }
+            Spacer()
+        }
+        .font(.system(size: 8, weight: .medium, design: .rounded))
+        .tracking(2.6)
+        .foregroundStyle(.white.opacity(0.44))
+        .padding(.top, 8)
+    }
+
+    private func gameChoiceCard(title: String, imageName: String, selected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 34, height: 34)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                Text(title)
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+                Spacer(minLength: 4)
+                Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .foregroundStyle(selected ? AppTheme.accent : Color.white.opacity(0.55))
+            }
+            .padding(.horizontal, 8)
+            .frame(maxWidth: .infinity, minHeight: 58)
+            .background(Color.black.opacity(selected ? 0.70 : 0.30))
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(selected ? AppTheme.accent.opacity(0.70) : Color.white.opacity(0.08), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func openSelectedFreeFire() {
+        let candidates: [String] = selectedGame == .normal
+            ? ["freefire://", "garena-freefire://"]
+            : ["freefiremax://", "garena-freefiremax://"]
+        openFirstAvailableGameURL(candidates, index: 0)
+    }
+
+    private func openFirstAvailableGameURL(_ candidates: [String], index: Int) {
+        guard index < candidates.count else { return }
+        guard let url = URL(string: candidates[index]) else {
+            openFirstAvailableGameURL(candidates, index: index + 1)
+            return
+        }
+        UIApplication.shared.open(url, options: [:]) { success in
+            if !success { openFirstAvailableGameURL(candidates, index: index + 1) }
+        }
+    }
+
     private func consumeExternalImport() {
         guard let request = draftCoordinator.importRequest else { return }
         draftCoordinator.clearImport()
@@ -306,7 +494,7 @@ struct PatchProjectsView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(package.displayName)
                     .font(.body.weight(.semibold))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(.white)
                     .lineLimit(1)
                 InstalledContentKindBadge(kind: .wallpaper, language: language)
                 Text(language.text(
@@ -479,6 +667,29 @@ struct PatchProjectsView: View {
     }
 }
 
+private struct WarRedBackground: View {
+    var body: some View {
+        ZStack {
+            Color.black
+            LinearGradient(
+                colors: [
+                    AppTheme.accent.opacity(0.22),
+                    Color.black.opacity(0.92),
+                    AppTheme.accent.opacity(0.08)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            RadialGradient(
+                colors: [AppTheme.accent.opacity(0.18), .clear],
+                center: .topTrailing,
+                startRadius: 10,
+                endRadius: 330
+            )
+        }
+    }
+}
+
 private struct WallpaperImportFeedback: Identifiable {
     let id = UUID()
     let titleKey: String
@@ -501,11 +712,11 @@ private struct PatchProjectRow: View {
                 if let author = item.project?.author, !author.isEmpty {
                     Text(language.text("patch.by_author", author))
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.60))
                 }
                 Text(rowDetail)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.50))
             }
             Spacer()
             if item.summary.isPasswordProtected {
@@ -521,7 +732,14 @@ private struct PatchProjectRow: View {
                     .accessibilityLabel(language.text("patch.private"))
             }
         }
-        .padding(.vertical, 4)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(Color.black.opacity(0.58))
+        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .stroke(AppTheme.accent.opacity(0.24), lineWidth: 1)
+        )
     }
 
     private var rowDetail: String {
