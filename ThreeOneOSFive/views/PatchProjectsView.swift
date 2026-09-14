@@ -22,7 +22,8 @@ struct PatchProjectsView: View {
     @State private var showCreate = false
     @State private var showImporter = false
     @State private var showWallpaperImporter = false
-    @State private var showCleaner = false
+    @State private var isQuickCleaning = false
+    @State private var quickCleanMessage: String?
     @State private var searchText = ""
     @State private var wallpaperPackages: [WallpaperStagedPackage] = []
     @State private var wallpaperImportFeedback: WallpaperImportFeedback?
@@ -205,7 +206,6 @@ struct PatchProjectsView: View {
                     store.create(project: project, password: password)
                 }
             }
-            .sheet(isPresented: $showCleaner) { CleanerView() }
             .sheet(item: $draftCoordinator.request) { request in
                 PatchProjectEditorView(
                     existingProject: nil,
@@ -283,7 +283,7 @@ struct PatchProjectsView: View {
                     .italic()
 
                     Text("O MELHOR EXTERNAL FEITO PARA IOS")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundStyle(.white.opacity(0.78))
                         .tracking(1.0)
                         .padding(.top, 2)
@@ -497,28 +497,156 @@ struct PatchProjectsView: View {
     }
 
     private var cleanerRow: some View {
-        Button {
-            showCleaner = true
-        } label: {
-            HStack(spacing: 10) {
-                Spacer()
-                Image(systemName: "trash.fill")
-                    .font(.system(size: 13, weight: .bold))
-                Text("LIMPAR LIXO")
-                    .font(.system(size: 12, weight: .black, design: .rounded))
-                    .tracking(1.2)
-                Spacer()
+        VStack(spacing: 6) {
+            Button {
+                quickCleanJunk()
+            } label: {
+                HStack(spacing: 10) {
+                    Spacer()
+                    if isQuickCleaning {
+                        ProgressView()
+                            .tint(.white)
+                            .scaleEffect(0.85)
+                    } else {
+                        Image(systemName: "trash.fill")
+                            .font(.system(size: 13, weight: .bold))
+                    }
+                    Text(isQuickCleaning ? "LIMPANDO..." : "LIMPAR LIXO")
+                        .font(.system(size: 12, weight: .black, design: .rounded))
+                        .tracking(1.2)
+                    Spacer()
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, minHeight: 46)
+                .background(Color.black.opacity(0.62))
+                .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .stroke(AppTheme.accent.opacity(0.55), lineWidth: 1)
+                )
             }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 46)
-            .background(Color.black.opacity(0.62))
-            .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 13, style: .continuous)
-                    .stroke(AppTheme.accent.opacity(0.55), lineWidth: 1)
-            )
+            .buttonStyle(.plain)
+            .disabled(isQuickCleaning)
+
+            if let quickCleanMessage {
+                Text(quickCleanMessage)
+                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.65))
+            }
         }
-        .buttonStyle(.plain)
+    }
+
+    private func quickCleanJunk() {
+        guard !isQuickCleaning else { return }
+        isQuickCleaning = true
+        quickCleanMessage = "SELECIONANDO TODAS AS OPÇÕES..."
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            var scannedBundleIDs = Set<String>()
+            var allRecords: [CleanerAppRecord] = []
+
+            func scanNewApps(_ applications: [InstalledApp]) {
+                let metadata = Dictionary(
+                    applications.map { ($0.bundleID, $0) },
+                    uniquingKeysWith: { first, _ in first }
+                )
+                let catalogApplications = applications.map {
+                    CleanerResolvedApplication(
+                        bundleID: $0.bundleID,
+                        name: $0.name,
+                        containerPath: $0.containerPath,
+                        version: $0.version
+                    )
+                }
+                let newRecords = CleanerCatalog.scanNewApplications(
+                    catalogApplications,
+                    scannedBundleIDs: &scannedBundleIDs,
+                    shouldIncludeBundleID: {
+                        ContainerPresentationPolicy.shouldShow(bundleID: $0)
+                    },
+                    activateContainer: { application in
+                        var activationError: NSString?
+                        return MCMActivateContainerPath(
+                            2,
+                            application.bundleID,
+                            false,
+                            &activationError
+                        )
+                    },
+                    isValidContainerPath: ContainerStore.isApplicationContainerPath,
+                    usageForContainer: { containerPath in
+                        try? LimitedCleanerService.scan(
+                            containerURL: URL(fileURLWithPath: containerPath, isDirectory: true),
+                            rootValidator: { ContainerStore.isApplicationContainerPath($0.path) }
+                        )
+                    }
+                )
+                for record in newRecords {
+                    let original = metadata[record.bundleID]
+                    let resolvedApp = InstalledApp(
+                        bundleID: record.bundleID,
+                        name: record.application.name,
+                        containerPath: record.containerPath,
+                        version: record.application.version,
+                        icon: original?.icon
+                    )
+                    allRecords.append(CleanerAppRecord(app: resolvedApp, usage: record.usage))
+                }
+            }
+
+            // Same discovery path used by CleanerView. Every reclaimable app found
+            // is treated as selected, so one tap is equivalent to "select all + clean".
+            let apiApps = ContainerStore.installedAppsFromAPI()
+            let dynamicIdentifiers = ContainerStore.dynamicAppIdentifiers()
+            let mcmApps = ContainerStore.installedAppsFromMCM(identifiers: dynamicIdentifiers)
+            scanNewApps(apiApps + mcmApps)
+
+            let launchServicesIdentifiers = ContainerStore.launchServicesStoreIdentifiers()
+            let candidates = MHAIdentifierCatalog.identifiers(
+                dynamic: dynamicIdentifiers,
+                installed: apiApps.map(\.bundleID),
+                research: ContainerStore.researchAppIdentifiers,
+                custom: [],
+                launchServices: launchServicesIdentifiers
+            )
+            let mhaApps = ContainerStore.installedAppsFromMHACandidates(
+                identifiers: candidates
+            ) { progressiveApps in
+                scanNewApps(progressiveApps)
+            }
+            scanNewApps(mhaApps)
+
+            var freedBytes: Int64 = 0
+            var removedItems = 0
+            var failedItems = 0
+
+            for record in allRecords {
+                do {
+                    let result = try LimitedCleanerService.clean(
+                        containerURL: URL(fileURLWithPath: record.app.containerPath, isDirectory: true),
+                        rootValidator: { ContainerStore.isApplicationContainerPath($0.path) }
+                    )
+                    freedBytes += result.freedBytes
+                    removedItems += result.removedItemCount
+                    failedItems += result.failedItemCount
+                } catch {
+                    failedItems += 1
+                }
+            }
+
+            let formatter = ByteCountFormatter()
+            formatter.countStyle = .file
+            let freed = formatter.string(fromByteCount: freedBytes)
+            let selectedCount = allRecords.count
+            let message = failedItems > 0
+                ? "LIMPEZA CONCLUÍDA • \(selectedCount) APPS • \(freed) • \(removedItems) ITENS"
+                : "LIMPEZA CONCLUÍDA • \(selectedCount) APPS • \(freed) LIBERADOS"
+
+            DispatchQueue.main.async {
+                quickCleanMessage = message
+                isQuickCleaning = false
+            }
+        }
     }
 
     private var wallpaperSymbol: String {
@@ -589,13 +717,28 @@ struct PatchProjectsView: View {
 
     @ViewBuilder
     private func itemRow(_ item: PatchLibraryItem) -> some View {
-        VStack(spacing: 10) {
-            PatchProjectRow(item: item, language: language)
+        HStack(spacing: 12) {
+            AppRowIcon(systemName: item.isLocked ? "lock.doc.fill" : "shippingbox.fill")
+
+            Text(item.project?.name ?? language.text("patch.locked_project"))
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+
+            Spacer(minLength: 8)
 
             if !item.isLocked, let project = item.project {
                 InlinePatchControls(project: project)
             }
         }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Color.black.opacity(0.58))
+        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .stroke(AppTheme.accent.opacity(0.24), lineWidth: 1)
+        )
     }
 
     private var loadingState: some View {
@@ -728,34 +871,34 @@ private struct InlinePatchControls: View {
     @State private var showChangedConfirmation = false
 
     var body: some View {
-        HStack(spacing: 10) {
-            Button { activate() } label: {
-                HStack(spacing: 7) {
-                    if isWorking && receipt == nil { ProgressView().controlSize(.small) }
-                    Image(systemName: "bolt.fill")
-                    Text("ATIVAR")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 42)
+        Button {
+            if receipt == nil {
+                activate()
+            } else {
+                prepareDeactivate()
             }
-            .buttonStyle(.borderedProminent)
-            .tint(AppTheme.accent)
-            .disabled(isWorking || receipt != nil)
-
-            Button(role: .destructive) { prepareDeactivate() } label: {
-                HStack(spacing: 7) {
-                    Image(systemName: "power")
-                    Text("DESATIVAR")
-                        .font(.system(size: 13, weight: .bold, design: .rounded))
+        } label: {
+            HStack(spacing: 6) {
+                if isWorking {
+                    ProgressView()
+                        .controlSize(.small)
+                        .tint(.white)
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height: 42)
+                Text(receipt == nil ? "ATIVAR" : "DESATIVAR")
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
             }
-            .buttonStyle(.bordered)
-            .disabled(isWorking || receipt == nil)
+            .foregroundStyle(.white)
+            .padding(.horizontal, 9)
+            .frame(height: 30)
+            .background(receipt == nil ? AppTheme.accent : Color.black.opacity(0.72))
+            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .stroke(AppTheme.accent.opacity(0.65), lineWidth: 1)
+            )
         }
-        .padding(.horizontal, 2)
+        .buttonStyle(.plain)
+        .disabled(isWorking)
         .onAppear { refreshReceipt() }
         .alert(alertTitle, isPresented: $showAlert) {
             Button("OK", role: .cancel) {}
