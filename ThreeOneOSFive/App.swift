@@ -6,33 +6,20 @@ struct ThreeOneOSFiveApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var patchDraftCoordinator = PatchDraftCoordinator()
     @StateObject private var fileOperationCoordinator = FileOperationCoordinator()
+    @StateObject private var patchStore = PatchProjectStore()
+    @StateObject private var repositoryStore = PackageRepositoryStore()
     @AppStorage(AppLanguage.storageKey) private var languageCode = AppLanguage.english.rawValue
     @State private var showAttribution = false
     @State private var updateOffer: AppUpdateChecker.Offer?
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
-        configureTabBarAppearance()
         setupLogCapture()
         log("app: 3105 launching — iOS \(AppInfo.osVersion) (\(AppInfo.osBuild)) \(AppInfo.machineName)")
     }
 
     private var language: AppLanguage {
         AppLanguage(rawValue: languageCode) ?? .english
-    }
-
-
-    private func configureTabBarAppearance() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .clear
-        appearance.shadowColor = .clear
-        appearance.shadowImage = UIImage()
-
-        UITabBar.appearance().standardAppearance = appearance
-        if #available(iOS 15.0, *) {
-            UITabBar.appearance().scrollEdgeAppearance = appearance
-        }
     }
 
     private func checkForUpdate() {
@@ -48,6 +35,8 @@ struct ThreeOneOSFiveApp: App {
                 .environmentObject(appState)
                 .environmentObject(patchDraftCoordinator)
                 .environmentObject(fileOperationCoordinator)
+                .environmentObject(patchStore)
+                .environmentObject(repositoryStore)
                 .environment(\.appLanguage, language)
                 .environment(\.locale, language.locale)
                 .displayIdentityAttribution(isPresented: $showAttribution, enabled: true)
@@ -97,12 +86,7 @@ class AppState: ObservableObject {
         )
     }
 
-    var isSupported: Bool {
-        if AppInfo.osVersion == "26.6.2" {
-            return true
-        }
-        return unsupportedMessage == nil
-    }
+    var isSupported: Bool { unsupportedMessage == nil }
 
     func detectSupport() {
         let v = AppInfo.versionTuple

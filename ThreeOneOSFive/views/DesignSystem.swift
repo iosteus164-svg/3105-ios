@@ -7,10 +7,10 @@ enum AppTheme {
         switch UserDefaults.standard.string(forKey: themeStorageKey) ?? "purple" {
         case "white":
             return .white
-        case "purple":
-            return Color(red: 0.64, green: 0.12, blue: 0.96)
         case "red":
             return Color(red: 1.00, green: 0.08, blue: 0.10)
+        case "purple":
+            return Color(red: 0.64, green: 0.12, blue: 0.96)
         default:
             return Color(red: 0.64, green: 0.12, blue: 0.96)
         }
@@ -26,6 +26,23 @@ enum AppTheme {
     static let appIconSize: CGFloat = 32
     static let emptyIconSize: CGFloat = 30
     static let selectionIconSize: CGFloat = 18
+    static let contentCardCornerRadius: CGFloat = 20
+    static let contentCardInset: CGFloat = 16
+    static let contentCardPadding: CGFloat = 16
+}
+
+struct AppCardBorder: View {
+    var body: some View {
+        RoundedRectangle(
+            cornerRadius: AppTheme.contentCardCornerRadius,
+            style: .continuous
+        )
+        .strokeBorder(
+            Color(uiColor: .separator).opacity(0.22),
+            lineWidth: 0.5
+        )
+        .accessibilityHidden(true)
+    }
 }
 
 struct AppRowIcon: View {
@@ -39,7 +56,7 @@ struct AppRowIcon: View {
             RoundedRectangle(cornerRadius: 7, style: .continuous)
                 .fill(tint.opacity(0.12))
             Image(systemName: systemName)
-                .font(.system(size: symbolSize, weight: .medium, design: .rounded))
+                .font(.system(size: symbolSize, weight: .medium))
                 .foregroundStyle(tint)
         }
         .frame(width: frameSize, height: frameSize)
@@ -55,7 +72,7 @@ struct AppSearchField: View {
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(.secondary)
                 .accessibilityHidden(true)
 
@@ -70,7 +87,7 @@ struct AppSearchField: View {
                     text = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(.tertiary)
                 }
                 .buttonStyle(.plain)
