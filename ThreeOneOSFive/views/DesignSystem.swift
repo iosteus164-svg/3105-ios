@@ -1,6 +1,11 @@
 import SwiftUI
 
 enum AppTheme {
+    // Compatibility values used by the original 3105 2.0 repository views.
+    static let contentCardCornerRadius: CGFloat = 18
+    static let contentCardPadding: CGFloat = 16
+    static let contentCardInset: CGFloat = 16
+
     static let themeStorageKey = "ui.selectedTheme.purpleDefaultV2"
 
     static var accent: Color {
@@ -111,5 +116,14 @@ struct AppLogo: View {
         .frame(width: size, height: size)
         .clipShape(RoundedRectangle(cornerRadius: size * 0.22, style: .continuous))
         .accessibilityHidden(true)
+    }
+}
+
+
+// Compatibility border used by the original 3105 2.0 repository views.
+struct AppCardBorder: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: AppTheme.contentCardCornerRadius, style: .continuous)
+            .stroke(AppTheme.accent.opacity(0.24), lineWidth: 1)
     }
 }
