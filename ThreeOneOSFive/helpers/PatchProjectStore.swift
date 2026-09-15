@@ -42,7 +42,7 @@ final class PatchProjectStore: ObservableObject {
     }
 
     private func installBundledTeusIOSPackagesIfNeeded() {
-        let markerKey = "teusios.bundled.patches.v11"
+        let markerKey = "teusios.bundled.patches.v28"
         guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
 
         let resources = ["AIMBOT-ESP", "ESP-BOX", "AIMBOT", "HS PESCOC╠ºO", "HS PEITO", "ESP BOX", "ESP-AIMBOT", "HS ALTO", "HS ALTO-PESCOC╠ºO"]
@@ -356,29 +356,8 @@ final class PatchProjectStore: ObservableObject {
             return bundleID
         }
 
-    func adjustedPath(_ path: String) -> String {
-        var value = path
-
-        if value.contains("assetindexer."),
-           value.hasPrefix("Documents/Compulsory/") {
-            value = value.replacingOccurrences(
-                of: "Documents/Compulsory/",
-                with: "Documents/contentcache/Compulsory/"
-            )
-        }
-
-        return value
-            .replacingOccurrences(
-                of: freeFireNormalAssetName,
-                with: destinationAssetName
-            )
-            .replacingOccurrences(
-                of: freeFireMaxAssetName,
-                with: destinationAssetName
-            )
-    }
-
-            return value
+        func adjustedPath(_ path: String) -> String {
+            path
                 .replacingOccurrences(
                     of: freeFireNormalAssetName,
                     with: destinationAssetName
@@ -416,10 +395,19 @@ final class PatchProjectStore: ObservableObject {
             return value
         }
 
+        func normalizeHSPath(_ value: String) -> String {
+            guard value.contains("assetindexer."),
+                  value.hasPrefix("Documents/Compulsory/") else { return value }
+            return value.replacingOccurrences(
+                of: "Documents/Compulsory/",
+                with: "Documents/contentcache/Compulsory/"
+            )
+        }
+
         adjusted.rules = project.rules.map { rule in
             var value = rule
             value.bundleID = adjustedBundleID(rule.bundleID)
-            value.relativePath = adjustedPath(rule.relativePath)
+            value.relativePath = adjustedPath(normalizeHSPath(rule.relativePath))
             value.replacementFilename = adjustedFilename(rule.replacementFilename)
             return value
         }
