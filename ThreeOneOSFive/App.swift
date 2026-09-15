@@ -8,7 +8,7 @@ struct ThreeOneOSFiveApp: App {
     @StateObject private var fileOperationCoordinator = FileOperationCoordinator()
     @AppStorage(AppLanguage.storageKey) private var languageCode = AppLanguage.english.rawValue
     @State private var showAttribution = false
-@Environment(\.scenePhase) private var scenePhase
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         configureTabBarAppearance()
@@ -19,7 +19,6 @@ struct ThreeOneOSFiveApp: App {
     private var language: AppLanguage {
         AppLanguage(rawValue: languageCode) ?? .english
     }
-
 
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
@@ -32,7 +31,6 @@ struct ThreeOneOSFiveApp: App {
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
-    }
     }
 
     var body: some Scene {
@@ -47,11 +45,9 @@ struct ThreeOneOSFiveApp: App {
                 .sheet(isPresented: $showAttribution) {
                     DisplayAttributionSheet()
                 }
-                    )
-                }
                 .onAppear {
                     appState.detectSupport()
-}
+                }
                 .onChange(of: scenePhase) { phase in
                     guard phase == .active else { return }
                     appState.detectSupport()
@@ -60,8 +56,8 @@ struct ThreeOneOSFiveApp: App {
                     patchDraftCoordinator.presentImport(url)
                 }
         }
-    
-
+    }
+}
 
 class AppState: ObservableObject {
     @Published var exploitStatus: ExploitStatus = .notStarted
