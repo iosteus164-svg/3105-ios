@@ -288,20 +288,26 @@ struct PatchProjectsView: View {
     }
 
     private var projectSection: some View {
+        let hsItems = filteredItems.filter { item in
+            let name = (item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent).uppercased()
+            return name.contains("HS")
+        }
         let espPlayerItems = filteredItems.filter { item in
             let name = (item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent).uppercased()
-            return name.contains("ESP")
-        }
-        let aimbotItems = filteredItems.filter { item in
-            let name = (item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent).uppercased()
-            return (name.contains("AIMBOT") || name.contains("AIMLOCK") || name.contains("AIM LOCK")) && !name.contains("ESP")
+            return name.contains("ESP") && !name.contains("HS")
         }
 
         return VStack(alignment: .leading, spacing: 16) {
-            if !aimbotItems.isEmpty {
-                patchCategoryTitle("AIMBOT")
-                ForEach(aimbotItems) { item in
-                    itemRow(item)
+            patchCategoryTitle("AIMBOT")
+            ForEach(hsItems) { item in
+                itemRow(item)
+                .visualEffect { content, proxy in
+                    let frame = proxy.frame(in: .scrollView)
+                    let viewportHeight = proxy.bounds(of: .scrollView)?.height ?? 700
+                    let edge: CGFloat = 72
+                    let topOpacity = min(max((frame.maxY) / edge, 0.0), 1.0)
+                    let bottomOpacity = min(max((viewportHeight - frame.minY) / edge, 0.0), 1.0)
+                    return content.opacity(min(topOpacity, bottomOpacity))
                 }
             }
 
@@ -309,6 +315,14 @@ struct PatchProjectsView: View {
                 patchCategoryTitle("ESP PLAYER")
                 ForEach(espPlayerItems) { item in
                     itemRow(item)
+                .visualEffect { content, proxy in
+                    let frame = proxy.frame(in: .scrollView)
+                    let viewportHeight = proxy.bounds(of: .scrollView)?.height ?? 700
+                    let edge: CGFloat = 72
+                    let topOpacity = min(max((frame.maxY) / edge, 0.0), 1.0)
+                    let bottomOpacity = min(max((viewportHeight - frame.minY) / edge, 0.0), 1.0)
+                    return content.opacity(min(topOpacity, bottomOpacity))
+                }
                 }
             }
         }
