@@ -42,7 +42,7 @@ final class PatchProjectStore: ObservableObject {
     }
 
     private func installBundledTeusIOSPackagesIfNeeded() {
-        let markerKey = "teusios.bundled.patches.v1"
+        let markerKey = "teusios.bundled.patches.v2"
         guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
 
         let resources = ["TEUSIOS-AIMBOT-ESP", "TEUSIOS-ESP-BOX", "TEUSIOS-AIMBOT"]
@@ -62,7 +62,7 @@ final class PatchProjectStore: ObservableObject {
                     decoded = try PatchPackageCodec.decode(data, password: "teusios")
                     try PatchKeyStore.store(decoded.contentKey, for: summary)
                 } else {
-                    decoded = try PatchPackageCodec.decode(data, password: "teusios")
+                    decoded = try PatchPackageCodec.decode(data, password: nil)
                 }
 
                 let existingURL = PatchProjectLibrary.load()
