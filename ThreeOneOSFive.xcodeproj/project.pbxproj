@@ -168,12 +168,12 @@
 		3105A122 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3105B123 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		2CE2F4326E9C42B0B291FEC6 /* AIMBOT.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ThreeOneOSFive/BundledPatches/AIMBOT.3105; sourceTree = SOURCE_ROOT; };
-		111165B66DED748395D3427B /* HS PESCOC╠ºO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HS PESCOC╠ºO.3105"; sourceTree = "<group>"; };
-		BE85AC083A83A16B339E24EF /* HS PEITO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HS PEITO.3105"; sourceTree = "<group>"; };
+		111165B66DED748395D3427B /* HS PESCOC╠ºO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/HS PESCOC╠ºO.3105"; sourceTree = "<group>"; };
+		BE85AC083A83A16B339E24EF /* HS PEITO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/HS PEITO.3105"; sourceTree = "<group>"; };
 		25719E74AFE6668D40496065 /* ESP BOX.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ESP BOX.3105"; sourceTree = "<group>"; };
 		3271245FB60F11733D3C883A /* ESP-AIMBOT.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ESP-AIMBOT.3105"; sourceTree = "<group>"; };
-		7ADDCBF2B08F23B48C4971BE /* HS ALTO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HS ALTO.3105"; sourceTree = "<group>"; };
-		92FD5351730BC9D1EBD5A962 /* HS ALTO-PESCOC╠ºO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HS ALTO-PESCOC╠ºO.3105"; sourceTree = "<group>"; };
+		7ADDCBF2B08F23B48C4971BE /* HS ALTO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/HS ALTO.3105"; sourceTree = "<group>"; };
+		92FD5351730BC9D1EBD5A962 /* HS ALTO-PESCOC╠ºO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/HS ALTO-PESCOC╠ºO.3105"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
