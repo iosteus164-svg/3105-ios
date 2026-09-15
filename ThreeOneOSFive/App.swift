@@ -47,7 +47,6 @@ struct ThreeOneOSFiveApp: App {
                 .sheet(isPresented: $showAttribution) {
                     DisplayAttributionSheet()
                 }
-,
                         secondaryButton: .cancel(Text(language.text("update.dismiss"))) {
                             AppUpdateChecker.dismiss(version: offer.version)
                         }
@@ -64,8 +63,8 @@ struct ThreeOneOSFiveApp: App {
                     patchDraftCoordinator.presentImport(url)
                 }
         }
-    }
-}
+    
+
 
 class AppState: ObservableObject {
     @Published var exploitStatus: ExploitStatus = .notStarted
