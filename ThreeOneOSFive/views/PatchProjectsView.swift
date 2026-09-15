@@ -9,6 +9,9 @@ private enum PatchPackagePickerPolicy {
 }
 
 struct PatchProjectsView: View {
+    @State private var swipeDeleteItemID: UUID? = nil
+    @State private var swipeDeleteTranslation: CGFloat = 0
+
 
     @EnvironmentObject private var appState: AppState
     @Environment(\.appLanguage) private var language
@@ -452,63 +455,108 @@ struct PatchProjectsView: View {
 
     @ViewBuilder
     private func itemRow(_ item: PatchLibraryItem) -> some View {
-        HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(AppTheme.accent.opacity(0.12))
-                    .frame(width: 50, height: 50)
-
-                Image(systemName: "scope")
-                    .font(.system(size: 23, weight: .black))
-                    .foregroundStyle(AppTheme.accent)
+        ZStack(alignment: .trailing) {
+            HStack {
+                Spacer(minLength: 0)
+                Button(role: .destructive) {
+                    withAnimation(.easeOut(duration: 0.16)) {
+                        swipeDeleteItemID = nil
+                        swipeDeleteTranslation = 0
+                    }
+                    store.delete(item)
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 58, height: 44)
+                        .background(Color.red)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .padding(.trailing, 8)
             }
 
             Group {
-                if item.isLocked {
-                    Button {
-                        store.requestUnlock(for: item)
-                    } label: {
-                        projectText(item)
-                    }
-                    .buttonStyle(.plain)
-                } else {
-                    projectText(item)
-                }
-            }
-
-            Toggle(
-                "",
-                isOn: Binding(
-                    get: { store.isApplied(projectID: item.id) },
-                    set: { enabled in
-                        store.setApplied(
-                            enabled,
-                            for: item,
-                            freeFireVariant: selectedGameRaw
+                HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(AppTheme.accent.opacity(0.12))
+                                    .frame(width: 50, height: 50)
+                
+                                Image(systemName: "scope")
+                                    .font(.system(size: 23, weight: .black))
+                                    .foregroundStyle(AppTheme.accent)
+                            }
+                
+                            Group {
+                                if item.isLocked {
+                                    Button {
+                                        store.requestUnlock(for: item)
+                                    } label: {
+                                        projectText(item)
+                                    }
+                                    .buttonStyle(.plain)
+                                } else {
+                                    projectText(item)
+                                }
+                            }
+                
+                            Toggle(
+                                "",
+                                isOn: Binding(
+                                    get: { store.isApplied(projectID: item.id) },
+                                    set: { enabled in
+                                        store.setApplied(
+                                            enabled,
+                                            for: item,
+                                            freeFireVariant: selectedGameRaw
+                                        )
+                                    }
+                                )
+                            )
+                            .labelsHidden()
+                            .tint(AppTheme.accent)
+                            .disabled(item.isLocked || store.isBusy)
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 12)
+                        .background(Color.black.opacity(0.58))
+                        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
                         )
-                    }
-                )
-            )
-            .labelsHidden()
-            .tint(AppTheme.accent)
-            .disabled(item.isLocked || store.isBusy)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
-        .background(Color.black.opacity(0.58))
-        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(Color.white.opacity(0.12), lineWidth: 1)
-        )
-        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button(role: .destructive) {
-                store.delete(item)
-            } label: {
-                Label("Excluir", systemImage: "trash")
             }
+            .offset(x: swipeDeleteItemID == item.id ? -66 + swipeDeleteTranslation : 0)
+            .contentShape(Rectangle())
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 8)
+                    .onChanged { value in
+                        guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                        if value.translation.width < 0 {
+                            swipeDeleteItemID = item.id
+                            swipeDeleteTranslation = max(-12, min(30, value.translation.width + 66))
+                        } else if swipeDeleteItemID == item.id {
+                            swipeDeleteTranslation = min(66, value.translation.width)
+                        }
+                    }
+                    .onEnded { value in
+                        guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                        withAnimation(.easeOut(duration: 0.16)) {
+                            if value.translation.width < -28 {
+                                swipeDeleteItemID = item.id
+                                swipeDeleteTranslation = 0
+                            } else {
+                                swipeDeleteItemID = nil
+                                swipeDeleteTranslation = 0
+                            }
+                        }
+                    }
+            )
         }
-}
+        .clipped()
+
+    }
 
     private func projectText(_ item: PatchLibraryItem) -> some View {
         VStack(alignment: .leading, spacing: 3) {
