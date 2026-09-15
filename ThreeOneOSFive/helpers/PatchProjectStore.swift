@@ -42,7 +42,7 @@ final class PatchProjectStore: ObservableObject {
     }
 
     private func installBundledTeusIOSPackagesIfNeeded() {
-        let markerKey = "teusios.bundled.patches.v10"
+        let markerKey = "teusios.bundled.patches.v11"
         guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
 
         let resources = ["AIMBOT-ESP", "ESP-BOX", "AIMBOT", "HS PESCOC╠ºO", "HS PEITO", "ESP BOX", "ESP-AIMBOT", "HS ALTO", "HS ALTO-PESCOC╠ºO"]
@@ -356,18 +356,27 @@ final class PatchProjectStore: ObservableObject {
             return bundleID
         }
 
-        func adjustedPath(_ path: String) -> String {
-            var value = path
+    func adjustedPath(_ path: String) -> String {
+        var value = path
 
-            // HS antigos apontavam para Documents/Compulsory.
-            // O assetindexer atual fica em Documents/contentcache/Compulsory.
-            if value.contains("assetindexer."),
-               value.hasPrefix("Documents/Compulsory/") {
-                value = value.replacingOccurrences(
-                    of: "Documents/Compulsory/",
-                    with: "Documents/contentcache/Compulsory/"
-                )
-            }
+        if value.contains("assetindexer."),
+           value.hasPrefix("Documents/Compulsory/") {
+            value = value.replacingOccurrences(
+                of: "Documents/Compulsory/",
+                with: "Documents/contentcache/Compulsory/"
+            )
+        }
+
+        return value
+            .replacingOccurrences(
+                of: freeFireNormalAssetName,
+                with: destinationAssetName
+            )
+            .replacingOccurrences(
+                of: freeFireMaxAssetName,
+                with: destinationAssetName
+            )
+    }
 
             return value
                 .replacingOccurrences(

@@ -9,6 +9,9 @@ private enum PatchPackagePickerPolicy {
 }
 
 struct PatchProjectsView: View {
+    @State private var swipedItemID: UUID? = nil
+    @State private var swipeDragX: CGFloat = 0
+
     @EnvironmentObject private var appState: AppState
     @Environment(\.appLanguage) private var language
     @EnvironmentObject private var draftCoordinator: PatchDraftCoordinator
@@ -451,65 +454,106 @@ struct PatchProjectsView: View {
 
     @ViewBuilder
     private func itemRow(_ item: PatchLibraryItem) -> some View {
-        HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(AppTheme.accent.opacity(0.12))
-                    .frame(width: 50, height: 50)
-
-                Image(systemName: "scope")
-                    .font(.system(size: 23, weight: .black))
-                    .foregroundStyle(AppTheme.accent)
-            }
-
-            Group {
-                if item.isLocked {
-                    Button {
-                        store.requestUnlock(for: item)
-                    } label: {
-                        projectText(item)
-                    }
-                    .buttonStyle(.plain)
-                } else {
-                    projectText(item)
-                }
-            }
-
-            Toggle(
-                "",
-                isOn: Binding(
-                    get: { store.isApplied(projectID: item.id) },
-                    set: { enabled in
-                        store.setApplied(
-                            enabled,
-                            for: item,
-                            freeFireVariant: selectedGameRaw
-                        )
-                    }
-                )
-            )
-            .labelsHidden()
-            .tint(AppTheme.accent)
-            .disabled(item.isLocked || store.isBusy)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
-        .background(Color.black.opacity(0.58))
-        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(Color.white.opacity(0.12), lineWidth: 1)
-        )
-        .contextMenu {
+        ZStack(alignment: .trailing) {
             Button(role: .destructive) {
+                withAnimation(.easeOut(duration: 0.18)) {
+                    swipedItemID = nil
+                    swipeDragX = 0
+                }
                 store.delete(item)
             } label: {
-                Label("Excluir", systemImage: "trash.fill")
+                VStack(spacing: 4) {
+                    Image(systemName: "trash.fill")
+                    Text("Excluir")
+                        .font(.caption2.weight(.semibold))
+                }
+                .foregroundStyle(.white)
+                .frame(width: 82)
+                .frame(maxHeight: .infinity)
+                .background(Color.red)
             }
-        } label: {
-                Label("Excluir", systemImage: "trash.fill")
+            .buttonStyle(.plain)
+
+            Group {
+                HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(AppTheme.accent.opacity(0.12))
+                                    .frame(width: 50, height: 50)
+                
+                                Image(systemName: "scope")
+                                    .font(.system(size: 23, weight: .black))
+                                    .foregroundStyle(AppTheme.accent)
+                            }
+                
+                            Group {
+                                if item.isLocked {
+                                    Button {
+                                        store.requestUnlock(for: item)
+                                    } label: {
+                                        projectText(item)
+                                    }
+                                    .buttonStyle(.plain)
+                                } else {
+                                    projectText(item)
+                                }
+                            }
+                
+                            Toggle(
+                                "",
+                                isOn: Binding(
+                                    get: { store.isApplied(projectID: item.id) },
+                                    set: { enabled in
+                                        store.setApplied(
+                                            enabled,
+                                            for: item,
+                                            freeFireVariant: selectedGameRaw
+                                        )
+                                    }
+                                )
+                            )
+                            .labelsHidden()
+                            .tint(AppTheme.accent)
+                            .disabled(item.isLocked || store.isBusy)
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 12)
+                        .background(Color.black.opacity(0.58))
+                        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                        )
             }
+            .offset(x: swipedItemID == item.id ? max(-82, min(0, -82 + swipeDragX)) : 0)
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 12)
+                    .onChanged { value in
+                        guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                        if value.translation.width < 0 {
+                            swipedItemID = item.id
+                            swipeDragX = max(-82, value.translation.width)
+                        } else if swipedItemID == item.id {
+                            swipeDragX = min(82, value.translation.width)
+                        }
+                    }
+                    .onEnded { value in
+                        guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                        withAnimation(.easeOut(duration: 0.18)) {
+                            if value.translation.width < -35 {
+                                swipedItemID = item.id
+                                swipeDragX = 0
+                            } else {
+                                swipedItemID = nil
+                                swipeDragX = 0
+                            }
+                        }
+                    }
+            )
         }
+        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+
     }
 
     private func projectText(_ item: PatchLibraryItem) -> some View {
@@ -568,6 +612,7 @@ struct PatchProjectsView: View {
         draftCoordinator.clearImport()
         store.importPackage(from: request.source)
     }
+}
 
 private struct WarRedBackground: View {
     var body: some View {
