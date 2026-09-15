@@ -568,7 +568,6 @@ struct PatchProjectsView: View {
         draftCoordinator.clearImport()
         store.importPackage(from: request.source)
     }
-}
 
 private struct WarRedBackground: View {
     var body: some View {
