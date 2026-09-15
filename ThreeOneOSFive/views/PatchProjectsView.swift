@@ -17,7 +17,6 @@ struct PatchProjectsView: View {
     @State private var showCreate = false
     @State private var showImporter = false
     @State private var searchText = ""
-    @State private var mainShareRequest: PatchShareRequest?
 
     @AppStorage("selectedFreeFireVariant") private var selectedGameRaw = "normal"
     @AppStorage(AppTheme.themeStorageKey) private var selectedThemeRaw = "purple"
@@ -116,11 +115,6 @@ struct PatchProjectsView: View {
                     }
                 )
                 .ignoresSafeArea()
-            }
-
-            .sheet(item: $mainShareRequest) { request in
-                PatchActivityView(items: [request.url])
-                    .ignoresSafeArea()
             }
 
             .sheet(isPresented: $showCreate) {
@@ -230,19 +224,10 @@ struct PatchProjectsView: View {
 
                     Divider()
 
-                    Menu {
-                        ForEach(categoryItems) { item in
-                            Button {
-                                mainShareRequest = PatchShareRequest(url: item.packageURL)
-                            } label: {
-                                Label(
-                                    item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent,
-                                    systemImage: "square.and.arrow.up"
-                                )
-                            }
-                        }
+                    Button {
+                        showImporter = true
                     } label: {
-                        Label("EXPORTAR", systemImage: "square.and.arrow.up")
+                        Label("IMPORTAR", systemImage: "square.and.arrow.down")
                     }
                 } label: {
                     Image(systemName: "gearshape.fill")
