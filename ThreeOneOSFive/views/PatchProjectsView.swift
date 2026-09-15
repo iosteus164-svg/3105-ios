@@ -301,28 +301,12 @@ struct PatchProjectsView: View {
             patchCategoryTitle("AIMBOT")
             ForEach(hsItems) { item in
                 itemRow(item)
-                .visualEffect { content, proxy in
-                    let frame = proxy.frame(in: .scrollView)
-                    let viewportHeight = proxy.bounds(of: .scrollView)?.height ?? 700
-                    let edge: CGFloat = 72
-                    let topOpacity = min(max((frame.maxY) / edge, 0.0), 1.0)
-                    let bottomOpacity = min(max((viewportHeight - frame.minY) / edge, 0.0), 1.0)
-                    return content.opacity(min(topOpacity, bottomOpacity))
-                }
             }
 
             if !espPlayerItems.isEmpty {
                 patchCategoryTitle("ESP PLAYER")
                 ForEach(espPlayerItems) { item in
                     itemRow(item)
-                .visualEffect { content, proxy in
-                    let frame = proxy.frame(in: .scrollView)
-                    let viewportHeight = proxy.bounds(of: .scrollView)?.height ?? 700
-                    let edge: CGFloat = 72
-                    let topOpacity = min(max((frame.maxY) / edge, 0.0), 1.0)
-                    let bottomOpacity = min(max((viewportHeight - frame.minY) / edge, 0.0), 1.0)
-                    return content.opacity(min(topOpacity, bottomOpacity))
-                }
                 }
             }
         }
