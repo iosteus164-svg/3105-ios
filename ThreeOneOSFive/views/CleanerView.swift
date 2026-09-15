@@ -131,7 +131,7 @@ struct CleanerView: View {
             }
             .foregroundStyle(.white)
             .padding(.horizontal, 22)
-            .frame(maxWidth: .infinity, minHeight: 78)
+            .frame(maxWidth: .infinity, minHeight: 58)
             .background(
                 LinearGradient(
                     colors: [

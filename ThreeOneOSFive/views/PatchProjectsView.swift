@@ -17,6 +17,7 @@ struct PatchProjectsView: View {
     @State private var showCreate = false
     @State private var showImporter = false
     @State private var searchText = ""
+    @State private var mainShareRequest: PatchShareRequest?
 
     @AppStorage("selectedFreeFireVariant") private var selectedGameRaw = "normal"
     @AppStorage(AppTheme.themeStorageKey) private var selectedThemeRaw = "purple"
@@ -115,6 +116,11 @@ struct PatchProjectsView: View {
                     }
                 )
                 .ignoresSafeArea()
+            }
+
+            .sheet(item: $mainShareRequest) { request in
+                PatchActivityView(items: [request.url])
+                    .ignoresSafeArea()
             }
 
             .sheet(isPresented: $showCreate) {
@@ -221,6 +227,23 @@ struct PatchProjectsView: View {
                                 : "circle"
                         )
                     }
+
+                    Divider()
+
+                    Menu {
+                        ForEach(categoryItems) { item in
+                            Button {
+                                mainShareRequest = PatchShareRequest(url: item.packageURL)
+                            } label: {
+                                Label(
+                                    item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent,
+                                    systemImage: "square.and.arrow.up"
+                                )
+                            }
+                        }
+                    } label: {
+                        Label("EXPORTAR", systemImage: "square.and.arrow.up")
+                    }
                 } label: {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 23, weight: .bold))
@@ -290,16 +313,16 @@ struct PatchProjectsView: View {
         }
 
         return VStack(alignment: .leading, spacing: 16) {
-            if !espPlayerItems.isEmpty {
-                patchCategoryTitle("Esp player")
-                ForEach(espPlayerItems) { item in
+            if !aimbotItems.isEmpty {
+                patchCategoryTitle("AIMBOT")
+                ForEach(aimbotItems) { item in
                     itemRow(item)
                 }
             }
 
-            if !aimbotItems.isEmpty {
-                patchCategoryTitle("Aimbot")
-                ForEach(aimbotItems) { item in
+            if !espPlayerItems.isEmpty {
+                patchCategoryTitle("ESP PLAYER")
+                ForEach(espPlayerItems) { item in
                     itemRow(item)
                 }
             }

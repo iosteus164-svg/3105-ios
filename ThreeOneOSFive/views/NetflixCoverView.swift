@@ -156,7 +156,7 @@ struct NetflixCoverView: View {
                         MovieCard(title: "VIKINGS\nVALHALLA", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/rDFy1fUU6OC3Mm0CLFB7u0gqg2P.jpg", description: "Guerreiros nórdicos enfrentam novas batalhas e disputas por território."),
                         MovieCard(title: "COBRA KAI", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/6POBWybSBDBKjSs1VAQcnQC1qyt.jpg", description: "Antigos rivais voltam a se enfrentar através de uma nova geração de alunos."),
                         MovieCard(title: "YOU", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/7bEYwjUvlJW7GerM8GYmqwl4oS3.jpg", description: "Uma obsessão perigosa transforma relacionamentos em um jogo de segredos."),
-                        MovieCard(title: "THE NIGHT\nAGENT", subtitle: "Série", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/x1kA8w8B7xWlYV3kYx7xY6YwQxQ.jpg", description: "Um agente se envolve em uma conspiração enquanto tenta proteger uma testemunha.")
+                        MovieCard(title: "THE NIGHT\nAGENT", subtitle: "Série", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/pJjFPPRmpkAMKms9taIGVJzaZWB.jpg", description: "Um agente se envolve em uma conspiração enquanto tenta proteger uma testemunha.")
                     ]
                 )
 
@@ -426,11 +426,16 @@ struct NetflixCoverView: View {
                         .resizable()
                         .scaledToFill()
                 case .failure:
-                    LinearGradient(
-                        colors: [item.accent.opacity(0.45), .black],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+                    ZStack {
+                        LinearGradient(
+                            colors: [item.accent.opacity(0.55), .black],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        Image(systemName: "film.fill")
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.85))
+                    }
                 case .empty:
                     ZStack {
                         Color.black
