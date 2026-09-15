@@ -500,6 +500,13 @@ struct PatchProjectsView: View {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
                 .stroke(Color.white.opacity(0.12), lineWidth: 1)
         )
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            Button(role: .destructive) {
+                store.delete(item)
+            } label: {
+                Label("Excluir", systemImage: "trash.fill")
+            }
+        }
     }
 
     private func projectText(_ item: PatchLibraryItem) -> some View {
