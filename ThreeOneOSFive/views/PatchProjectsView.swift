@@ -16,6 +16,8 @@ struct PatchProjectsView: View {
 
     @State private var showCreate = false
     @State private var showImporter = false
+    @State private var swipedItemID: UUID? = nil
+    @State private var swipeDragX: CGFloat = 0
     @State private var searchText = ""
 
     @AppStorage("selectedFreeFireVariant") private var selectedGameRaw = "normal"
@@ -444,14 +446,30 @@ struct PatchProjectsView: View {
             .padding(.horizontal, 8)
             .frame(maxWidth: .infinity, minHeight: 58)
             .background(Color.clear)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        }
-        .buttonStyle(.plain)
-    }
+            .clipShape(RoundedRectangle(corner    private func itemRow(_ item: PatchLibraryItem) -> some View {
+        ZStack(alignment: .trailing) {
+            Button(role: .destructive) {
+                withAnimation(.easeOut(duration: 0.18)) {
+                    swipedItemID = nil
+                    swipeDragX = 0
+                }
+                store.delete(item)
+            } label: {
+                VStack(spacing: 4) {
+                    Image(systemName: "trash.fill")
+                        .font(.system(size: 18, weight: .bold))
+                    Text("Excluir")
+                        .font(.caption2.bold())
+                }
+                .foregroundStyle(.white)
+                .frame(width: 82)
+                .frame(maxHeight: .infinity)
+                .background(Color.red)
+                .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+            }
 
-    @ViewBuilder
-    private func itemRow(_ item: PatchLibraryItem) -> some View {
-        HStack(spacing: 12) {
+            Group {
+HStack(spacing: 12) {
             ZStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .fill(AppTheme.accent.opacity(0.12))
@@ -504,6 +522,54 @@ struct PatchProjectsView: View {
             Button(role: .destructive) {
                 store.delete(item)
             } label: {
+                Label("Excluir", systemImage: "trash.fill")
+            }
+        }
+            }
+            .offset(x: swipedItemID == item.id ? max(-82, min(0, -82 + swipeDragX)) : min(0, swipeDragX))
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 12)
+                    .onChanged { value in
+                        guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                        if swipedItemID == item.id {
+                            swipeDragX = min(82, max(-82, value.translation.width))
+                        } else if value.translation.width < 0 {
+                            swipeDragX = max(-82, value.translation.width)
+                        }
+                    }
+                    .onEnded { value in
+                        guard abs(value.translation.width) > abs(value.translation.height) else {
+                            swipeDragX = 0
+                            return
+                        }
+
+                        if swipedItemID == item.id {
+                            if value.translation.width > 35 {
+                                withAnimation(.easeOut(duration: 0.18)) {
+                                    swipedItemID = nil
+                                    swipeDragX = 0
+                                }
+                            } else {
+                                withAnimation(.easeOut(duration: 0.18)) {
+                                    swipeDragX = 0
+                                }
+                            }
+                        } else if value.translation.width < -35 {
+                            withAnimation(.easeOut(duration: 0.18)) {
+                                swipedItemID = item.id
+                                swipeDragX = 0
+                            }
+                        } else {
+                            withAnimation(.easeOut(duration: 0.18)) {
+                                swipeDragX = 0
+                            }
+                        }
+                    }
+            )
+        }
+
+    }bel: {
                 Label("Excluir", systemImage: "trash.fill")
             }
         }

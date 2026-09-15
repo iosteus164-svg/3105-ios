@@ -13,7 +13,7 @@ struct NetflixCoverView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 0.035, green: 0.075, blue: 0.105).ignoresSafeArea()
+            Color.black.ignoresSafeArea()
 
             if showInjector {
                 ContentView(onReturnToNetflix: {
@@ -89,66 +89,44 @@ struct NetflixCoverView: View {
 
             bottomBar
         }
-        .background(Color(red: 0.035, green: 0.075, blue: 0.105))
+        .background(Color.black)
     }
 
     private var topBar: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 14) {
-                Button {
-                    registerLogoTap()
-                } label: {
-                    HStack(spacing: 3) {
-                        Text("prime")
-                            .font(.system(size: 23, weight: .semibold, design: .rounded))
-                        Text("video")
-                            .font(.system(size: 23, weight: .regular, design: .rounded))
-                    }
+        HStack(spacing: 14) {
+            Button {
+                registerLogoTap()
+            } label: {
+                Image("NetflixLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 34, height: 34)
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            Button(action: {}) {
+                Image(systemName: "airplayvideo")
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
-                }
-                .buttonStyle(.plain)
-
-                Spacer()
-
-                Button(action: {}) {
-                    Image(systemName: "airplayvideo")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(.white)
-                }
-
-                Button(action: {}) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 19, weight: .semibold))
-                        .foregroundStyle(.white)
-                }
-
-                Button(action: {}) {
-                    Circle()
-                        .fill(Color(red: 0.10, green: 0.66, blue: 0.95))
-                        .frame(width: 30, height: 30)
-                        .overlay(
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundStyle(.white)
-                        )
-                }
             }
-            .padding(.horizontal, 18)
-            .padding(.top, 9)
-            .padding(.bottom, 13)
 
-            HStack(spacing: 24) {
-                Text("Início").foregroundStyle(.white)
-                Text("Loja").foregroundStyle(.white.opacity(0.76))
-                Text("TV ao vivo").foregroundStyle(.white.opacity(0.76))
-                Text("Categorias").foregroundStyle(.white.opacity(0.76))
-                Spacer()
+            Button(action: {}) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 19, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
             }
-            .font(.system(size: 14, weight: .semibold))
-            .padding(.horizontal, 18)
-            .padding(.bottom, 11)
+
+            Button(action: {}) {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.system(size: 22))
+                    .foregroundStyle(.red)
+            }
         }
-        .background(Color(red: 0.035, green: 0.075, blue: 0.105))
+        .padding(.horizontal, 18)
+        .padding(.vertical, 10)
+        .background(Color.black)
     }
 
     private var homeContent: some View {
@@ -157,7 +135,7 @@ struct NetflixCoverView: View {
                 hero
 
                 posterSection(
-                    "Filmes e séries populares",
+                    "Populares na Netflix",
                     [
                         MovieCard(title: "STRANGER\nTHINGS", subtitle: "Série", accent: .red, posterURL: "https://image.tmdb.org/t/p/w500/uOOtwVbSr4QDjAGIifLDwpb2Pdl.jpg", description: "Mistério, aventura e acontecimentos sobrenaturais em uma pequena cidade."),
                         MovieCard(title: "WANDINHA", subtitle: "Série", accent: .purple, posterURL: "https://image.tmdb.org/t/p/w500/9PFonBhy4cQy7Jz20NpMygczOkv.jpg", description: "Uma estudante incomum investiga segredos e acontecimentos estranhos em sua escola."),
@@ -167,7 +145,7 @@ struct NetflixCoverView: View {
                 )
 
                 posterSection(
-                    "Continue assistindo",
+                    "Continuar assistindo",
                     [
                         MovieCard(title: "BLACK\nMIRROR", subtitle: "Série", accent: .white, posterURL: "https://image.tmdb.org/t/p/w500/7PRddO7z7mcPi21nZTCMGShAyy1.jpg", description: "Histórias independentes exploram tecnologia e seus impactos sobre a sociedade."),
                         MovieCard(title: "LUPIN", subtitle: "Série", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/sgxawbFB5Vi5OkPWQLNfl3dvkNJ.jpg", description: "Um ladrão elegante usa inteligência e disfarces para executar seus planos."),
@@ -183,7 +161,7 @@ struct NetflixCoverView: View {
                 )
 
                 posterSection(
-                    "Filmes que achamos que você vai gostar",
+                    "Filmes para você",
                     [
                         MovieCard(title: "OPPENHEIMER", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg", description: "Um físico assume um papel central em um dos projetos científicos mais importantes do século."),
                         MovieCard(title: "INTERSTELLAR", subtitle: "Filme", accent: .blue, posterURL: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", description: "Exploradores atravessam o espaço em busca de uma nova esperança para a humanidade."),
@@ -199,7 +177,7 @@ struct NetflixCoverView: View {
                 )
 
                 posterSection(
-                    "Ação e aventura no Prime",
+                    "Ação e aventura",
                     [
                         MovieCard(title: "EXTRACTION\n2", subtitle: "Filme", accent: .orange, posterURL: "https://image.tmdb.org/t/p/w500/7gKI9hpEMcZUQpNgKrkDzJpbnNS.jpg", description: "Um mercenário retorna para uma nova missão de resgate ainda mais perigosa."),
                         MovieCard(title: "ARMY OF\nTHE DEAD", subtitle: "Filme", accent: .yellow, posterURL: "https://image.tmdb.org/t/p/w500/z8CExJekGrEThbpMXAmCFvvgoJR.jpg", description: "Um grupo entra em uma cidade isolada para tentar realizar um grande roubo."),
@@ -329,78 +307,51 @@ struct NetflixCoverView: View {
         ZStack(alignment: .bottomLeading) {
             LinearGradient(
                 colors: [
-                    Color(red: 0.04, green: 0.12, blue: 0.18),
-                    Color(red: 0.025, green: 0.08, blue: 0.12),
-                    Color(red: 0.035, green: 0.075, blue: 0.105)
+                    .black,
+                    Color(red: 0.10, green: 0.10, blue: 0.13),
+                    .black
                 ],
-                startPoint: .topTrailing,
-                endPoint: .bottomLeading
-            )
-            .frame(height: 350)
-
-            HStack {
-                Spacer()
-                Image(systemName: "play.tv.fill")
-                    .font(.system(size: 126, weight: .thin))
-                    .foregroundStyle(Color(red: 0.10, green: 0.66, blue: 0.95).opacity(0.18))
-                    .padding(.trailing, 24)
-                    .padding(.bottom, 72)
-            }
-
-            LinearGradient(
-                colors: [.clear, Color(red: 0.035, green: 0.075, blue: 0.105)],
-                startPoint: .center,
+                startPoint: .top,
                 endPoint: .bottom
             )
+            .frame(height: 380)
 
-            VStack(alignment: .leading, spacing: 9) {
-                HStack(spacing: 5) {
-                    Text("prime")
-                        .font(.caption.bold())
-                    Text("ORIGINAL")
-                        .font(.caption2.bold())
-                        .tracking(1.2)
-                }
-                .foregroundStyle(Color(red: 0.10, green: 0.66, blue: 0.95))
+            VStack(alignment: .leading, spacing: 10) {
+                Text("N  SÉRIE")
+                    .font(.caption.bold())
+                    .foregroundStyle(.red)
 
-                Text("THE BOYS")
-                    .font(.system(size: 38, weight: .black, design: .rounded))
+                Text("THE WITCHER")
+                    .font(.system(size: 36, weight: .black, design: .rounded))
                     .foregroundStyle(.white)
 
-                Text("Assista agora no Prime Video")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.88))
+                Text("Destino é uma fera. Você é o que faz dele.")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.82))
 
                 HStack(spacing: 10) {
                     Button(action: {}) {
                         Label("Assistir", systemImage: "play.fill")
                             .font(.headline)
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 23)
-                            .padding(.vertical, 12)
-                            .background(Color(red: 0.10, green: 0.56, blue: 0.84))
-                            .clipShape(RoundedRectangle(cornerRadius: 7))
+                            .foregroundStyle(.black)
+                            .padding(.horizontal, 22)
+                            .padding(.vertical, 11)
+                            .background(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
 
                     Button(action: {}) {
-                        Image(systemName: "plus")
+                        Label("Minha lista", systemImage: "plus")
                             .font(.headline)
                             .foregroundStyle(.white)
-                            .frame(width: 45, height: 45)
-                            .background(Color.white.opacity(0.13))
-                            .clipShape(Circle())
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 11)
+                            .background(Color.white.opacity(0.14))
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
                 }
-
-                HStack(spacing: 5) {
-                    Image(systemName: "checkmark.circle.fill")
-                    Text("Incluído com Prime")
-                }
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(Color(red: 0.35, green: 0.78, blue: 1.0))
             }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 20)
+            .padding(18)
         }
     }
 
@@ -422,7 +373,7 @@ struct NetflixCoverView: View {
         HStack(spacing: 14) {
             Image(systemName: icon)
                 .font(.system(size: 24))
-                .foregroundStyle(Color(red: 0.10, green: 0.66, blue: 0.95))
+                .foregroundStyle(.red)
                 .frame(width: 38)
 
             VStack(alignment: .leading, spacing: 4) {
@@ -489,13 +440,13 @@ struct NetflixCoverView: View {
                     ZStack {
                         Color.black
                         ProgressView()
-                            .tint(Color(red: 0.10, green: 0.66, blue: 0.95))
+                            .tint(.red)
                     }
                 @unknown default:
                     Color.black
                 }
             }
-            .frame(width: 128, height: 180)
+            .frame(width: 116, height: 165)
             .clipped()
 
             LinearGradient(
@@ -516,10 +467,10 @@ struct NetflixCoverView: View {
             }
             .padding(8)
         }
-        .frame(width: 128, height: 180)
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .frame(width: 116, height: 165)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(
-            RoundedRectangle(cornerRadius: 6)
+            RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.white.opacity(0.08), lineWidth: 1)
         )
     }
@@ -527,12 +478,12 @@ struct NetflixCoverView: View {
     private var bottomBar: some View {
         HStack {
             fakeTab(.home, "house.fill", "Início")
-            fakeTab(.trending, "play.rectangle.on.rectangle", "Loja")
-            fakeTab(.newAndHot, "rectangle.stack.fill", "Ao vivo")
-            fakeTab(.downloads, "person.crop.circle", "Minha área")
+            fakeTab(.trending, "play.rectangle.on.rectangle", "Em alta")
+            fakeTab(.newAndHot, "rectangle.stack.fill", "Novidades")
+            fakeTab(.downloads, "arrow.down.circle.fill", "Downloads")
         }
         .padding(.vertical, 9)
-        .background(Color(red: 0.025, green: 0.055, blue: 0.078).opacity(0.99))
+        .background(Color.black.opacity(0.98))
     }
 
     private func fakeTab(_ tab: FakeNetflixTab, _ icon: String, _ title: String) -> some View {
@@ -546,7 +497,7 @@ struct NetflixCoverView: View {
                 Text(title)
                     .font(.caption2)
             }
-            .foregroundStyle(selectedTab == tab ? Color(red: 0.10, green: 0.66, blue: 0.95) : Color.white.opacity(0.55))
+            .foregroundStyle(selectedTab == tab ? Color.red : Color.white.opacity(0.55))
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
