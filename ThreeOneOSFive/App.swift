@@ -47,9 +47,6 @@ struct ThreeOneOSFiveApp: App {
                 .sheet(isPresented: $showAttribution) {
                     DisplayAttributionSheet()
                 }
-                        secondaryButton: .cancel(Text(language.text("update.dismiss"))) {
-                            AppUpdateChecker.dismiss(version: offer.version)
-                        }
                     )
                 }
                 .onAppear {
