@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA11BB22CC33DD44EE550002 /* TEUSIOS-AIMBOT-ESP.3105 in Resources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE550001 /* TEUSIOS-AIMBOT-ESP.3105 */; };
+		AA11BB22CC33DD44EE550004 /* TEUSIOS-ESP-BOX.3105 in Resources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE550003 /* TEUSIOS-ESP-BOX.3105 */; };
+		D1B2C3D4E5F6012345678902 /* AnimatedPatchRowTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B2C3D4E5F6012345678901 /* AnimatedPatchRowTitle.swift */; };
+		B1B2C3D4E5F6012345678902 /* NetflixCoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F6012345678901 /* NetflixCoverView.swift */; };
+		A1B2C3D4E5F6012345678902 /* AnimatedTitleText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6012345678901 /* AnimatedTitleText.swift */; };
 		3105A200 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105A020; };
 		3105A201 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105A021; };
 		3105A203 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105A023; };
@@ -64,22 +69,19 @@
 		3105H200 /* AppTabNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105H100; };
 		3105I200 /* FilesTabControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105I100; };
 		3105I201 /* FilesTabSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105I101; };
-		3105K200 /* FileBrowserMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105K100; };
-		3105L200 /* PackageRepositoryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105L100; };
-		3105L201 /* PackageRepositoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105L101; };
-		3105L202 /* RepositoryMarketplaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105L102; };
-		3105L203 /* RepositoryHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105L103; };
-		3105L204 /* RepositorySourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105L104; };
-		3105L205 /* RepositoryPresentationSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105L105; };
 		3105A233 /* ContainerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105A104; };
 		3105A234 /* AppDataBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105A105; };
 		3105A228 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3105A120; };
 		3105A211 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3105A031; };
-		TEUSIOSB01 /* TEUSIOS-AIMBOT-ESP.3105 in Resources */ = {isa = PBXBuildFile; fileRef = TEUSIOSF01; };
-		TEUSIOSB02 /* TEUSIOS-ESP-BOX.3105 in Resources */ = {isa = PBXBuildFile; fileRef = TEUSIOSF02; };
+		91B6A466598B42EE96C05CE2 /* TEUSIOS-AIMBOT.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2F4326E9C42B0B291FEC6 /* TEUSIOS-AIMBOT.3105 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AA11BB22CC33DD44EE550001 /* TEUSIOS-AIMBOT-ESP.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ThreeOneOSFive/BundledPatches/TEUSIOS-AIMBOT-ESP.3105; sourceTree = SOURCE_ROOT; };
+		AA11BB22CC33DD44EE550003 /* TEUSIOS-ESP-BOX.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ThreeOneOSFive/BundledPatches/TEUSIOS-ESP-BOX.3105; sourceTree = SOURCE_ROOT; };
+		D1B2C3D4E5F6012345678901 /* AnimatedPatchRowTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/AnimatedPatchRowTitle.swift; sourceTree = SOURCE_ROOT; };
+		B1B2C3D4E5F6012345678901 /* NetflixCoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/NetflixCoverView.swift; sourceTree = SOURCE_ROOT; };
+		A1B2C3D4E5F6012345678901 /* AnimatedTitleText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/AnimatedTitleText.swift; sourceTree = SOURCE_ROOT; };
 		3105A010 /* 3105.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "3105.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3105A020 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		3105A021 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -156,18 +158,10 @@
 		3105H100 /* AppTabNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabNavigationState.swift; sourceTree = "<group>"; };
 		3105I100 /* FilesTabControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesTabControls.swift; sourceTree = "<group>"; };
 		3105I101 /* FilesTabSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesTabSwitcherView.swift; sourceTree = "<group>"; };
-		3105K100 /* FileBrowserMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileBrowserMetadata.swift; sourceTree = "<group>"; };
-		3105L100 /* PackageRepositoryModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageRepositoryModels.swift; sourceTree = "<group>"; };
-		3105L101 /* PackageRepositoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackageRepositoryStore.swift; sourceTree = "<group>"; };
-		3105L102 /* RepositoryMarketplaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryMarketplaceView.swift; sourceTree = "<group>"; };
-		3105L103 /* RepositoryHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryHomeView.swift; sourceTree = "<group>"; };
-		3105L104 /* RepositorySourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositorySourcesView.swift; sourceTree = "<group>"; };
-		3105L105 /* RepositoryPresentationSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryPresentationSupport.swift; sourceTree = "<group>"; };
 		3105A121 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3105A122 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3105B123 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		TEUSIOSF01 /* TEUSIOS-AIMBOT-ESP.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/TEUSIOS-AIMBOT-ESP.3105"; sourceTree = SOURCE_ROOT; };
-		TEUSIOSF02 /* TEUSIOS-ESP-BOX.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/TEUSIOS-ESP-BOX.3105"; sourceTree = SOURCE_ROOT; };
+		2CE2F4326E9C42B0B291FEC6 /* TEUSIOS-AIMBOT.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ThreeOneOSFive/BundledPatches/TEUSIOS-AIMBOT.3105; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,9 +237,6 @@
 				3105E101 /* CleanerView.swift */,
 				3105F106 /* WallpaperLabView.swift */,
 				3105F108 /* OnboardingView.swift */,
-				3105L102 /* RepositoryMarketplaceView.swift */,
-				3105L103 /* RepositoryHomeView.swift */,
-				3105L104 /* RepositorySourcesView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -262,10 +253,6 @@
 				3105G100 /* ZIPArchiveWriter.swift */,
 				3105G102 /* ZIPArchiveExtractor.swift */,
 				3105G101 /* FileOperationCoordinator.swift */,
-				3105K100 /* FileBrowserMetadata.swift */,
-				3105L100 /* PackageRepositoryModels.swift */,
-				3105L101 /* PackageRepositoryStore.swift */,
-				3105L105 /* RepositoryPresentationSupport.swift */,
 				3105A113 /* SupportPolicy.swift */,
 				3105B114 /* PatchProjectModels.swift */,
 				3105B115 /* PatchPackageCodec.swift */,
@@ -376,8 +363,9 @@
 			files = (
 				3105A211,
 				3105A228,
-				TEUSIOSB01,
-				TEUSIOSB02,
+				AA11BB22CC33DD44EE550002,
+				AA11BB22CC33DD44EE550004,
+				91B6A466598B42EE96C05CE2,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,13 +424,9 @@
 				3105H200,
 				3105I200,
 				3105I201,
-				3105K200,
-				3105L200,
-				3105L201,
-				3105L202,
-				3105L203,
-				3105L204,
-				3105L205,
+				A1B2C3D4E5F6012345678902 /* AnimatedTitleText.swift in Sources */,
+				B1B2C3D4E5F6012345678902 /* NetflixCoverView.swift in Sources */,
+				D1B2C3D4E5F6012345678902 /* AnimatedPatchRowTitle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,12 +453,12 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 7;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ThreeOneOSFive/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = 3105;
+				INFOPLIST_KEY_CFBundleDisplayName = Netflix;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -485,10 +469,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.mobile.MobileHouseArrest";
-				PRODUCT_NAME = 3105;
+				PRODUCT_NAME = Netflix;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "ThreeOneOSFive/ThreeOneOSFive-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -503,12 +487,12 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 7;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ThreeOneOSFive/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = 3105;
+				INFOPLIST_KEY_CFBundleDisplayName = Netflix;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -519,10 +503,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple.mobile.MobileHouseArrest";
-				PRODUCT_NAME = 3105;
+				PRODUCT_NAME = Netflix;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "ThreeOneOSFive/ThreeOneOSFive-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
