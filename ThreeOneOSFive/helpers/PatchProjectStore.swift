@@ -62,7 +62,7 @@ final class PatchProjectStore: ObservableObject {
                     decoded = try PatchPackageCodec.decode(data, password: "teusios")
                     try PatchKeyStore.store(decoded.contentKey, for: summary)
                 } else {
-                    decoded = try PatchPackageCodec.decode(data)
+                    decoded = try PatchPackageCodec.decode(data, password: "teusios")
                 }
 
                 let existingURL = PatchProjectLibrary.load()
