@@ -74,6 +74,12 @@
 		3105A228 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3105A120; };
 		3105A211 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3105A031; };
 		91B6A466598B42EE96C05CE2 /* AIMBOT.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2F4326E9C42B0B291FEC6 /* AIMBOT.3105 */; };
+		E0BAE81616108B582C9B1039 /* HS PESCOC╠ºO.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 111165B66DED748395D3427B /* HS PESCOC╠ºO.3105 */; };
+		8C942D39684B0098BE4042B3 /* HS PEITO.3105 in Resources */ = {isa = PBXBuildFile; fileRef = BE85AC083A83A16B339E24EF /* HS PEITO.3105 */; };
+		8B3ABA7942CFBF8307AEC311 /* ESP BOX.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 25719E74AFE6668D40496065 /* ESP BOX.3105 */; };
+		B0E3F7F2C667860BE4FC10E1 /* ESP-AIMBOT.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 3271245FB60F11733D3C883A /* ESP-AIMBOT.3105 */; };
+		1C923D018A8D01F41267A8B5 /* HS ALTO.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 7ADDCBF2B08F23B48C4971BE /* HS ALTO.3105 */; };
+		5B2419D46C1825EE86774842 /* HS ALTO-PESCOC╠ºO.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 92FD5351730BC9D1EBD5A962 /* HS ALTO-PESCOC╠ºO.3105 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -162,6 +168,12 @@
 		3105A122 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3105B123 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		2CE2F4326E9C42B0B291FEC6 /* AIMBOT.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ThreeOneOSFive/BundledPatches/AIMBOT.3105; sourceTree = SOURCE_ROOT; };
+		111165B66DED748395D3427B /* HS PESCOC╠ºO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HS PESCOC╠ºO.3105"; sourceTree = "<group>"; };
+		BE85AC083A83A16B339E24EF /* HS PEITO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HS PEITO.3105"; sourceTree = "<group>"; };
+		25719E74AFE6668D40496065 /* ESP BOX.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ESP BOX.3105"; sourceTree = "<group>"; };
+		3271245FB60F11733D3C883A /* ESP-AIMBOT.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ESP-AIMBOT.3105"; sourceTree = "<group>"; };
+		7ADDCBF2B08F23B48C4971BE /* HS ALTO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HS ALTO.3105"; sourceTree = "<group>"; };
+		92FD5351730BC9D1EBD5A962 /* HS ALTO-PESCOC╠ºO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HS ALTO-PESCOC╠ºO.3105"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -366,7 +378,13 @@
 				AA11BB22CC33DD44EE550002,
 				AA11BB22CC33DD44EE550004,
 				91B6A466598B42EE96C05CE2,
-			);
+			
+				E0BAE81616108B582C9B1039 /* HS PESCOC╠ºO.3105 in Resources */,
+				8C942D39684B0098BE4042B3 /* HS PEITO.3105 in Resources */,
+				8B3ABA7942CFBF8307AEC311 /* ESP BOX.3105 in Resources */,
+				B0E3F7F2C667860BE4FC10E1 /* ESP-AIMBOT.3105 in Resources */,
+				1C923D018A8D01F41267A8B5 /* HS ALTO.3105 in Resources */,
+				5B2419D46C1825EE86774842 /* HS ALTO-PESCOC╠ºO.3105 in Resources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */

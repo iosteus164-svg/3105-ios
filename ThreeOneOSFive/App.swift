@@ -8,8 +8,7 @@ struct ThreeOneOSFiveApp: App {
     @StateObject private var fileOperationCoordinator = FileOperationCoordinator()
     @AppStorage(AppLanguage.storageKey) private var languageCode = AppLanguage.english.rawValue
     @State private var showAttribution = false
-    @State private var updateOffer: AppUpdateChecker.Offer?
-    @Environment(\.scenePhase) private var scenePhase
+@Environment(\.scenePhase) private var scenePhase
 
     init() {
         configureTabBarAppearance()
@@ -34,12 +33,6 @@ struct ThreeOneOSFiveApp: App {
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
     }
-
-    private func checkForUpdate() {
-        Task {
-            guard let offer = await AppUpdateChecker.check() else { return }
-            await MainActor.run { updateOffer = offer }
-        }
     }
 
     var body: some Scene {
@@ -54,13 +47,7 @@ struct ThreeOneOSFiveApp: App {
                 .sheet(isPresented: $showAttribution) {
                     DisplayAttributionSheet()
                 }
-                .alert(item: $updateOffer) { offer in
-                    Alert(
-                        title: Text(language.text("update.title")),
-                        message: Text(language.text("update.message", offer.version)),
-                        primaryButton: .default(Text(language.text("update.agree"))) {
-                            UIApplication.shared.open(offer.url)
-                        },
+,
                         secondaryButton: .cancel(Text(language.text("update.dismiss"))) {
                             AppUpdateChecker.dismiss(version: offer.version)
                         }
@@ -68,8 +55,7 @@ struct ThreeOneOSFiveApp: App {
                 }
                 .onAppear {
                     appState.detectSupport()
-                    checkForUpdate()
-                }
+}
                 .onChange(of: scenePhase) { phase in
                     guard phase == .active else { return }
                     appState.detectSupport()

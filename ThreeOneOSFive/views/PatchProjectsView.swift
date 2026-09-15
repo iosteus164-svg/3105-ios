@@ -83,18 +83,6 @@ struct PatchProjectsView: View {
                         if !filteredItems.isEmpty {
                             projectSection
                         }
-            .mask(
-                LinearGradient(
-                    stops: [
-                        .init(color: .clear, location: 0.00),
-                        .init(color: .black, location: 0.035),
-                        .init(color: .black, location: 0.965),
-                        .init(color: .clear, location: 1.00)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
 
                         CleanerView(compactMode: true)
                             .padding(.top, 4)
