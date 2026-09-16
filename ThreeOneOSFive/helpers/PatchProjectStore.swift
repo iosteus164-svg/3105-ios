@@ -339,7 +339,7 @@ final class PatchProjectStore: ObservableObject {
         "assetindexer.H5ak1JM1Eck~2FxRcJrEp~2FMzeuqmY~3D"
 
     private static let freeFireMaxAssetName =
-        "assetindexer.PENojQAQf9a1l6Dzjs0n1Z3rtVU~3D"
+        "assetindexer.YJ~2FW7EkU5pRkVg51NrKyx4LXid8~3D"
 
     private static func freeFireAdjustedProject(
         _ project: PatchProject,
