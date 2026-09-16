@@ -40,16 +40,6 @@ struct WallpaperLabView: View {
             .toolbar { toolbarContent }
             .overlay { busyOverlay }
             .alert(item: $alert, content: alertContent)
-            .sheet(isPresented: $showImporter) {
-                FileDocumentPicker(
-                    allowedContentTypes: WallpaperPickerPolicy.allowedContentTypes,
-                    copiesSelectedDocument: true,
-                    allowsMultipleSelection: true,
-                    onSelection: { result in
-                        showImporter = false
-                        if case .success(let urls) = result, !urls.isEmpty {
-                            importPackages(urls)
-                        }
                     },
                     onCancel: { showImporter = false }
                 )

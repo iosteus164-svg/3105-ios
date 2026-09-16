@@ -100,17 +100,6 @@ struct PatchProjectsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
             .preferredColorScheme(.dark)
-
-            .sheet(isPresented: $showImporter) {
-                FileDocumentPicker(
-                    allowedContentTypes: PatchPackagePickerPolicy.allowedContentTypes,
-                    copiesSelectedDocument: PatchPackagePickerPolicy.copiesSelectedDocument,
-                    allowsMultipleSelection: false,
-                    onSelection: { result in
-                        showImporter = false
-                        if case .success(let urls) = result, let url = urls.first {
-                            store.importPackage(at: url)
-                        }
                     },
                     onCancel: {
                         showImporter = false
@@ -225,12 +214,6 @@ struct PatchProjectsView: View {
                     }
 
                     Divider()
-
-                    Button {
-                        showImporter = true
-                    } label: {
-                        Label("IMPORTAR", systemImage: "square.and.arrow.down")
-                    }
                 } label: {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 23, weight: .bold))
