@@ -612,7 +612,6 @@ private struct TeusIOSKeyGateView: View {
         }
         .animation(.easeInOut(duration: 0.28), value: phase)
         .onAppear {
-                    configureNetflixImageCache()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.30) {
                 keyFocused = true
             }
