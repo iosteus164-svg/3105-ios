@@ -37,6 +37,7 @@ struct NetflixCoverView: View {
                     onValidated: {
                         withAnimation(.easeInOut(duration: 0.25)) {
                             showKeyGate = false
+                            keyText = licenseKeyInput
                             showInjector = true
                         }
                     },
@@ -546,7 +547,8 @@ private struct TeusIOSKeyGateView: View {
         case approved
     }
 
-    @AppStorage("savedLicenseKey") private var keyText = "SMTO6DLCDZ9ARH3S"
+    @AppStorage("savedLicenseKey") private var keyText = ""
+    @State private var licenseKeyInput = ""
     @State private var errorMessage: String?
     @State private var phase: Phase = .entry
     @State private var loadingProgress: CGFloat = 0
@@ -612,6 +614,7 @@ private struct TeusIOSKeyGateView: View {
         }
         .animation(.easeInOut(duration: 0.28), value: phase)
         .onAppear {
+                    licenseKeyInput = keyText
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.30) {
                 keyFocused = true
             }
@@ -651,7 +654,7 @@ private struct TeusIOSKeyGateView: View {
                     Image(systemName: "key")
                         .foregroundStyle(Color(red: 0.72, green: 0.16, blue: 1.00))
 
-                    SecureField("Insira sua key", text: $keyText)
+                    SecureField("Insira sua key", text: $licenseKeyInput)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
                         .focused($keyFocused)
