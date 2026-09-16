@@ -37,7 +37,6 @@ struct NetflixCoverView: View {
                     onValidated: {
                         withAnimation(.easeInOut(duration: 0.25)) {
                             showKeyGate = false
-                            keyText = licenseKeyInput
                             showInjector = true
                         }
                     },
@@ -882,7 +881,7 @@ private struct TeusIOSKeyGateView: View {
     }
 
     private func validateKey() {
-        let normalized = keyText
+        let normalized = licenseKeyInput
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .uppercased()
 
@@ -896,6 +895,8 @@ private struct TeusIOSKeyGateView: View {
             return
         }
 
+        // Só persiste depois que a key passou por todas as validações.
+        keyText = normalized
         errorMessage = nil
         keyFocused = false
 
