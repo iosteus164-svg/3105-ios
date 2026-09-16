@@ -294,22 +294,11 @@ struct PatchProjectsView: View {
         let name = (item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent).uppercased()
         return !name.contains("ESP")
     }
-        let espPlayerItems = filteredItems.filter { item in
-            let name = (item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent).uppercased()
-            return name.contains("ESP") && !name.contains("HS")
-        }
 
         return VStack(alignment: .leading, spacing: 16) {
             patchCategoryTitle("AIMBOT")
             ForEach(hsItems) { item in
                 itemRow(item)
-            }
-
-            if !espPlayerItems.isEmpty {
-                patchCategoryTitle("ESP PLAYER")
-                ForEach(espPlayerItems) { item in
-                    itemRow(item)
-                }
             }
         }
     }

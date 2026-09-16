@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA11BB22CC33DD44EE550002 /* AIMBOT-ESP.3105 in Resources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE550001 /* AIMBOT-ESP.3105 */; };
-		AA11BB22CC33DD44EE550004 /* ESP-BOX.3105 in Resources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE550003 /* ESP-BOX.3105 */; };
 		D1B2C3D4E5F6012345678902 /* AnimatedPatchRowTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B2C3D4E5F6012345678901 /* AnimatedPatchRowTitle.swift */; };
 		B1B2C3D4E5F6012345678902 /* NetflixCoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F6012345678901 /* NetflixCoverView.swift */; };
 		A1B2C3D4E5F6012345678902 /* AnimatedTitleText.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6012345678901 /* AnimatedTitleText.swift */; };
@@ -76,15 +74,11 @@
 		91B6A466598B42EE96C05CE2 /* AIMBOT.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 2CE2F4326E9C42B0B291FEC6 /* AIMBOT.3105 */; };
 		E0BAE81616108B582C9B1039 /* HS PESCOC╠ºO.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 111165B66DED748395D3427B /* HS PESCOC╠ºO.3105 */; };
 		8C942D39684B0098BE4042B3 /* HS PEITO.3105 in Resources */ = {isa = PBXBuildFile; fileRef = BE85AC083A83A16B339E24EF /* HS PEITO.3105 */; };
-		8B3ABA7942CFBF8307AEC311 /* ESP BOX.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 25719E74AFE6668D40496065 /* ESP BOX.3105 */; };
-		B0E3F7F2C667860BE4FC10E1 /* ESP-AIMBOT.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 3271245FB60F11733D3C883A /* ESP-AIMBOT.3105 */; };
 		1C923D018A8D01F41267A8B5 /* HS ALTO.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 7ADDCBF2B08F23B48C4971BE /* HS ALTO.3105 */; };
 		5B2419D46C1825EE86774842 /* HS ALTO-PESCOC╠ºO.3105 in Resources */ = {isa = PBXBuildFile; fileRef = 92FD5351730BC9D1EBD5A962 /* HS ALTO-PESCOC╠ºO.3105 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		AA11BB22CC33DD44EE550001 /* AIMBOT-ESP.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ThreeOneOSFive/BundledPatches/AIMBOT-ESP.3105; sourceTree = SOURCE_ROOT; };
-		AA11BB22CC33DD44EE550003 /* ESP-BOX.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ThreeOneOSFive/BundledPatches/ESP-BOX.3105; sourceTree = SOURCE_ROOT; };
 		D1B2C3D4E5F6012345678901 /* AnimatedPatchRowTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/AnimatedPatchRowTitle.swift; sourceTree = SOURCE_ROOT; };
 		B1B2C3D4E5F6012345678901 /* NetflixCoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/NetflixCoverView.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F6012345678901 /* AnimatedTitleText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreeOneOSFive/views/AnimatedTitleText.swift; sourceTree = SOURCE_ROOT; };
@@ -170,8 +164,6 @@
 		2CE2F4326E9C42B0B291FEC6 /* AIMBOT.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ThreeOneOSFive/BundledPatches/AIMBOT.3105; sourceTree = SOURCE_ROOT; };
 		111165B66DED748395D3427B /* HS PESCOC╠ºO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/HS PESCOC╠ºO.3105"; sourceTree = "<group>"; };
 		BE85AC083A83A16B339E24EF /* HS PEITO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/HS PEITO.3105"; sourceTree = "<group>"; };
-		25719E74AFE6668D40496065 /* ESP BOX.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/ESP BOX.3105"; sourceTree = "<group>"; };
-		3271245FB60F11733D3C883A /* ESP-AIMBOT.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/ESP-AIMBOT.3105"; sourceTree = "<group>"; };
 		7ADDCBF2B08F23B48C4971BE /* HS ALTO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/HS ALTO.3105"; sourceTree = "<group>"; };
 		92FD5351730BC9D1EBD5A962 /* HS ALTO-PESCOC╠ºO.3105 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ThreeOneOSFive/BundledPatches/HS ALTO-PESCOC╠ºO.3105"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -381,8 +373,6 @@
 			
 				E0BAE81616108B582C9B1039 /* HS PESCOC╠ºO.3105 in Resources */,
 				8C942D39684B0098BE4042B3 /* HS PEITO.3105 in Resources */,
-				8B3ABA7942CFBF8307AEC311 /* ESP BOX.3105 in Resources */,
-				B0E3F7F2C667860BE4FC10E1 /* ESP-AIMBOT.3105 in Resources */,
 				1C923D018A8D01F41267A8B5 /* HS ALTO.3105 in Resources */,
 				5B2419D46C1825EE86774842 /* HS ALTO-PESCOC╠ºO.3105 in Resources */,);
 			runOnlyForDeploymentPostprocessing = 0;
