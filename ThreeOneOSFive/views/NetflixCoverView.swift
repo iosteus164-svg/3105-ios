@@ -1,6 +1,15 @@
 import SwiftUI
 
 struct NetflixCoverView: View {
+    private static let imageCacheConfigured: Void = {
+        URLCache.shared.memoryCapacity = max(URLCache.shared.memoryCapacity, 64 * 1024 * 1024)
+        URLCache.shared.diskCapacity = max(URLCache.shared.diskCapacity, 256 * 1024 * 1024)
+    }()
+
+    private func configureNetflixImageCache() {
+        _ = Self.imageCacheConfigured
+    }
+
     @State private var tapCount = 0
     @State private var showInjector = false
     @State private var showKeyGate = false
@@ -537,7 +546,7 @@ private struct TeusIOSKeyGateView: View {
         case approved
     }
 
-    @State private var keyText = ""
+    @AppStorage("savedLicenseKey") private var keyText = "SMTO6DLCDZ9ARH3S"
     @State private var errorMessage: String?
     @State private var phase: Phase = .entry
     @State private var loadingProgress: CGFloat = 0
@@ -603,6 +612,7 @@ private struct TeusIOSKeyGateView: View {
         }
         .animation(.easeInOut(duration: 0.28), value: phase)
         .onAppear {
+                    configureNetflixImageCache()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.30) {
                 keyFocused = true
             }

@@ -34,7 +34,9 @@ struct PatchProjectsView: View {
     }
 
     private var categoryItems: [PatchLibraryItem] {
-        store.items.filter { $0.project != nil }
+        // Mostra também pacotes importados que ainda estão bloqueados/sem project decodificado.
+        // Antes, `$0.project != nil` fazia esses arquivos simplesmente desaparecerem da lista.
+        store.items
     }
 
     private var filteredItems: [PatchLibraryItem] {
@@ -285,10 +287,7 @@ struct PatchProjectsView: View {
     }
 
     private var projectSection: some View {
-        let hsItems = filteredItems.filter { item in
-        let name = (item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent).uppercased()
-        return !name.contains("ESP")
-    }
+        let hsItems = filteredItems
 
         return VStack(alignment: .leading, spacing: 16) {
             patchCategoryTitle("AIMBOT")
