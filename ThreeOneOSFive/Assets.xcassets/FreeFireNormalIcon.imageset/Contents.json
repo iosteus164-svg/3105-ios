@@ -1,23 +1,21 @@
 {
-  "images": [
+  "images" : [
     {
-      "filename": "FreeFireNormalIcon-1x.png",
-      "idiom": "universal",
-      "scale": "1x"
+      "filename" : "FreeFireNormalIcon.png",
+      "idiom" : "universal",
+      "scale" : "1x"
     },
     {
-      "filename": "FreeFireNormalIcon-2x.png",
-      "idiom": "universal",
-      "scale": "2x"
+      "idiom" : "universal",
+      "scale" : "2x"
     },
     {
-      "filename": "FreeFireNormalIcon-3x.png",
-      "idiom": "universal",
-      "scale": "3x"
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
-  "info": {
-    "author": "xcode",
-    "version": 1
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
   }
 }
