@@ -226,9 +226,6 @@ struct PatchProjectsView: View {
 
                     Divider()
 
- label: {
-                        Label("IMPORTAR", systemImage: "square.and.arrow.down")
-                    }
                 } label: {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 23, weight: .bold))
