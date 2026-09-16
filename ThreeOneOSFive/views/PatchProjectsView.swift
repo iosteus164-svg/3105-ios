@@ -293,9 +293,9 @@ struct PatchProjectsView: View {
 
     private var projectSection: some View {
         let hsItems = filteredItems.filter { item in
-            let name = (item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent).uppercased()
-            return name.contains("HS")
-        }
+        let name = (item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent).uppercased()
+        return !name.contains("ESP")
+    }
         let espPlayerItems = filteredItems.filter { item in
             let name = (item.project?.name ?? item.packageURL.deletingPathExtension().lastPathComponent).uppercased()
             return name.contains("ESP") && !name.contains("HS")
