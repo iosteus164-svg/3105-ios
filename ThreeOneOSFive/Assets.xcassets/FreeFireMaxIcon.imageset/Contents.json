@@ -1,15 +1,17 @@
 {
   "images": [
     {
-      "filename": "FreeFireMaxIcon.png",
+      "filename": "FreeFireMaxIcon-1x.png",
       "idiom": "universal",
       "scale": "1x"
     },
     {
+      "filename": "FreeFireMaxIcon-2x.png",
       "idiom": "universal",
       "scale": "2x"
     },
     {
+      "filename": "FreeFireMaxIcon-3x.png",
       "idiom": "universal",
       "scale": "3x"
     }
