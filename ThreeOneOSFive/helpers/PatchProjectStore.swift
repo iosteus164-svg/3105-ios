@@ -336,10 +336,14 @@ final class PatchProjectStore: ObservableObject {
     private static let freeFireMaxBundleID = "com.dts.freefiremax"
 
     private static let freeFireNormalAssetName =
-        "assetindexer.H5ak1JM1Eck~2FxRcJrEp~2FMzeuqmY~3D"
+        "assetindexer.U6Zffc4YIR3DslNj3cXvYGAqz58~3D"
 
     private static let freeFireMaxAssetName =
         "assetindexer.YJ~2FW7EkU5pRkVg51NrKyx4LXid8~3D"
+
+    // Nome legado presente em alguns pacotes HS antigos.
+    private static let freeFireLegacyAssetName =
+        "assetindexer.H5ak1JM1Eck~2FxRcJrEp~2FMzeuqmY~3D"
 
     private static func freeFireAdjustedProject(
         _ project: PatchProject,
@@ -366,10 +370,16 @@ final class PatchProjectStore: ObservableObject {
                     of: freeFireMaxAssetName,
                     with: destinationAssetName
                 )
+                .replacingOccurrences(
+                    of: freeFireLegacyAssetName,
+                    with: destinationAssetName
+                )
         }
 
         func adjustedFilename(_ filename: String) -> String {
-            if filename == freeFireNormalAssetName || filename == freeFireMaxAssetName {
+            if filename == freeFireNormalAssetName ||
+                filename == freeFireMaxAssetName ||
+                filename == freeFireLegacyAssetName {
                 return destinationAssetName
             }
 
@@ -380,6 +390,10 @@ final class PatchProjectStore: ObservableObject {
                 )
                 .replacingOccurrences(
                     of: freeFireMaxAssetName,
+                    with: destinationAssetName
+                )
+                .replacingOccurrences(
+                    of: freeFireLegacyAssetName,
                     with: destinationAssetName
                 )
         }
