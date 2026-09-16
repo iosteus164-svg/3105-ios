@@ -42,10 +42,10 @@ final class PatchProjectStore: ObservableObject {
     }
 
     private func installBundledTeusIOSPackagesIfNeeded() {
-        let markerKey = "teusios.bundled.patches.v28"
+        let markerKey = "teusios.bundled.patches.v29"
         guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
 
-        let resources = ["AIMBOT-ESP", "ESP-BOX", "AIMBOT", "HS PESCOC╠ºO", "HS PEITO", "ESP BOX", "ESP-AIMBOT", "HS ALTO", "HS ALTO-PESCOC╠ºO"]
+        let resources = ["HS PESCOC╠ºO", "HS PEITO", "HS ALTO", "HS ALTO-PESCOC╠ºO", "BALA MAGICA"]
         var allInstalled = true
 
         for resource in resources {
