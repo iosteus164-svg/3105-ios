@@ -42,17 +42,15 @@ final class PatchProjectStore: ObservableObject {
     }
 
     private func installBundledTeusIOSPackagesIfNeeded() {
-        let markerKey = "teusios.bundled.patches.v29"
+        let markerKey = "teusios.bundled.patches.v31"
         guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
 
-        let resources = ["HS PESCOC╠ºO", "HS PEITO", "HS ALTO", "HS ALTO-PESCOC╠ºO", "BALA MAGICA"]
-        var allInstalled = true
+        let bundledURLs = (Bundle.main.urls(forResourcesWithExtension: "3105", subdirectory: nil) ?? [])
+            .sorted { $0.lastPathComponent.localizedCaseInsensitiveCompare($1.lastPathComponent) == .orderedAscending }
+        var allInstalled = !bundledURLs.isEmpty
 
-        for resource in resources {
-            guard let url = Bundle.main.url(forResource: resource, withExtension: "3105") else {
-                allInstalled = false
-                continue
-            }
+        for url in bundledURLs {
+            let resource = url.deletingPathExtension().lastPathComponent
 
             do {
                 let data = try PatchProjectLibrary.readPackage(at: url)
