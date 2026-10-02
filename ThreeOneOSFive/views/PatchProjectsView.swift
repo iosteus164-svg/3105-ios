@@ -9,8 +9,6 @@ private enum PatchPackagePickerPolicy {
 }
 
 struct PatchProjectsView: View {
-
-
     @EnvironmentObject private var appState: AppState
     @Environment(\.appLanguage) private var language
     @EnvironmentObject private var draftCoordinator: PatchDraftCoordinator
@@ -34,9 +32,7 @@ struct PatchProjectsView: View {
     }
 
     private var categoryItems: [PatchLibraryItem] {
-        // Mostra também pacotes importados que ainda estão bloqueados/sem project decodificado.
-        // Antes, `$0.project != nil` fazia esses arquivos simplesmente desaparecerem da lista.
-        store.items
+        store.items.filter { $0.project != nil }
     }
 
     private var filteredItems: [PatchLibraryItem] {
@@ -169,12 +165,8 @@ struct PatchProjectsView: View {
                         .foregroundStyle(AppTheme.accent)
                         .rotationEffect(.degrees(-8))
 
-                    HStack(spacing: 3) {
-                        Text("Teus")
-                            .foregroundStyle(.white)
-                        Text("ios")
-                            .foregroundStyle(AppTheme.accent)
-                    }
+                    Text("INJETOR IOS")
+                        .foregroundStyle(.white)
                     .font(.system(size: 36, weight: .black, design: .rounded))
                     .italic()
 
@@ -225,9 +217,6 @@ struct PatchProjectsView: View {
                                 : "circle"
                         )
                     }
-
-                    Divider()
-
                 } label: {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 23, weight: .bold))
@@ -263,23 +252,24 @@ struct PatchProjectsView: View {
                     .multilineTextAlignment(.trailing)
             }
 
-            HStack(spacing: 12) {
-                gameChoiceCard(
-                    title: "Free Fire",
+            HStack(spacing: 8) {
+                gameTab(
+                    title: "FF NORMAL",
                     imageName: "FreeFireNormalIcon",
                     selected: selectedGame == .normal
                 ) {
                     selectedGame = .normal
                 }
 
-                gameChoiceCard(
-                    title: "Free Fire Max",
+                gameTab(
+                    title: "FF MAX",
                     imageName: "FreeFireMaxIcon",
                     selected: selectedGame == .max
                 ) {
                     selectedGame = .max
                 }
             }
+            .frame(maxWidth: .infinity)
         }
         .padding(16)
         .background(Color.black.opacity(0.56))
@@ -287,21 +277,16 @@ struct PatchProjectsView: View {
     }
 
     private var projectSection: some View {
-        let hsItems = filteredItems
+        VStack(alignment: .leading, spacing: 10) {
+            Text("CONFIGURAÇÕES")
+                .font(.system(size: 10, weight: .bold, design: .rounded))
+                .tracking(3.4)
+                .foregroundStyle(.white.opacity(0.52))
 
-        return VStack(alignment: .leading, spacing: 16) {
-            patchCategoryTitle("AIMBOT")
-            ForEach(hsItems) { item in
+            ForEach(filteredItems) { item in
                 itemRow(item)
             }
         }
-    }
-
-    private func patchCategoryTitle(_ title: String) -> some View {
-        Text(title)
-            .font(.system(size: 10, weight: .bold, design: .rounded))
-            .tracking(3.4)
-            .foregroundStyle(.white.opacity(0.52))
     }
 
     private var supportStatusCard: some View {
@@ -377,7 +362,7 @@ struct PatchProjectsView: View {
     private var footer: some View {
         HStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 5) {
-                Text("TEUS IOS")
+                Text("EXTERNAL IOS")
                 Text("SEMPRE UM PASSO À FRENTE")
             }
 
@@ -393,43 +378,39 @@ struct PatchProjectsView: View {
         .padding(.top, 8)
     }
 
-    private func gameChoiceCard(
+    private func gameTab(
         title: String,
         imageName: String,
         selected: Bool,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            HStack(spacing: 10) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(Color(red: 0.10, green: 0.10, blue: 0.11))
-                        .frame(width: 28, height: 28)
-
-                    Image(imageName)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 34, height: 34)
-                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                }
+            HStack(spacing: 8) {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 25, height: 25)
+                    .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
 
                 Text(title)
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
+                    .font(.system(size: 11, weight: .black, design: .rounded))
+                    .tracking(0.8)
                     .foregroundStyle(.white)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.65)
-                    .layoutPriority(1)
-
-                Spacer(minLength: 4)
-
-                Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
-                    .foregroundStyle(selected ? AppTheme.accent : Color.white.opacity(0.55))
+                    .minimumScaleFactor(0.75)
             }
-            .padding(.horizontal, 8)
-            .frame(maxWidth: .infinity, minHeight: 58)
-            .background(Color.clear)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .background(
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .fill(selected ? AppTheme.accent.opacity(0.24) : Color.white.opacity(0.045))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .stroke(
+                        selected ? AppTheme.accent.opacity(0.95) : Color.white.opacity(0.08),
+                        lineWidth: selected ? 1.2 : 0.7
+                    )
+            )
         }
         .buttonStyle(.plain)
     }

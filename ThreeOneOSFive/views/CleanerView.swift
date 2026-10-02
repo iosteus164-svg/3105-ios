@@ -119,7 +119,7 @@ struct CleanerView: View {
                 }
 
                 Text(isCleaning ? "Limpando..." : (isScanning ? "Verificando..." : "Limpar Lixo"))
-                    .font(.system(size: 20, weight: .black, design: .rounded))
+                    .font(.system(size: 15, weight: .black, design: .rounded))
 
                 Spacer()
 
@@ -130,8 +130,8 @@ struct CleanerView: View {
                 }
             }
             .foregroundStyle(.white)
-            .padding(.horizontal, 22)
-            .frame(maxWidth: .infinity, minHeight: 58)
+            .padding(.horizontal, 14)
+            .frame(maxWidth: .infinity, minHeight: 54)
             .background(
                 LinearGradient(
                     colors: [
@@ -142,7 +142,7 @@ struct CleanerView: View {
                     endPoint: .bottomTrailing
                 )
             )
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .stroke(Color.white.opacity(0.22), lineWidth: 1)

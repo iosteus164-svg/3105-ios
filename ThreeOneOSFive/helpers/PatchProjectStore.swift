@@ -37,49 +37,7 @@ final class PatchProjectStore: ObservableObject {
     private var pendingUnlock: PendingUnlock?
 
     init() {
-        installBundledTeusIOSPackagesIfNeeded()
         reload()
-    }
-
-    private func installBundledTeusIOSPackagesIfNeeded() {
-        let markerKey = "teusios.bundled.patches.v31"
-        guard !UserDefaults.standard.bool(forKey: markerKey) else { return }
-
-        let bundledURLs = (Bundle.main.urls(forResourcesWithExtension: "3105", subdirectory: nil) ?? [])
-            .sorted { $0.lastPathComponent.localizedCaseInsensitiveCompare($1.lastPathComponent) == .orderedAscending }
-        var allInstalled = !bundledURLs.isEmpty
-
-        for url in bundledURLs {
-            let resource = url.deletingPathExtension().lastPathComponent
-
-            do {
-                let data = try PatchProjectLibrary.readPackage(at: url)
-                let summary = try PatchPackageCodec.inspect(data)
-                let decoded: DecodedPatchPackage
-                if summary.isPasswordProtected {
-                    decoded = try PatchPackageCodec.decode(data, password: "teusios")
-                    try PatchKeyStore.store(decoded.contentKey, for: summary)
-                } else {
-                    decoded = try PatchPackageCodec.decode(data, password: nil)
-                }
-
-                let existingURL = PatchProjectLibrary.load()
-                    .first(where: { $0.id == summary.packageID })?.packageURL
-                try PatchProjectLibrary.installImportedPackage(
-                    data: data,
-                    decoded: decoded,
-                    summary: summary,
-                    existingURL: existingURL
-                )
-            } catch {
-                allInstalled = false
-                log("bundled patch install failed: \(resource) — \(error)")
-            }
-        }
-
-        if allInstalled {
-            UserDefaults.standard.set(true, forKey: markerKey)
-        }
     }
 
     func reload() {
@@ -334,14 +292,10 @@ final class PatchProjectStore: ObservableObject {
     private static let freeFireMaxBundleID = "com.dts.freefiremax"
 
     private static let freeFireNormalAssetName =
-        "assetindexer.U6Zffc4YIR3DslNj3cXvYGAqz58~3D"
+        "assetindexer.H5ak1JM1Eck~2FxRcJrEp~2FMzeuqmY~3D"
 
     private static let freeFireMaxAssetName =
-        "assetindexer.YJ~2FW7EkU5pRkVg51NrKyx4LXid8~3D"
-
-    // Nome legado presente em alguns pacotes HS antigos.
-    private static let freeFireLegacyAssetName =
-        "assetindexer.H5ak1JM1Eck~2FxRcJrEp~2FMzeuqmY~3D"
+        "assetindexer.PENojQAQf9a1l6Dzjs0n1Z3rtVU~3D"
 
     private static func freeFireAdjustedProject(
         _ project: PatchProject,
@@ -368,16 +322,10 @@ final class PatchProjectStore: ObservableObject {
                     of: freeFireMaxAssetName,
                     with: destinationAssetName
                 )
-                .replacingOccurrences(
-                    of: freeFireLegacyAssetName,
-                    with: destinationAssetName
-                )
         }
 
         func adjustedFilename(_ filename: String) -> String {
-            if filename == freeFireNormalAssetName ||
-                filename == freeFireMaxAssetName ||
-                filename == freeFireLegacyAssetName {
+            if filename == freeFireNormalAssetName || filename == freeFireMaxAssetName {
                 return destinationAssetName
             }
 
@@ -388,10 +336,6 @@ final class PatchProjectStore: ObservableObject {
                 )
                 .replacingOccurrences(
                     of: freeFireMaxAssetName,
-                    with: destinationAssetName
-                )
-                .replacingOccurrences(
-                    of: freeFireLegacyAssetName,
                     with: destinationAssetName
                 )
         }
@@ -407,19 +351,10 @@ final class PatchProjectStore: ObservableObject {
             return value
         }
 
-        func normalizeHSPath(_ value: String) -> String {
-            guard value.contains("assetindexer."),
-                  value.hasPrefix("Documents/Compulsory/") else { return value }
-            return value.replacingOccurrences(
-                of: "Documents/Compulsory/",
-                with: "Documents/contentcache/Compulsory/"
-            )
-        }
-
         adjusted.rules = project.rules.map { rule in
             var value = rule
             value.bundleID = adjustedBundleID(rule.bundleID)
-            value.relativePath = adjustedPath(normalizeHSPath(rule.relativePath))
+            value.relativePath = adjustedPath(rule.relativePath)
             value.replacementFilename = adjustedFilename(rule.replacementFilename)
             return value
         }
